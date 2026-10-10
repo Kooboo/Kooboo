@@ -1,0 +1,40 @@
+# Kooboo Preflight payment capability rules
+
+rules:
+  - id: PF-COMMERCE-007
+    capability: payment
+    profiles: [site, app]
+    requiredStage: static-first
+    title: The Storefront must not directly mark an order as paid
+    severity: BLOCKER
+    appliesTo: [Page, Layout, View, Script, Api, CodeBlock]
+    tags: [commerce, order, payment, callback, security]
+    patterns:
+      - "k\\.commerce\\.order\\.pay\\s*\\("
+    fix: "Remove order.pay from public APIs, return URLs, order-result pages, and frontend flows. Use k.payment.xxx.charge({ order: orderId, ... }) so the built-in Kooboo provider callback / checkStatus can verify the real payment and update the order; direct order.pay is allowed only in trusted internal manual or migration flows."
+
+  - id: PF-COMMERCE-013
+    requires: [alipay]
+    capability: payment
+    profiles: [site, app]
+    requiredStage: payment-runtime
+    title: Alipay web payments must retain requestId and output the payment form correctly
+    severity: BLOCKER
+    appliesTo: [Page, View, Api, CodeBlock]
+    requiredArtifactFields: [commerceSurface]
+    tags: [commerce, order, payment, alipay]
+    customCheck: commercePaymentContract
+    fix: "alipayForm.charge must receive a Commerce order and CNY and retain response.requestId; navigate the browser directly to the Payment API/CodeBlock, which outputs through k.response.write(renderHtml). Do not use script env=server in a View or inject with client-side innerHTML. returnUrl is not evidence of payment success."
+
+  - id: PF-COMMERCE-015
+    advisory: true
+    capability: payment
+    profiles: [site, app]
+    requiredStage: payment-runtime
+    title: Payment results and order entry points must read real order status
+    severity: BLOCKER
+    appliesTo: [Page, View, Api, CodeBlock]
+    requiredArtifactFields: [commerceSurface]
+    tags: [commerce, order-result, payment]
+    customCheck: commerceOrderResultContract
+    fix: "For order-result, reread the order or PaymentRequest by orderId, verify current-customer ownership, and distinguish paid/pending/failed; returnUrl does not mean paid. Orders and the Account in the payment-capability stage must provide an order list and a real Order Detail entry; /order-result must not masquerade as a detail page."

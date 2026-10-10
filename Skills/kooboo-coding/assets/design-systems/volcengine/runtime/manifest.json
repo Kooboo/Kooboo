@@ -1,0 +1,1021 @@
+{
+  "schemaVersion": 2,
+  "version": "0.10.1",
+  "moduleUrl": "/yuanli.js",
+  "guide": "runtime/usage.md",
+  "files": [
+    {
+      "type": "Script",
+      "name": "yuanli.js",
+      "source": "runtime/yuanli.js"
+    },
+    {
+      "type": "Style",
+      "name": "yuanli.css",
+      "source": "runtime/yuanli.css"
+    },
+    {
+      "type": "Script",
+      "name": "yuanli-icons.js",
+      "source": "runtime/icons.js"
+    }
+  ],
+  "shell": {
+    "id": "yuanli-workspace",
+    "source": "runtime/layout.default.js",
+    "requires": [
+      "YlShell",
+      "YlButton",
+      "YlPopover",
+      "YlMessage"
+    ]
+  },
+  "sourceIndex": "components/index.json",
+  "components": [
+    {
+      "slug": "alert",
+      "name": "Alert",
+      "status": "complete",
+      "exports": [
+        "YlAlert"
+      ],
+      "coverage": "Four semantic types, optional description, controlled dismissal and full-width banner. Use Message for transient mutation feedback. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "anchor",
+      "name": "Anchor",
+      "status": "complete",
+      "exports": [
+        "YlAnchor"
+      ],
+      "coverage": "Three-level section navigation, container-aware scroll and active tracking; ordinary clicks preserve App hash routing. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "avatar",
+      "name": "Avatar",
+      "status": "complete",
+      "exports": [
+        "YlAvatar"
+      ],
+      "coverage": "Four sizes and seven colors, bordered icons, person/department combinations, capsule, subtitle and guarded editing; image-error fallback. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "badge",
+      "name": "Badge",
+      "status": "complete",
+      "exports": [
+        "YlBadge"
+      ],
+      "coverage": "Three sizes, dot, count, overflow count, muted and five icon states, standalone or target/Avatar composition. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "breadcrumb",
+      "name": "Breadcrumb",
+      "status": "complete",
+      "exports": [
+        "YlBreadcrumb"
+      ],
+      "coverage": "Default/large sizes, ellipsis expansion, disabled/current items and controlled navigation; modified links stay native. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "button",
+      "name": "Button",
+      "status": "complete",
+      "exports": [
+        "YlButton",
+        "YlButtonGroup",
+        "YlSplitButton"
+      ],
+      "coverage": "Primary/secondary/outline/text/danger/success/warning/dashed, four sizes, leading/trailing icons, icon-only, loading/disabled, joined groups and split actions. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "cascader",
+      "name": "Cascader",
+      "status": "complete",
+      "exports": [
+        "YlCascader"
+      ],
+      "coverage": "Single and multiple leaf paths, local full-path search, groups/icons, disabled subtrees, parent checkbox selection and column keyboard navigation. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "checkbox",
+      "name": "Checkbox",
+      "status": "complete",
+      "exports": [
+        "YlCheckbox",
+        "YlCheckboxGroup"
+      ],
+      "coverage": "Native checked/unchecked/mixed/error/disabled states, plus controlled horizontal and vertical checkbox groups. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "descriptions",
+      "name": "Descriptions",
+      "status": "complete",
+      "exports": [
+        "YlDescriptions"
+      ],
+      "coverage": "Stacked, label-left, label-right, inline and inline-colon layouts; per-item slots and narrow-screen stacking. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "drawer",
+      "name": "Drawer",
+      "status": "complete",
+      "exports": [
+        "YlDrawer"
+      ],
+      "coverage": "Right-side native modal drawer with source widths 480/600/720/1080px, viewport bounds, body/footer slots and busy guards. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "dropdown",
+      "name": "Dropdown",
+      "status": "complete",
+      "exports": [
+        "YlPopover",
+        "YlDropdown"
+      ],
+      "coverage": "Single/multiple selection, separators, nested columns, groups, icons, descriptions, search and disabled items through Dropdown; Popover supplies arbitrary anchored panels. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "form",
+      "name": "Form",
+      "status": "complete",
+      "exports": [
+        "YlForm",
+        "YlFormItem",
+        "YlFormGroup"
+      ],
+      "coverage": "Single/two-column forms, semantic groups, label/help/error/success association and guarded submit; business owns validation and requests. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "input",
+      "name": "Input",
+      "status": "complete",
+      "exports": [
+        "YlInput",
+        "YlTextarea",
+        "YlInputNumber"
+      ],
+      "coverage": "Four input sizes, native states, prefix/suffix icons or slots and inset labels; auxiliary textarea and number controls. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "message",
+      "name": "Message",
+      "status": "complete",
+      "exports": [
+        "YlMessage"
+      ],
+      "coverage": "Success/warning/error/info/loading; controlled top-center message, timeout/pause/dismissal. Loading persists until replaced or cleared. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "modal",
+      "name": "Modal",
+      "status": "complete",
+      "exports": [
+        "YlDialog",
+        "YlConfirmDialog"
+      ],
+      "coverage": "Standard small/default/large dialogs and info/success/warning/error confirmation, optional cancel button, controlled completion and busy guards. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "page-header",
+      "name": "PageHeader",
+      "status": "complete",
+      "exports": [
+        "YlListPage",
+        "YlPageHeader"
+      ],
+      "coverage": "Standalone title/actions/status, optional breadcrumb and tabs with panels; ListPage remains available for list-screen composition. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "pagination",
+      "name": "Pagination",
+      "status": "complete",
+      "exports": [
+        "YlPagination"
+      ],
+      "coverage": "Basic, total count, page-size chooser, validated jump and simple modes; bounded controlled pages and disabled controls. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "popconfirm",
+      "name": "Popconfirm",
+      "status": "complete",
+      "exports": [
+        "YlPopconfirm"
+      ],
+      "coverage": "Anchored default/icon/description and simple confirmation; controlled success/failure and busy dismissal guards. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "progress",
+      "name": "Progress",
+      "status": "complete",
+      "exports": [
+        "YlProgress"
+      ],
+      "coverage": "Linear default/large/small/mini sizes and normal/success/warning/error states; accessible clamped percentage, mini without visible text. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "segmented-picker",
+      "name": "SegmentedPicker",
+      "status": "complete",
+      "exports": [
+        "YlSegmentedPicker"
+      ],
+      "coverage": "Four source sizes, controlled primitive values, disabled items and radio-group keyboard navigation. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "select",
+      "name": "Select",
+      "status": "complete",
+      "exports": [
+        "YlSelect"
+      ],
+      "coverage": "Single/multiple, four sizes, native-like states, grouped/empty/search panels, removable and overflow tags, clear and inset labels; controlled typed values. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "sidenav",
+      "name": "Sidenav",
+      "status": "complete",
+      "exports": [
+        "YlShell",
+        "YlSidenav"
+      ],
+      "coverage": "Standalone full-width grouped/nested navigation and optional icon rail with branch flyouts; Shell composes navigation separately from its optional whole-sidebar collapse. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "slider",
+      "name": "Slider",
+      "status": "complete",
+      "exports": [
+        "YlSlider"
+      ],
+      "coverage": "Default/small native single-value and dual-handle ranges; bounds, step, disabled and non-crossing updates. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "status-tag",
+      "name": "StatusTag",
+      "status": "complete",
+      "exports": [
+        "YlStatusTag"
+      ],
+      "coverage": "Text/fill/outline variants for success/warning/processing/stop/error/loading/waiting; visible labels and reduced-motion loading. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "steps",
+      "name": "Steps",
+      "status": "complete",
+      "exports": [
+        "YlSteps"
+      ],
+      "coverage": "Horizontal/vertical ordered steps with or without descriptions; completed/active/pending/disabled/error states and parent-owned progress. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "switch",
+      "name": "Switch",
+      "status": "complete",
+      "exports": [
+        "YlSwitch"
+      ],
+      "coverage": "Default 20px and small 16px sizes, checked/unchecked, disabled and loading guards. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "table",
+      "name": "Table",
+      "status": "complete",
+      "exports": [
+        "YlTable"
+      ],
+      "coverage": "Source table with selection, striped rows, cell/action slots, toolbar and pagination composition; controlled sorting and centered load/empty/error states. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "tabs",
+      "name": "Tabs",
+      "status": "complete",
+      "exports": [
+        "YlTabs"
+      ],
+      "coverage": "Line/card/capsule/button/segmented/vertical variants, sizes, icons/counts/badges, scroll/add/extra controls and optional bordered content panels. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "timepicker",
+      "name": "TimePicker",
+      "status": "complete",
+      "exports": [
+        "YlTimePicker"
+      ],
+      "coverage": "Single/range local time strings, default/large/small, seconds, placeholders and disabled/readonly/error states; native panel, parent validates range order. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "tooltip",
+      "name": "Tooltip",
+      "status": "complete",
+      "exports": [
+        "YlTooltip"
+      ],
+      "coverage": "Top/bottom/left/right, opposite-side flip and viewport clamp, hover/focus/Escape with top-layer support. Source-contract implementation; browser and real-App acceptance remain manual."
+    },
+    {
+      "slug": "topnav",
+      "name": "TopNav",
+      "status": "complete",
+      "exports": [
+        "YlShell",
+        "YlTopNav"
+      ],
+      "coverage": "Light/dark header, optional product tabs, secondary navigation, links/search/actions; business owns navigation and optional menu trigger. Source-contract implementation; browser and real-App acceptance remain manual."
+    }
+  ],
+  "exports": [
+    {
+      "name": "YlButton",
+      "slug": "button",
+      "summary": "Action button with disabled/loading guard; default slot; click event.",
+      "api": "runtime/api/button.md",
+      "sourceComponents": [
+        "button"
+      ],
+      "source": "runtime/modules/YlButton.js",
+      "dependencies": [
+        "YlIcon"
+      ]
+    },
+    {
+      "name": "YlInput",
+      "slug": "input",
+      "summary": "Native text input with string v-model, IME, readonly/disabled/invalid states.",
+      "api": "runtime/api/input.md",
+      "sourceComponents": [
+        "input"
+      ],
+      "source": "runtime/modules/YlInput.js",
+      "dependencies": [
+        "YlIcon"
+      ]
+    },
+    {
+      "name": "YlTable",
+      "slug": "table",
+      "summary": "Source table with selection, striped rows, cell/action slots, toolbar and pagination composition; controlled sorting and centered load/empty/error states.",
+      "api": "runtime/api/table.md",
+      "sourceComponents": [
+        "table"
+      ],
+      "source": "runtime/modules/YlTable.js",
+      "dependencies": [
+        "YlCheckbox",
+        "YlIcon"
+      ]
+    },
+    {
+      "name": "YlPagination",
+      "slug": "pagination",
+      "summary": "Basic, total count, page-size chooser, validated jump and simple modes; bounded controlled pages and disabled controls.",
+      "api": "runtime/api/pagination.md",
+      "sourceComponents": [
+        "pagination"
+      ],
+      "source": "runtime/modules/YlPagination.js",
+      "dependencies": [
+        "YlIcon",
+        "YlSelect"
+      ]
+    },
+    {
+      "name": "YlDialog",
+      "slug": "modal",
+      "summary": "Controlled native modal dialog with Escape, focus return, busy guard and footer slot.",
+      "api": "runtime/api/modal.md",
+      "sourceComponents": [
+        "modal"
+      ],
+      "source": "runtime/modules/YlDialog.js",
+      "dependencies": [
+        "YlIcon"
+      ]
+    },
+    {
+      "name": "YlListPage",
+      "slug": "list-page",
+      "summary": "Page composition: title, description, actions/filters/default/pagination slots. No navigation or data.",
+      "api": "runtime/api/list-page.md",
+      "sourceComponents": [
+        "page-header"
+      ],
+      "source": "runtime/modules/YlListPage.js",
+      "dependencies": []
+    },
+    {
+      "name": "YlShell",
+      "slug": "shell",
+      "summary": "Responsive workspace Shell with flat/grouped or recursive navigation children, accessible disclosure, active ancestors and mobile navigation.",
+      "api": "runtime/api/shell.md",
+      "sourceComponents": [
+        "topnav",
+        "sidenav"
+      ],
+      "source": "runtime/modules/YlShell.js",
+      "dependencies": [
+        "YlButton",
+        "YlDialog",
+        "YlIcon",
+        "YlLayout",
+        "YlHeader",
+        "YlAside",
+        "YlMain",
+        "YlSidenav",
+        "YlSkeleton"
+      ]
+    },
+    {
+      "name": "YlSelect",
+      "slug": "select",
+      "summary": "Single/multiple, four sizes, native-like states, grouped/empty/search panels, removable and overflow tags, clear and inset labels; controlled typed values.",
+      "api": "runtime/api/select.md",
+      "sourceComponents": [
+        "select"
+      ],
+      "source": "runtime/modules/YlSelect.js",
+      "dependencies": [
+        "YlIcon",
+        "YlInput"
+      ]
+    },
+    {
+      "name": "YlIcon",
+      "slug": "icon",
+      "summary": "Reactive Lucide SVG; kebab-case name, numeric size. Bundled common icons; App Base loader for others.",
+      "api": "runtime/api/icon.md",
+      "sourceComponents": [],
+      "source": "runtime/modules/YlIcon.js",
+      "dependencies": []
+    },
+    {
+      "name": "YlPopover",
+      "slug": "popover",
+      "summary": "Controlled anchored non-modal panel with trigger slot, outside/Tab/Escape dismissal; use for account and notifications.",
+      "api": "runtime/api/popover.md",
+      "sourceComponents": [
+        "dropdown"
+      ],
+      "source": "runtime/modules/YlPopover.js",
+      "dependencies": []
+    },
+    {
+      "name": "YlConfirmDialog",
+      "slug": "confirm-dialog",
+      "summary": "Controlled confirmation modal with busy guard. Confirm before publishing/unpublishing or deleting; caller owns async mutation.",
+      "api": "runtime/api/confirm-dialog.md",
+      "sourceComponents": [
+        "modal"
+      ],
+      "source": "runtime/modules/YlConfirmDialog.js",
+      "dependencies": [
+        "YlButton",
+        "YlDialog",
+        "YlIcon"
+      ]
+    },
+    {
+      "name": "YlMessage",
+      "slug": "message",
+      "summary": "Success/warning/error/info/loading; controlled top-center message, timeout/pause/dismissal. Loading persists until replaced or cleared.",
+      "api": "runtime/api/message.md",
+      "sourceComponents": [
+        "message"
+      ],
+      "source": "runtime/modules/YlMessage.js",
+      "dependencies": [
+        "YlIcon"
+      ]
+    },
+    {
+      "name": "YlCheckbox",
+      "slug": "checkbox",
+      "summary": "Boolean v-model; default slot labels the native checkbox. indeterminate is visual/mixed state; caller owns checkbox groups.",
+      "api": "runtime/api/checkbox.md",
+      "source": "runtime/modules/YlCheckbox.js",
+      "dependencies": [
+        "YlIcon"
+      ],
+      "sourceComponents": [
+        "checkbox"
+      ]
+    },
+    {
+      "name": "YlSwitch",
+      "slug": "switch",
+      "summary": "Default 20px and small 16px sizes, checked/unchecked, disabled and loading guards.",
+      "api": "runtime/api/switch.md",
+      "source": "runtime/modules/YlSwitch.js",
+      "dependencies": [],
+      "sourceComponents": [
+        "switch"
+      ]
+    },
+    {
+      "name": "YlForm",
+      "slug": "form",
+      "summary": "Native form with submit prevention and busy guard. Default slot; native validation works for native inputs. Caller validates custom controls and owns async requests.",
+      "api": "runtime/api/form.md",
+      "source": "runtime/modules/YlForm.js",
+      "dependencies": [],
+      "sourceComponents": [
+        "form"
+      ]
+    },
+    {
+      "name": "YlFormItem",
+      "slug": "form-item",
+      "summary": "Default scoped slot receives id, aria-describedby, aria-invalid and required: bind them to the input. Set invalid on YlInput/YlSelect when error is present. No automatic schema validator.",
+      "api": "runtime/api/form-item.md",
+      "source": "runtime/modules/YlFormItem.js",
+      "dependencies": [],
+      "sourceComponents": [
+        "form"
+      ]
+    },
+    {
+      "name": "YlStatusTag",
+      "slug": "status-tag",
+      "summary": "Text/fill/outline variants for success/warning/processing/stop/error/loading/waiting; visible labels and reduced-motion loading.",
+      "api": "runtime/api/status-tag.md",
+      "source": "runtime/modules/YlStatusTag.js",
+      "dependencies": [],
+      "sourceComponents": [
+        "status-tag"
+      ]
+    },
+    {
+      "name": "YlAlert",
+      "slug": "alert",
+      "summary": "Four semantic types, optional description, controlled dismissal and full-width banner. Use Message for transient mutation feedback.",
+      "api": "runtime/api/alert.md",
+      "source": "runtime/modules/YlAlert.js",
+      "dependencies": [
+        "YlIcon"
+      ],
+      "sourceComponents": [
+        "alert"
+      ]
+    },
+    {
+      "name": "YlBadge",
+      "slug": "badge",
+      "summary": "Three sizes, dot, count, overflow count, muted and five icon states, standalone or target/Avatar composition.",
+      "api": "runtime/api/badge.md",
+      "source": "runtime/modules/YlBadge.js",
+      "dependencies": [
+        "YlIcon"
+      ],
+      "sourceComponents": [
+        "badge"
+      ]
+    },
+    {
+      "name": "YlAvatar",
+      "slug": "avatar",
+      "summary": "Four sizes and seven colors, bordered icons, person/department combinations, capsule, subtitle and guarded editing; image-error fallback.",
+      "api": "runtime/api/avatar.md",
+      "source": "runtime/modules/YlAvatar.js",
+      "dependencies": [
+        "YlIcon"
+      ],
+      "sourceComponents": [
+        "avatar"
+      ]
+    },
+    {
+      "name": "YlProgress",
+      "slug": "progress",
+      "summary": "Linear default/large/small/mini sizes and normal/success/warning/error states; accessible clamped percentage, mini without visible text.",
+      "api": "runtime/api/progress.md",
+      "source": "runtime/modules/YlProgress.js",
+      "dependencies": [],
+      "sourceComponents": [
+        "progress"
+      ]
+    },
+    {
+      "name": "YlDescriptions",
+      "slug": "descriptions",
+      "summary": "Stacked, label-left, label-right, inline and inline-colon layouts; per-item slots and narrow-screen stacking.",
+      "api": "runtime/api/descriptions.md",
+      "source": "runtime/modules/YlDescriptions.js",
+      "dependencies": [],
+      "sourceComponents": [
+        "descriptions"
+      ]
+    },
+    {
+      "name": "YlBreadcrumb",
+      "slug": "breadcrumb",
+      "summary": "Default/large sizes, ellipsis expansion, disabled/current items and controlled navigation; modified links stay native.",
+      "api": "runtime/api/breadcrumb.md",
+      "source": "runtime/modules/YlBreadcrumb.js",
+      "dependencies": [],
+      "sourceComponents": [
+        "breadcrumb"
+      ]
+    },
+    {
+      "name": "YlDrawer",
+      "slug": "drawer",
+      "summary": "Right-side native modal drawer with source widths 480/600/720/1080px, viewport bounds, body/footer slots and busy guards.",
+      "api": "runtime/api/drawer.md",
+      "source": "runtime/modules/YlDrawer.js",
+      "dependencies": [
+        "YlDialog"
+      ],
+      "sourceComponents": [
+        "drawer"
+      ]
+    },
+    {
+      "name": "YlTabs",
+      "slug": "tabs",
+      "summary": "Line/card/capsule/button/segmented/vertical variants, sizes, icons/counts/badges, scroll/add/extra controls and optional bordered content panels.",
+      "api": "runtime/api/tabs.md",
+      "source": "runtime/modules/YlTabs.js",
+      "dependencies": [
+        "YlButton",
+        "YlIcon"
+      ],
+      "sourceComponents": [
+        "tabs"
+      ]
+    },
+    {
+      "name": "YlTooltip",
+      "slug": "tooltip",
+      "summary": "Top/bottom/left/right, opposite-side flip and viewport clamp, hover/focus/Escape with top-layer support.",
+      "api": "runtime/api/tooltip.md",
+      "source": "runtime/modules/YlTooltip.js",
+      "dependencies": [],
+      "sourceComponents": [
+        "tooltip"
+      ]
+    },
+    {
+      "name": "YlTextarea",
+      "slug": "textarea",
+      "summary": "String v-model with IME guard. Native rows, maxlength, required and label attributes. Resize vertically; caller owns validation.",
+      "api": "runtime/api/textarea.md",
+      "source": "runtime/modules/YlTextarea.js",
+      "dependencies": [
+        "YlInput"
+      ],
+      "sourceComponents": [
+        "input"
+      ]
+    },
+    {
+      "name": "YlInputNumber",
+      "slug": "input-number",
+      "summary": "Number|null v-model; native number control. min/max/step use native constraint validation, never silently clamp typed values. Empty emits null; bad intermediate input emits nothing. Validate custom API submissions.",
+      "api": "runtime/api/input-number.md",
+      "source": "runtime/modules/YlInputNumber.js",
+      "dependencies": [
+        "YlInput"
+      ],
+      "sourceComponents": [
+        "input"
+      ]
+    },
+    {
+      "name": "YlRadioGroup",
+      "slug": "radio-group",
+      "summary": "options: Array<{value:string|number,label:string,disabled?:boolean}>. Native radio group with legend and browser keyboard navigation. Value types are preserved. Source radio styling is in the original Form section, outside the source component index.",
+      "api": "runtime/api/radio-group.md",
+      "source": "runtime/modules/YlRadioGroup.js",
+      "dependencies": [],
+      "sourceComponents": []
+    },
+    {
+      "name": "YlLayout",
+      "slug": "layout",
+      "summary": "Composable horizontal/vertical container; flow, parent-fill or viewport sizing.",
+      "api": "runtime/api/layout.md",
+      "sourceComponents": [],
+      "source": "runtime/modules/YlLayout.js",
+      "dependencies": []
+    },
+    {
+      "name": "YlHeader",
+      "slug": "header",
+      "summary": "Optional header region with content-driven or explicit height.",
+      "api": "runtime/api/header.md",
+      "sourceComponents": [],
+      "source": "runtime/modules/YlHeader.js",
+      "dependencies": [
+        "YlLayout"
+      ]
+    },
+    {
+      "name": "YlAside",
+      "slug": "aside",
+      "summary": "Optional left or right region with explicit width and independent overflow; no menu coupling.",
+      "api": "runtime/api/aside.md",
+      "sourceComponents": [],
+      "source": "runtime/modules/YlAside.js",
+      "dependencies": [
+        "YlLayout"
+      ]
+    },
+    {
+      "name": "YlMain",
+      "slug": "main",
+      "summary": "Flexible main/content region; optional independent scrolling and semantic tag.",
+      "api": "runtime/api/main.md",
+      "sourceComponents": [],
+      "source": "runtime/modules/YlMain.js",
+      "dependencies": [
+        "YlLayout"
+      ]
+    },
+    {
+      "name": "YlFooter",
+      "slug": "footer",
+      "summary": "Optional footer region with content-driven or explicit height.",
+      "api": "runtime/api/footer.md",
+      "sourceComponents": [],
+      "source": "runtime/modules/YlFooter.js",
+      "dependencies": [
+        "YlLayout"
+      ]
+    },
+    {
+      "name": "YlDatePicker",
+      "slug": "date-picker",
+      "summary": "Native date, month and local datetime input with explicit string values.",
+      "api": "runtime/api/date-picker.md",
+      "sourceComponents": [],
+      "source": "runtime/modules/YlDatePicker.js",
+      "dependencies": [
+        "YlInput",
+        "YlIcon"
+      ]
+    },
+    {
+      "name": "YlDateRangePicker",
+      "slug": "date-range-picker",
+      "summary": "Two native date controls with visible reversed-range validation.",
+      "api": "runtime/api/date-range-picker.md",
+      "sourceComponents": [],
+      "source": "runtime/modules/YlDateRangePicker.js",
+      "dependencies": [
+        "YlDatePicker"
+      ]
+    },
+    {
+      "name": "YlUpload",
+      "slug": "upload",
+      "summary": "File selection, raster image preview and cancellable caller-provided upload requests.",
+      "api": "runtime/api/upload.md",
+      "sourceComponents": [],
+      "source": "runtime/modules/YlUpload.js",
+      "dependencies": [
+        "YlButton",
+        "YlProgress"
+      ]
+    },
+    {
+      "name": "YlAnchor",
+      "slug": "anchor",
+      "summary": "Three-level section navigation, container-aware scroll and active tracking; ordinary clicks preserve App hash routing.",
+      "api": "runtime/api/anchor.md",
+      "sourceComponents": [
+        "anchor"
+      ],
+      "source": "runtime/modules/YlAnchor.js",
+      "dependencies": [
+        "YlIcon"
+      ]
+    },
+    {
+      "name": "YlCascader",
+      "slug": "cascader",
+      "summary": "Single and multiple leaf paths, local full-path search, groups/icons, disabled subtrees, parent checkbox selection and column keyboard navigation.",
+      "api": "runtime/api/cascader.md",
+      "sourceComponents": [
+        "cascader"
+      ],
+      "source": "runtime/modules/YlCascader.js",
+      "dependencies": [
+        "YlInput",
+        "YlCheckbox",
+        "YlIcon"
+      ]
+    },
+    {
+      "name": "YlPopconfirm",
+      "slug": "popconfirm",
+      "summary": "Anchored default/icon/description and simple confirmation; controlled success/failure and busy dismissal guards.",
+      "api": "runtime/api/popconfirm.md",
+      "sourceComponents": [
+        "popconfirm"
+      ],
+      "source": "runtime/modules/YlPopconfirm.js",
+      "dependencies": [
+        "YlPopover",
+        "YlButton",
+        "YlIcon"
+      ]
+    },
+    {
+      "name": "YlSegmentedPicker",
+      "slug": "segmented-picker",
+      "summary": "Four source sizes, controlled primitive values, disabled items and radio-group keyboard navigation.",
+      "api": "runtime/api/segmented-picker.md",
+      "sourceComponents": [
+        "segmented-picker"
+      ],
+      "source": "runtime/modules/YlSegmentedPicker.js",
+      "dependencies": []
+    },
+    {
+      "name": "YlSlider",
+      "slug": "slider",
+      "summary": "Default/small native single-value and dual-handle ranges; bounds, step, disabled and non-crossing updates.",
+      "api": "runtime/api/slider.md",
+      "sourceComponents": [
+        "slider"
+      ],
+      "source": "runtime/modules/YlSlider.js",
+      "dependencies": []
+    },
+    {
+      "name": "YlSteps",
+      "slug": "steps",
+      "summary": "Horizontal/vertical ordered steps with or without descriptions; completed/active/pending/disabled/error states and parent-owned progress.",
+      "api": "runtime/api/steps.md",
+      "sourceComponents": [
+        "steps"
+      ],
+      "source": "runtime/modules/YlSteps.js",
+      "dependencies": [
+        "YlIcon"
+      ]
+    },
+    {
+      "name": "YlTimePicker",
+      "slug": "timepicker",
+      "summary": "Single/range local time strings, default/large/small, seconds, placeholders and disabled/readonly/error states; native panel, parent validates range order.",
+      "api": "runtime/api/timepicker.md",
+      "sourceComponents": [
+        "timepicker"
+      ],
+      "source": "runtime/modules/YlTimePicker.js",
+      "dependencies": []
+    },
+    {
+      "name": "YlCheckboxGroup",
+      "slug": "checkbox-group",
+      "summary": "Controlled horizontal/vertical checkbox groups.",
+      "api": "runtime/api/checkbox-group.md",
+      "sourceComponents": [
+        "checkbox"
+      ],
+      "source": "runtime/modules/YlCheckboxGroup.js",
+      "dependencies": [
+        "YlCheckbox"
+      ]
+    },
+    {
+      "name": "YlButtonGroup",
+      "slug": "button-group",
+      "summary": "Source joined-button composition.",
+      "api": "runtime/api/button-group.md",
+      "sourceComponents": [
+        "button"
+      ],
+      "source": "runtime/modules/YlButtonGroup.js",
+      "dependencies": [
+        "YlButton"
+      ]
+    },
+    {
+      "name": "YlSplitButton",
+      "slug": "split-button",
+      "summary": "Primary action with a separate dropdown trigger.",
+      "api": "runtime/api/split-button.md",
+      "sourceComponents": [
+        "button"
+      ],
+      "source": "runtime/modules/YlSplitButton.js",
+      "dependencies": [
+        "YlButtonGroup",
+        "YlDropdown"
+      ]
+    },
+    {
+      "name": "YlFormGroup",
+      "slug": "form-group",
+      "summary": "Labeled fieldsets with one/two-column form layouts.",
+      "api": "runtime/api/form-group.md",
+      "sourceComponents": [
+        "form"
+      ],
+      "source": "runtime/modules/YlFormGroup.js",
+      "dependencies": [
+        "YlForm"
+      ]
+    },
+    {
+      "name": "YlDropdown",
+      "slug": "dropdown",
+      "summary": "Single/multiple hierarchical menu selection with groups, search, icons and descriptions.",
+      "api": "runtime/api/dropdown.md",
+      "sourceComponents": [
+        "dropdown"
+      ],
+      "source": "runtime/modules/YlDropdown.js",
+      "dependencies": [
+        "YlPopover",
+        "YlCascader",
+        "YlButton"
+      ]
+    },
+    {
+      "name": "YlPageHeader",
+      "slug": "page-header",
+      "summary": "Configurable breadcrumbs, title/status, actions and card tabs.",
+      "api": "runtime/api/page-header.md",
+      "sourceComponents": [
+        "page-header"
+      ],
+      "source": "runtime/modules/YlPageHeader.js",
+      "dependencies": [
+        "YlBreadcrumb",
+        "YlTabs",
+        "YlStatusTag"
+      ]
+    },
+    {
+      "name": "YlSidenav",
+      "slug": "sidenav",
+      "summary": "Standalone grouped/tree navigation with optional icon rail.",
+      "api": "runtime/api/sidenav.md",
+      "sourceComponents": [
+        "sidenav"
+      ],
+      "source": "runtime/modules/YlSidenav.js",
+      "dependencies": [
+        "YlIcon",
+        "YlButton",
+        "YlPopover"
+      ]
+    },
+    {
+      "name": "YlTopNav",
+      "slug": "topnav",
+      "summary": "Light/dark header, optional product tabs, secondary navigation, links/search/actions; business owns navigation and optional menu trigger.",
+      "api": "runtime/api/topnav.md",
+      "sourceComponents": [
+        "topnav"
+      ],
+      "source": "runtime/modules/YlTopNav.js",
+      "dependencies": [
+        "YlInput"
+      ]
+    },
+    {
+      "name": "YlSkeleton",
+      "source": "runtime/modules/YlSkeleton.js",
+      "dependencies": [],
+      "api": "runtime/api/skeleton.md",
+      "summary": "Loading placeholder with bounded rows, optional title, reduced-motion animation and loaded-content slot.",
+      "sourceComponents": [],
+      "slug": "skeleton"
+    }
+  ],
+  "auxiliaryAssets": [
+    {
+      "slug": "icon",
+      "source": "runtime/icons.js",
+      "status": "partial",
+      "provider": "App Base Lucide",
+      "coverage": "YlIcon renders Lucide 0.468.0 SVG with Vue. Common nodes are bundled; other names use the existing App Base loader. Icon is outside the 31-item source index.",
+      "exports": [
+        "YlIcon"
+      ]
+    },
+    {
+      "slug": "radio-group",
+      "source": "runtime/styles.json",
+      "status": "partial",
+      "exports": [
+        "YlRadioGroup"
+      ],
+      "coverage": "Native group with source Form radio styling; not an additional registered source component."
+    }
+  ],
+  "common": "runtime/common.js",
+  "styleRules": "runtime/styles.json",
+  "tokens": "runtime/tokens.css",
+  "extensionGuide": "runtime/extensions.md",
+  "provenance": {
+    "implementation": "Kooboo native-ESM Vue runtime derived from Yuanli visual contracts; reference material and build inputs are maintained outside the consumption package.",
+    "vue": "App Base 3.5.13",
+    "icons": "Lucide 0.468.0 ISC; bundled nodes retain license",
+    "upstreamAssessment": "The original visual reference was not a reusable Vue library. This package exposes the documented executable exports; implementation coverage and browser acceptance are separate."
+  }
+}

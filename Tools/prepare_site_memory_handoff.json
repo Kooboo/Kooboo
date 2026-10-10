@@ -1,0 +1,38 @@
+{
+  "type": "function",
+  "function": {
+    "name": "prepare_site_memory_handoff",
+    "description": "Finish a user-requested move to a new conversation after saving necessary memory. Provide current read/write receipts for index.md and relevant notes; the server verifies their persisted hashes. continuation is a short next-step instruction, not a history summary. Preserve discussion versus implementation and the user\u0027s authorized scope; do not authorize another milestone. This tool does not create a conversation. Call last, then stop.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "continuation": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}\\.md$",
+                "minLength": 4,
+                "maxLength": 83,
+                "description": "Exact valid ASCII Markdown filename from a read/write receipt; index.md must be lowercase."
+              },
+              "sha256": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "continuation"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

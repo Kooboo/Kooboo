@@ -1,0 +1,49 @@
+{
+  "type": "function",
+  "function": {
+    "name": "create_app_plan_version",
+    "description": "Retired App Plan writer; use the typed per-object save tools.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "expectedCurrentAppPlanVersionId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sourceBlueprintVersionId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "foundation": true,
+        "dataModels": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "deliverySlices": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "sourceBlueprintVersionId",
+        "foundation"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

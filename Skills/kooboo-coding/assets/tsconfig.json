@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "rootDirs": [
+      "app-base/API",
+      "app-base/CodeBlock",
+      "backend-templates/response/files",
+      "backend-templates/notifications/files",
+      "backend-templates/files/files",
+      "backend-templates"
+    ]
+  },
+  "include": [
+    "backend-env.d.ts",
+    "app-base/API/*.ts",
+    "app-base/CodeBlock/*.ts",
+    "backend-templates/*/files/*.ts",
+    "backend-templates/ENV.ts"
+  ]
+}

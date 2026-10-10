@@ -1,0 +1,32 @@
+{
+  "type": "function",
+  "function": {
+    "name": "change_image_format",
+    "description": "Convert an image stored as a site Image, CmsFile, or FileIO file to another image format. The converted file is saved beside the source with the new extension, and its path is returned. For example, /1.png converted to jpg is saved as /1.jpg.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "newExtension": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

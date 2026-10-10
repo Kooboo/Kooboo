@@ -1,0 +1,11 @@
+{
+  "type": "function",
+  "function": {
+    "name": "list_ai_task_jobs",
+    "description": "List AI task jobs in the current site, including scheduling settings and running status.",
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "function",
+  "function": {
+    "name": "list_todos",
+    "description": "Read the todo list for current conversation",
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false
+    }
+  }
+}

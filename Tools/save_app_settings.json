@@ -1,0 +1,95 @@
+{
+  "type": "function",
+  "function": {
+    "name": "save_app_settings",
+    "description": "Save reviewed complete App settings: designSystem, layout and navigation. Replaces the settings singleton in the server App Plan; other objects are retained. Navigation targets must reference saved routed Screens. Requires an existing Blueprint; the Plan is initialized on the first successful write. Does not install resources.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "settings": {
+          "type": [
+            "object"
+          ],
+          "properties": {
+            "designSystem": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "layout": {
+              "type": "object",
+              "properties": {
+                "pattern": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "pattern"
+              ],
+              "additionalProperties": false
+            },
+            "navigation": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "screenId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "children": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/properties/settings/properties/navigation/items",
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "label"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "designSystem",
+            "layout"
+          ],
+          "additionalProperties": false
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "settings"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

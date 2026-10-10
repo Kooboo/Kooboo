@@ -1,0 +1,28 @@
+{
+  "type": "function",
+  "function": {
+    "name": "sandbox_render_template",
+    "description": "Render template HTML in a sandbox site with optional model values.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "templateHtml": {
+          "type": "string",
+          "description": "Kooboo template HTML to render."
+        },
+        "models": {
+          "description": "Optional model values exposed to the template."
+        },
+        "sandbox": {
+          "type": "string",
+          "description": "Sandbox name returned by list_sandbox or create_sandbox."
+        }
+      },
+      "required": [
+        "templateHtml",
+        "sandbox"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

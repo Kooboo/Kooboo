@@ -1,0 +1,26 @@
+{
+  "type": "function",
+  "function": {
+    "name": "get_cookie_management_overview",
+    "description": "Unavailable: this tool is not implemented and must not be called. Get a read-only overview of the current site\u0027s Cookie Management configuration and consent statistics.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "description": "Optional start date for consent statistics (inclusive). Format: yyyy-MM-dd"
+        },
+        "endDate": {
+          "description": "Optional end date for consent statistics (inclusive). Format: yyyy-MM-dd"
+        },
+        "includeDefinitions": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether to include configured cookie definitions in the response. Default: true"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

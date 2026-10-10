@@ -1,0 +1,11 @@
+{
+  "type": "function",
+  "function": {
+    "name": "update_app_blueprint",
+    "description": "Retired legacy kfile Blueprint update entry point. Use a reviewed propose_blueprint result and save_blueprint.",
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false
+    }
+  }
+}

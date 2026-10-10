@@ -1,0 +1,21 @@
+{
+  "type": "function",
+  "function": {
+    "name": "load_skill",
+    "description": "Load the entry instructions for an installed skill. Pass only its exact registered name, for example skillName=\u0027kooboo-coding\u0027. Do not pass a file path or append references/, assets/ or scripts/ to the skill name. To read a referenced document, use read_skill_resource with the same skillName and a separate resourceName relative to the skill root, for example resourceName=\u0027references/Scenario/app-building/index.md\u0027. Reuse already loaded entry instructions within the conversation unless they changed.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "skillName": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Exact installed skill name from the available skills list, such as kooboo-coding. Not a file path. For a resource document use read_skill_resource with separate skillName and resourceName fields."
+        }
+      },
+      "required": [
+        "skillName"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

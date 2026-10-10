@@ -1,0 +1,1451 @@
+{
+  "designSystemId": "antdv",
+  "version": "0.2.0",
+  "installation": "Full fixed assets; components selects API guides only.",
+  "components": [
+    {
+      "name": "AAffix",
+      "slug": "a-affix",
+      "kind": "component",
+      "summary": "Affix: native Ant Design Vue affix API.",
+      "api": "runtime/api/a-affix.md",
+      "sourceComponents": [
+        "affix"
+      ]
+    },
+    {
+      "name": "AAnchor",
+      "slug": "a-anchor",
+      "kind": "component",
+      "summary": "Anchor: native Ant Design Vue anchor API.",
+      "api": "runtime/api/a-anchor.md",
+      "sourceComponents": [
+        "anchor"
+      ]
+    },
+    {
+      "name": "AAnchorLink",
+      "slug": "a-anchor-link",
+      "kind": "component",
+      "summary": "AnchorLink: native Ant Design Vue anchor API.",
+      "api": "runtime/api/a-anchor-link.md",
+      "sourceComponents": [
+        "anchor"
+      ]
+    },
+    {
+      "name": "AAutoComplete",
+      "slug": "a-auto-complete",
+      "kind": "component",
+      "summary": "AutoComplete: native Ant Design Vue auto-complete API.",
+      "api": "runtime/api/a-auto-complete.md",
+      "sourceComponents": [
+        "auto-complete"
+      ]
+    },
+    {
+      "name": "AAutoCompleteOptGroup",
+      "slug": "a-auto-complete-opt-group",
+      "kind": "component",
+      "summary": "AutoCompleteOptGroup: native Ant Design Vue auto-complete API.",
+      "api": "runtime/api/a-auto-complete-opt-group.md",
+      "sourceComponents": [
+        "auto-complete"
+      ]
+    },
+    {
+      "name": "AAutoCompleteOption",
+      "slug": "a-auto-complete-option",
+      "kind": "component",
+      "summary": "AutoCompleteOption: native Ant Design Vue auto-complete API.",
+      "api": "runtime/api/a-auto-complete-option.md",
+      "sourceComponents": [
+        "auto-complete"
+      ]
+    },
+    {
+      "name": "AAlert",
+      "slug": "a-alert",
+      "kind": "component",
+      "summary": "Alert: native Ant Design Vue alert API.",
+      "api": "runtime/api/a-alert.md",
+      "sourceComponents": [
+        "alert"
+      ]
+    },
+    {
+      "name": "AAvatar",
+      "slug": "a-avatar",
+      "kind": "component",
+      "summary": "Avatar: native Ant Design Vue avatar API.",
+      "api": "runtime/api/a-avatar.md",
+      "sourceComponents": [
+        "avatar"
+      ]
+    },
+    {
+      "name": "AAvatarGroup",
+      "slug": "a-avatar-group",
+      "kind": "component",
+      "summary": "AvatarGroup: native Ant Design Vue avatar API.",
+      "api": "runtime/api/a-avatar-group.md",
+      "sourceComponents": [
+        "avatar"
+      ]
+    },
+    {
+      "name": "ABadge",
+      "slug": "a-badge",
+      "kind": "component",
+      "summary": "Badge: native Ant Design Vue badge API.",
+      "api": "runtime/api/a-badge.md",
+      "sourceComponents": [
+        "badge"
+      ]
+    },
+    {
+      "name": "ABadgeRibbon",
+      "slug": "a-badge-ribbon",
+      "kind": "component",
+      "summary": "BadgeRibbon: native Ant Design Vue badge API.",
+      "api": "runtime/api/a-badge-ribbon.md",
+      "sourceComponents": [
+        "badge"
+      ]
+    },
+    {
+      "name": "ABreadcrumb",
+      "slug": "a-breadcrumb",
+      "kind": "component",
+      "summary": "Breadcrumb: native Ant Design Vue breadcrumb API.",
+      "api": "runtime/api/a-breadcrumb.md",
+      "sourceComponents": [
+        "breadcrumb"
+      ]
+    },
+    {
+      "name": "ABreadcrumbItem",
+      "slug": "a-breadcrumb-item",
+      "kind": "component",
+      "summary": "BreadcrumbItem: native Ant Design Vue breadcrumb API.",
+      "api": "runtime/api/a-breadcrumb-item.md",
+      "sourceComponents": [
+        "breadcrumb"
+      ]
+    },
+    {
+      "name": "ABreadcrumbSeparator",
+      "slug": "a-breadcrumb-separator",
+      "kind": "component",
+      "summary": "BreadcrumbSeparator: native Ant Design Vue breadcrumb API.",
+      "api": "runtime/api/a-breadcrumb-separator.md",
+      "sourceComponents": [
+        "breadcrumb"
+      ]
+    },
+    {
+      "name": "AButton",
+      "slug": "a-button",
+      "kind": "component",
+      "summary": "Button: native Ant Design Vue button API.",
+      "api": "runtime/api/a-button.md",
+      "sourceComponents": [
+        "button"
+      ]
+    },
+    {
+      "name": "AButtonGroup",
+      "slug": "a-button-group",
+      "kind": "component",
+      "summary": "ButtonGroup: native Ant Design Vue button API.",
+      "api": "runtime/api/a-button-group.md",
+      "sourceComponents": [
+        "button"
+      ]
+    },
+    {
+      "name": "ACalendar",
+      "slug": "a-calendar",
+      "kind": "component",
+      "summary": "Calendar: native Ant Design Vue calendar API.",
+      "api": "runtime/api/a-calendar.md",
+      "sourceComponents": [
+        "calendar"
+      ]
+    },
+    {
+      "name": "ACard",
+      "slug": "a-card",
+      "kind": "component",
+      "summary": "Card: native Ant Design Vue card API.",
+      "api": "runtime/api/a-card.md",
+      "sourceComponents": [
+        "card"
+      ]
+    },
+    {
+      "name": "ACardGrid",
+      "slug": "a-card-grid",
+      "kind": "component",
+      "summary": "CardGrid: native Ant Design Vue card API.",
+      "api": "runtime/api/a-card-grid.md",
+      "sourceComponents": [
+        "card"
+      ]
+    },
+    {
+      "name": "ACardMeta",
+      "slug": "a-card-meta",
+      "kind": "component",
+      "summary": "CardMeta: native Ant Design Vue card API.",
+      "api": "runtime/api/a-card-meta.md",
+      "sourceComponents": [
+        "card"
+      ]
+    },
+    {
+      "name": "ACollapse",
+      "slug": "a-collapse",
+      "kind": "component",
+      "summary": "Collapse: native Ant Design Vue collapse API.",
+      "api": "runtime/api/a-collapse.md",
+      "sourceComponents": [
+        "collapse"
+      ]
+    },
+    {
+      "name": "ACollapsePanel",
+      "slug": "a-collapse-panel",
+      "kind": "component",
+      "summary": "CollapsePanel: native Ant Design Vue collapse API.",
+      "api": "runtime/api/a-collapse-panel.md",
+      "sourceComponents": [
+        "collapse"
+      ]
+    },
+    {
+      "name": "ACarousel",
+      "slug": "a-carousel",
+      "kind": "component",
+      "summary": "Carousel: native Ant Design Vue carousel API.",
+      "api": "runtime/api/a-carousel.md",
+      "sourceComponents": [
+        "carousel"
+      ]
+    },
+    {
+      "name": "ACascader",
+      "slug": "a-cascader",
+      "kind": "component",
+      "summary": "Cascader: native Ant Design Vue cascader API.",
+      "api": "runtime/api/a-cascader.md",
+      "sourceComponents": [
+        "cascader"
+      ]
+    },
+    {
+      "name": "ACheckbox",
+      "slug": "a-checkbox",
+      "kind": "component",
+      "summary": "Checkbox: native Ant Design Vue checkbox API.",
+      "api": "runtime/api/a-checkbox.md",
+      "sourceComponents": [
+        "checkbox"
+      ]
+    },
+    {
+      "name": "ACheckboxGroup",
+      "slug": "a-checkbox-group",
+      "kind": "component",
+      "summary": "CheckboxGroup: native Ant Design Vue checkbox API.",
+      "api": "runtime/api/a-checkbox-group.md",
+      "sourceComponents": [
+        "checkbox"
+      ]
+    },
+    {
+      "name": "ACol",
+      "slug": "a-col",
+      "kind": "component",
+      "summary": "Col: native Ant Design Vue col API.",
+      "api": "runtime/api/a-col.md",
+      "sourceComponents": [
+        "col"
+      ]
+    },
+    {
+      "name": "AComment",
+      "slug": "a-comment",
+      "kind": "component",
+      "summary": "Comment: native Ant Design Vue comment API.",
+      "api": "runtime/api/a-comment.md",
+      "sourceComponents": [
+        "comment"
+      ]
+    },
+    {
+      "name": "AConfigProvider",
+      "slug": "a-config-provider",
+      "kind": "component",
+      "summary": "ConfigProvider: native Ant Design Vue config-provider API.",
+      "api": "runtime/api/a-config-provider.md",
+      "sourceComponents": [
+        "config-provider"
+      ]
+    },
+    {
+      "name": "ADatePicker",
+      "slug": "a-date-picker",
+      "kind": "component",
+      "summary": "DatePicker: native Ant Design Vue date-picker API.",
+      "api": "runtime/api/a-date-picker.md",
+      "sourceComponents": [
+        "date-picker"
+      ]
+    },
+    {
+      "name": "AMonthPicker",
+      "slug": "a-month-picker",
+      "kind": "component",
+      "summary": "MonthPicker: native Ant Design Vue date-picker API.",
+      "api": "runtime/api/a-month-picker.md",
+      "sourceComponents": [
+        "date-picker"
+      ]
+    },
+    {
+      "name": "AWeekPicker",
+      "slug": "a-week-picker",
+      "kind": "component",
+      "summary": "WeekPicker: native Ant Design Vue date-picker API.",
+      "api": "runtime/api/a-week-picker.md",
+      "sourceComponents": [
+        "date-picker"
+      ]
+    },
+    {
+      "name": "ARangePicker",
+      "slug": "a-range-picker",
+      "kind": "component",
+      "summary": "RangePicker: native Ant Design Vue date-picker API.",
+      "api": "runtime/api/a-range-picker.md",
+      "sourceComponents": [
+        "date-picker"
+      ]
+    },
+    {
+      "name": "AQuarterPicker",
+      "slug": "a-quarter-picker",
+      "kind": "component",
+      "summary": "QuarterPicker: native Ant Design Vue date-picker API.",
+      "api": "runtime/api/a-quarter-picker.md",
+      "sourceComponents": [
+        "date-picker"
+      ]
+    },
+    {
+      "name": "ADescriptions",
+      "slug": "a-descriptions",
+      "kind": "component",
+      "summary": "Descriptions: native Ant Design Vue descriptions API.",
+      "api": "runtime/api/a-descriptions.md",
+      "sourceComponents": [
+        "descriptions"
+      ]
+    },
+    {
+      "name": "ADescriptionsItem",
+      "slug": "a-descriptions-item",
+      "kind": "component",
+      "summary": "DescriptionsItem: native Ant Design Vue descriptions API.",
+      "api": "runtime/api/a-descriptions-item.md",
+      "sourceComponents": [
+        "descriptions"
+      ]
+    },
+    {
+      "name": "ADivider",
+      "slug": "a-divider",
+      "kind": "component",
+      "summary": "Divider: native Ant Design Vue divider API.",
+      "api": "runtime/api/a-divider.md",
+      "sourceComponents": [
+        "divider"
+      ]
+    },
+    {
+      "name": "ADropdown",
+      "slug": "a-dropdown",
+      "kind": "component",
+      "summary": "Dropdown: native Ant Design Vue dropdown API.",
+      "api": "runtime/api/a-dropdown.md",
+      "sourceComponents": [
+        "dropdown"
+      ]
+    },
+    {
+      "name": "ADropdownButton",
+      "slug": "a-dropdown-button",
+      "kind": "component",
+      "summary": "DropdownButton: native Ant Design Vue dropdown API.",
+      "api": "runtime/api/a-dropdown-button.md",
+      "sourceComponents": [
+        "dropdown"
+      ]
+    },
+    {
+      "name": "ADrawer",
+      "slug": "a-drawer",
+      "kind": "component",
+      "summary": "Drawer: native Ant Design Vue drawer API.",
+      "api": "runtime/api/a-drawer.md",
+      "sourceComponents": [
+        "drawer"
+      ]
+    },
+    {
+      "name": "AEmpty",
+      "slug": "a-empty",
+      "kind": "component",
+      "summary": "Empty: native Ant Design Vue empty API.",
+      "api": "runtime/api/a-empty.md",
+      "sourceComponents": [
+        "empty"
+      ]
+    },
+    {
+      "name": "AFloatButton",
+      "slug": "a-float-button",
+      "kind": "component",
+      "summary": "FloatButton: native Ant Design Vue float-button API.",
+      "api": "runtime/api/a-float-button.md",
+      "sourceComponents": [
+        "float-button"
+      ]
+    },
+    {
+      "name": "AFloatButtonGroup",
+      "slug": "a-float-button-group",
+      "kind": "component",
+      "summary": "FloatButtonGroup: native Ant Design Vue float-button API.",
+      "api": "runtime/api/a-float-button-group.md",
+      "sourceComponents": [
+        "float-button"
+      ]
+    },
+    {
+      "name": "ABackTop",
+      "slug": "a-back-top",
+      "kind": "component",
+      "summary": "BackTop: native Ant Design Vue float-button API.",
+      "api": "runtime/api/a-back-top.md",
+      "sourceComponents": [
+        "float-button"
+      ]
+    },
+    {
+      "name": "AForm",
+      "slug": "a-form",
+      "kind": "component",
+      "summary": "Form: native Ant Design Vue form API.",
+      "api": "runtime/api/a-form.md",
+      "sourceComponents": [
+        "form"
+      ]
+    },
+    {
+      "name": "AFormItem",
+      "slug": "a-form-item",
+      "kind": "component",
+      "summary": "FormItem: native Ant Design Vue form API.",
+      "api": "runtime/api/a-form-item.md",
+      "sourceComponents": [
+        "form"
+      ]
+    },
+    {
+      "name": "AFormItemRest",
+      "slug": "a-form-item-rest",
+      "kind": "component",
+      "summary": "FormItemRest: native Ant Design Vue form API.",
+      "api": "runtime/api/a-form-item-rest.md",
+      "sourceComponents": [
+        "form"
+      ]
+    },
+    {
+      "name": "Grid",
+      "slug": "grid",
+      "kind": "utility",
+      "summary": "Grid: native Ant Design Vue grid API.",
+      "api": "runtime/api/grid.md",
+      "sourceComponents": [
+        "grid"
+      ]
+    },
+    {
+      "name": "AInput",
+      "slug": "a-input",
+      "kind": "component",
+      "summary": "Input: native Ant Design Vue input API.",
+      "api": "runtime/api/a-input.md",
+      "sourceComponents": [
+        "input"
+      ]
+    },
+    {
+      "name": "AInputGroup",
+      "slug": "a-input-group",
+      "kind": "component",
+      "summary": "InputGroup: native Ant Design Vue input API.",
+      "api": "runtime/api/a-input-group.md",
+      "sourceComponents": [
+        "input"
+      ]
+    },
+    {
+      "name": "AInputPassword",
+      "slug": "a-input-password",
+      "kind": "component",
+      "summary": "InputPassword: native Ant Design Vue input API.",
+      "api": "runtime/api/a-input-password.md",
+      "sourceComponents": [
+        "input"
+      ]
+    },
+    {
+      "name": "AInputSearch",
+      "slug": "a-input-search",
+      "kind": "component",
+      "summary": "InputSearch: native Ant Design Vue input API.",
+      "api": "runtime/api/a-input-search.md",
+      "sourceComponents": [
+        "input"
+      ]
+    },
+    {
+      "name": "ATextarea",
+      "slug": "a-textarea",
+      "kind": "component",
+      "summary": "Textarea: native Ant Design Vue input API.",
+      "api": "runtime/api/a-textarea.md",
+      "sourceComponents": [
+        "input"
+      ]
+    },
+    {
+      "name": "AImage",
+      "slug": "a-image",
+      "kind": "component",
+      "summary": "Image: native Ant Design Vue image API.",
+      "api": "runtime/api/a-image.md",
+      "sourceComponents": [
+        "image"
+      ]
+    },
+    {
+      "name": "AImagePreviewGroup",
+      "slug": "a-image-preview-group",
+      "kind": "component",
+      "summary": "ImagePreviewGroup: native Ant Design Vue image API.",
+      "api": "runtime/api/a-image-preview-group.md",
+      "sourceComponents": [
+        "image"
+      ]
+    },
+    {
+      "name": "AInputNumber",
+      "slug": "a-input-number",
+      "kind": "component",
+      "summary": "InputNumber: native Ant Design Vue input-number API.",
+      "api": "runtime/api/a-input-number.md",
+      "sourceComponents": [
+        "input-number"
+      ]
+    },
+    {
+      "name": "ALayout",
+      "slug": "a-layout",
+      "kind": "component",
+      "summary": "Layout: native Ant Design Vue layout API.",
+      "api": "runtime/api/a-layout.md",
+      "sourceComponents": [
+        "layout"
+      ]
+    },
+    {
+      "name": "ALayoutHeader",
+      "slug": "a-layout-header",
+      "kind": "component",
+      "summary": "LayoutHeader: native Ant Design Vue layout API.",
+      "api": "runtime/api/a-layout-header.md",
+      "sourceComponents": [
+        "layout"
+      ]
+    },
+    {
+      "name": "ALayoutSider",
+      "slug": "a-layout-sider",
+      "kind": "component",
+      "summary": "LayoutSider: native Ant Design Vue layout API.",
+      "api": "runtime/api/a-layout-sider.md",
+      "sourceComponents": [
+        "layout"
+      ]
+    },
+    {
+      "name": "ALayoutFooter",
+      "slug": "a-layout-footer",
+      "kind": "component",
+      "summary": "LayoutFooter: native Ant Design Vue layout API.",
+      "api": "runtime/api/a-layout-footer.md",
+      "sourceComponents": [
+        "layout"
+      ]
+    },
+    {
+      "name": "ALayoutContent",
+      "slug": "a-layout-content",
+      "kind": "component",
+      "summary": "LayoutContent: native Ant Design Vue layout API.",
+      "api": "runtime/api/a-layout-content.md",
+      "sourceComponents": [
+        "layout"
+      ]
+    },
+    {
+      "name": "AList",
+      "slug": "a-list",
+      "kind": "component",
+      "summary": "List: native Ant Design Vue list API.",
+      "api": "runtime/api/a-list.md",
+      "sourceComponents": [
+        "list"
+      ]
+    },
+    {
+      "name": "AListItem",
+      "slug": "a-list-item",
+      "kind": "component",
+      "summary": "ListItem: native Ant Design Vue list API.",
+      "api": "runtime/api/a-list-item.md",
+      "sourceComponents": [
+        "list"
+      ]
+    },
+    {
+      "name": "AListItemMeta",
+      "slug": "a-list-item-meta",
+      "kind": "component",
+      "summary": "ListItemMeta: native Ant Design Vue list API.",
+      "api": "runtime/api/a-list-item-meta.md",
+      "sourceComponents": [
+        "list"
+      ]
+    },
+    {
+      "name": "message",
+      "slug": "message",
+      "kind": "utility",
+      "summary": "message: native Ant Design Vue message API.",
+      "api": "runtime/api/message.md",
+      "sourceComponents": [
+        "message"
+      ]
+    },
+    {
+      "name": "AMenu",
+      "slug": "a-menu",
+      "kind": "component",
+      "summary": "Menu: native Ant Design Vue menu API.",
+      "api": "runtime/api/a-menu.md",
+      "sourceComponents": [
+        "menu"
+      ]
+    },
+    {
+      "name": "AMenuDivider",
+      "slug": "a-menu-divider",
+      "kind": "component",
+      "summary": "MenuDivider: native Ant Design Vue menu API.",
+      "api": "runtime/api/a-menu-divider.md",
+      "sourceComponents": [
+        "menu"
+      ]
+    },
+    {
+      "name": "AMenuItem",
+      "slug": "a-menu-item",
+      "kind": "component",
+      "summary": "MenuItem: native Ant Design Vue menu API.",
+      "api": "runtime/api/a-menu-item.md",
+      "sourceComponents": [
+        "menu"
+      ]
+    },
+    {
+      "name": "AMenuItemGroup",
+      "slug": "a-menu-item-group",
+      "kind": "component",
+      "summary": "MenuItemGroup: native Ant Design Vue menu API.",
+      "api": "runtime/api/a-menu-item-group.md",
+      "sourceComponents": [
+        "menu"
+      ]
+    },
+    {
+      "name": "ASubMenu",
+      "slug": "a-sub-menu",
+      "kind": "component",
+      "summary": "SubMenu: native Ant Design Vue menu API.",
+      "api": "runtime/api/a-sub-menu.md",
+      "sourceComponents": [
+        "menu"
+      ]
+    },
+    {
+      "name": "AMentions",
+      "slug": "a-mentions",
+      "kind": "component",
+      "summary": "Mentions: native Ant Design Vue mentions API.",
+      "api": "runtime/api/a-mentions.md",
+      "sourceComponents": [
+        "mentions"
+      ]
+    },
+    {
+      "name": "AMentionsOption",
+      "slug": "a-mentions-option",
+      "kind": "component",
+      "summary": "MentionsOption: native Ant Design Vue mentions API.",
+      "api": "runtime/api/a-mentions-option.md",
+      "sourceComponents": [
+        "mentions"
+      ]
+    },
+    {
+      "name": "AModal",
+      "slug": "a-modal",
+      "kind": "component",
+      "summary": "Modal: native Ant Design Vue modal API.",
+      "api": "runtime/api/a-modal.md",
+      "sourceComponents": [
+        "modal"
+      ]
+    },
+    {
+      "name": "AStatistic",
+      "slug": "a-statistic",
+      "kind": "component",
+      "summary": "Statistic: native Ant Design Vue statistic API.",
+      "api": "runtime/api/a-statistic.md",
+      "sourceComponents": [
+        "statistic"
+      ]
+    },
+    {
+      "name": "AStatisticCountdown",
+      "slug": "a-statistic-countdown",
+      "kind": "component",
+      "summary": "StatisticCountdown: native Ant Design Vue statistic API.",
+      "api": "runtime/api/a-statistic-countdown.md",
+      "sourceComponents": [
+        "statistic"
+      ]
+    },
+    {
+      "name": "notification",
+      "slug": "notification",
+      "kind": "utility",
+      "summary": "notification: native Ant Design Vue notification API.",
+      "api": "runtime/api/notification.md",
+      "sourceComponents": [
+        "notification"
+      ]
+    },
+    {
+      "name": "APageHeader",
+      "slug": "a-page-header",
+      "kind": "component",
+      "summary": "PageHeader: native Ant Design Vue page-header API.",
+      "api": "runtime/api/a-page-header.md",
+      "sourceComponents": [
+        "page-header"
+      ]
+    },
+    {
+      "name": "APagination",
+      "slug": "a-pagination",
+      "kind": "component",
+      "summary": "Pagination: native Ant Design Vue pagination API.",
+      "api": "runtime/api/a-pagination.md",
+      "sourceComponents": [
+        "pagination"
+      ]
+    },
+    {
+      "name": "APopconfirm",
+      "slug": "a-popconfirm",
+      "kind": "component",
+      "summary": "Popconfirm: native Ant Design Vue popconfirm API.",
+      "api": "runtime/api/a-popconfirm.md",
+      "sourceComponents": [
+        "popconfirm"
+      ]
+    },
+    {
+      "name": "APopover",
+      "slug": "a-popover",
+      "kind": "component",
+      "summary": "Popover: native Ant Design Vue popover API.",
+      "api": "runtime/api/a-popover.md",
+      "sourceComponents": [
+        "popover"
+      ]
+    },
+    {
+      "name": "AProgress",
+      "slug": "a-progress",
+      "kind": "component",
+      "summary": "Progress: native Ant Design Vue progress API.",
+      "api": "runtime/api/a-progress.md",
+      "sourceComponents": [
+        "progress"
+      ]
+    },
+    {
+      "name": "ARadio",
+      "slug": "a-radio",
+      "kind": "component",
+      "summary": "Radio: native Ant Design Vue radio API.",
+      "api": "runtime/api/a-radio.md",
+      "sourceComponents": [
+        "radio"
+      ]
+    },
+    {
+      "name": "ARadioButton",
+      "slug": "a-radio-button",
+      "kind": "component",
+      "summary": "RadioButton: native Ant Design Vue radio API.",
+      "api": "runtime/api/a-radio-button.md",
+      "sourceComponents": [
+        "radio"
+      ]
+    },
+    {
+      "name": "ARadioGroup",
+      "slug": "a-radio-group",
+      "kind": "component",
+      "summary": "RadioGroup: native Ant Design Vue radio API.",
+      "api": "runtime/api/a-radio-group.md",
+      "sourceComponents": [
+        "radio"
+      ]
+    },
+    {
+      "name": "ARate",
+      "slug": "a-rate",
+      "kind": "component",
+      "summary": "Rate: native Ant Design Vue rate API.",
+      "api": "runtime/api/a-rate.md",
+      "sourceComponents": [
+        "rate"
+      ]
+    },
+    {
+      "name": "AResult",
+      "slug": "a-result",
+      "kind": "component",
+      "summary": "Result: native Ant Design Vue result API.",
+      "api": "runtime/api/a-result.md",
+      "sourceComponents": [
+        "result"
+      ]
+    },
+    {
+      "name": "ARow",
+      "slug": "a-row",
+      "kind": "component",
+      "summary": "Row: native Ant Design Vue row API.",
+      "api": "runtime/api/a-row.md",
+      "sourceComponents": [
+        "row"
+      ]
+    },
+    {
+      "name": "ASelect",
+      "slug": "a-select",
+      "kind": "component",
+      "summary": "Select: native Ant Design Vue select API.",
+      "api": "runtime/api/a-select.md",
+      "sourceComponents": [
+        "select"
+      ]
+    },
+    {
+      "name": "ASelectOptGroup",
+      "slug": "a-select-opt-group",
+      "kind": "component",
+      "summary": "SelectOptGroup: native Ant Design Vue select API.",
+      "api": "runtime/api/a-select-opt-group.md",
+      "sourceComponents": [
+        "select"
+      ]
+    },
+    {
+      "name": "ASelectOption",
+      "slug": "a-select-option",
+      "kind": "component",
+      "summary": "SelectOption: native Ant Design Vue select API.",
+      "api": "runtime/api/a-select-option.md",
+      "sourceComponents": [
+        "select"
+      ]
+    },
+    {
+      "name": "ASkeleton",
+      "slug": "a-skeleton",
+      "kind": "component",
+      "summary": "Skeleton: native Ant Design Vue skeleton API.",
+      "api": "runtime/api/a-skeleton.md",
+      "sourceComponents": [
+        "skeleton"
+      ]
+    },
+    {
+      "name": "ASkeletonButton",
+      "slug": "a-skeleton-button",
+      "kind": "component",
+      "summary": "SkeletonButton: native Ant Design Vue skeleton API.",
+      "api": "runtime/api/a-skeleton-button.md",
+      "sourceComponents": [
+        "skeleton"
+      ]
+    },
+    {
+      "name": "ASkeletonAvatar",
+      "slug": "a-skeleton-avatar",
+      "kind": "component",
+      "summary": "SkeletonAvatar: native Ant Design Vue skeleton API.",
+      "api": "runtime/api/a-skeleton-avatar.md",
+      "sourceComponents": [
+        "skeleton"
+      ]
+    },
+    {
+      "name": "ASkeletonInput",
+      "slug": "a-skeleton-input",
+      "kind": "component",
+      "summary": "SkeletonInput: native Ant Design Vue skeleton API.",
+      "api": "runtime/api/a-skeleton-input.md",
+      "sourceComponents": [
+        "skeleton"
+      ]
+    },
+    {
+      "name": "ASkeletonImage",
+      "slug": "a-skeleton-image",
+      "kind": "component",
+      "summary": "SkeletonImage: native Ant Design Vue skeleton API.",
+      "api": "runtime/api/a-skeleton-image.md",
+      "sourceComponents": [
+        "skeleton"
+      ]
+    },
+    {
+      "name": "ASkeletonTitle",
+      "slug": "a-skeleton-title",
+      "kind": "component",
+      "summary": "SkeletonTitle: native Ant Design Vue skeleton API.",
+      "api": "runtime/api/a-skeleton-title.md",
+      "sourceComponents": [
+        "skeleton"
+      ]
+    },
+    {
+      "name": "ASlider",
+      "slug": "a-slider",
+      "kind": "component",
+      "summary": "Slider: native Ant Design Vue slider API.",
+      "api": "runtime/api/a-slider.md",
+      "sourceComponents": [
+        "slider"
+      ]
+    },
+    {
+      "name": "ASpace",
+      "slug": "a-space",
+      "kind": "component",
+      "summary": "Space: native Ant Design Vue space API.",
+      "api": "runtime/api/a-space.md",
+      "sourceComponents": [
+        "space"
+      ]
+    },
+    {
+      "name": "ACompact",
+      "slug": "a-compact",
+      "kind": "component",
+      "summary": "Compact: native Ant Design Vue space API.",
+      "api": "runtime/api/a-compact.md",
+      "sourceComponents": [
+        "space"
+      ]
+    },
+    {
+      "name": "ASpin",
+      "slug": "a-spin",
+      "kind": "component",
+      "summary": "Spin: native Ant Design Vue spin API.",
+      "api": "runtime/api/a-spin.md",
+      "sourceComponents": [
+        "spin"
+      ]
+    },
+    {
+      "name": "ASteps",
+      "slug": "a-steps",
+      "kind": "component",
+      "summary": "Steps: native Ant Design Vue steps API.",
+      "api": "runtime/api/a-steps.md",
+      "sourceComponents": [
+        "steps"
+      ]
+    },
+    {
+      "name": "AStep",
+      "slug": "a-step",
+      "kind": "component",
+      "summary": "Step: native Ant Design Vue steps API.",
+      "api": "runtime/api/a-step.md",
+      "sourceComponents": [
+        "steps"
+      ]
+    },
+    {
+      "name": "ASwitch",
+      "slug": "a-switch",
+      "kind": "component",
+      "summary": "Switch: native Ant Design Vue switch API.",
+      "api": "runtime/api/a-switch.md",
+      "sourceComponents": [
+        "switch"
+      ]
+    },
+    {
+      "name": "ATable",
+      "slug": "a-table",
+      "kind": "component",
+      "summary": "Table: native Ant Design Vue table API.",
+      "api": "runtime/api/a-table.md",
+      "sourceComponents": [
+        "table"
+      ]
+    },
+    {
+      "name": "ATableColumn",
+      "slug": "a-table-column",
+      "kind": "component",
+      "summary": "TableColumn: native Ant Design Vue table API.",
+      "api": "runtime/api/a-table-column.md",
+      "sourceComponents": [
+        "table"
+      ]
+    },
+    {
+      "name": "ATableColumnGroup",
+      "slug": "a-table-column-group",
+      "kind": "component",
+      "summary": "TableColumnGroup: native Ant Design Vue table API.",
+      "api": "runtime/api/a-table-column-group.md",
+      "sourceComponents": [
+        "table"
+      ]
+    },
+    {
+      "name": "ATableSummary",
+      "slug": "a-table-summary",
+      "kind": "component",
+      "summary": "TableSummary: native Ant Design Vue table API.",
+      "api": "runtime/api/a-table-summary.md",
+      "sourceComponents": [
+        "table"
+      ]
+    },
+    {
+      "name": "ATableSummaryRow",
+      "slug": "a-table-summary-row",
+      "kind": "component",
+      "summary": "TableSummaryRow: native Ant Design Vue table API.",
+      "api": "runtime/api/a-table-summary-row.md",
+      "sourceComponents": [
+        "table"
+      ]
+    },
+    {
+      "name": "ATableSummaryCell",
+      "slug": "a-table-summary-cell",
+      "kind": "component",
+      "summary": "TableSummaryCell: native Ant Design Vue table API.",
+      "api": "runtime/api/a-table-summary-cell.md",
+      "sourceComponents": [
+        "table"
+      ]
+    },
+    {
+      "name": "ATransfer",
+      "slug": "a-transfer",
+      "kind": "component",
+      "summary": "Transfer: native Ant Design Vue transfer API.",
+      "api": "runtime/api/a-transfer.md",
+      "sourceComponents": [
+        "transfer"
+      ]
+    },
+    {
+      "name": "ATree",
+      "slug": "a-tree",
+      "kind": "component",
+      "summary": "Tree: native Ant Design Vue tree API.",
+      "api": "runtime/api/a-tree.md",
+      "sourceComponents": [
+        "tree"
+      ]
+    },
+    {
+      "name": "ATreeNode",
+      "slug": "a-tree-node",
+      "kind": "component",
+      "summary": "TreeNode: native Ant Design Vue tree API.",
+      "api": "runtime/api/a-tree-node.md",
+      "sourceComponents": [
+        "tree"
+      ]
+    },
+    {
+      "name": "ADirectoryTree",
+      "slug": "a-directory-tree",
+      "kind": "component",
+      "summary": "DirectoryTree: native Ant Design Vue tree API.",
+      "api": "runtime/api/a-directory-tree.md",
+      "sourceComponents": [
+        "tree"
+      ]
+    },
+    {
+      "name": "ATreeSelect",
+      "slug": "a-tree-select",
+      "kind": "component",
+      "summary": "TreeSelect: native Ant Design Vue tree-select API.",
+      "api": "runtime/api/a-tree-select.md",
+      "sourceComponents": [
+        "tree-select"
+      ]
+    },
+    {
+      "name": "ATreeSelectNode",
+      "slug": "a-tree-select-node",
+      "kind": "component",
+      "summary": "TreeSelectNode: native Ant Design Vue tree-select API.",
+      "api": "runtime/api/a-tree-select-node.md",
+      "sourceComponents": [
+        "tree-select"
+      ]
+    },
+    {
+      "name": "ATabs",
+      "slug": "a-tabs",
+      "kind": "component",
+      "summary": "Tabs: native Ant Design Vue tabs API.",
+      "api": "runtime/api/a-tabs.md",
+      "sourceComponents": [
+        "tabs"
+      ]
+    },
+    {
+      "name": "ATabPane",
+      "slug": "a-tab-pane",
+      "kind": "component",
+      "summary": "TabPane: native Ant Design Vue tabs API.",
+      "api": "runtime/api/a-tab-pane.md",
+      "sourceComponents": [
+        "tabs"
+      ]
+    },
+    {
+      "name": "ATag",
+      "slug": "a-tag",
+      "kind": "component",
+      "summary": "Tag: native Ant Design Vue tag API.",
+      "api": "runtime/api/a-tag.md",
+      "sourceComponents": [
+        "tag"
+      ]
+    },
+    {
+      "name": "ACheckableTag",
+      "slug": "a-checkable-tag",
+      "kind": "component",
+      "summary": "CheckableTag: native Ant Design Vue tag API.",
+      "api": "runtime/api/a-checkable-tag.md",
+      "sourceComponents": [
+        "tag"
+      ]
+    },
+    {
+      "name": "ATimePicker",
+      "slug": "a-time-picker",
+      "kind": "component",
+      "summary": "TimePicker: native Ant Design Vue time-picker API.",
+      "api": "runtime/api/a-time-picker.md",
+      "sourceComponents": [
+        "time-picker"
+      ]
+    },
+    {
+      "name": "ATimeRangePicker",
+      "slug": "a-time-range-picker",
+      "kind": "component",
+      "summary": "TimeRangePicker: native Ant Design Vue time-picker API.",
+      "api": "runtime/api/a-time-range-picker.md",
+      "sourceComponents": [
+        "time-picker"
+      ]
+    },
+    {
+      "name": "ATimeline",
+      "slug": "a-timeline",
+      "kind": "component",
+      "summary": "Timeline: native Ant Design Vue timeline API.",
+      "api": "runtime/api/a-timeline.md",
+      "sourceComponents": [
+        "timeline"
+      ]
+    },
+    {
+      "name": "ATimelineItem",
+      "slug": "a-timeline-item",
+      "kind": "component",
+      "summary": "TimelineItem: native Ant Design Vue timeline API.",
+      "api": "runtime/api/a-timeline-item.md",
+      "sourceComponents": [
+        "timeline"
+      ]
+    },
+    {
+      "name": "ATooltip",
+      "slug": "a-tooltip",
+      "kind": "component",
+      "summary": "Tooltip: native Ant Design Vue tooltip API.",
+      "api": "runtime/api/a-tooltip.md",
+      "sourceComponents": [
+        "tooltip"
+      ]
+    },
+    {
+      "name": "ATypography",
+      "slug": "a-typography",
+      "kind": "component",
+      "summary": "Typography: native Ant Design Vue typography API.",
+      "api": "runtime/api/a-typography.md",
+      "sourceComponents": [
+        "typography"
+      ]
+    },
+    {
+      "name": "ATypographyLink",
+      "slug": "a-typography-link",
+      "kind": "component",
+      "summary": "TypographyLink: native Ant Design Vue typography API.",
+      "api": "runtime/api/a-typography-link.md",
+      "sourceComponents": [
+        "typography"
+      ]
+    },
+    {
+      "name": "ATypographyParagraph",
+      "slug": "a-typography-paragraph",
+      "kind": "component",
+      "summary": "TypographyParagraph: native Ant Design Vue typography API.",
+      "api": "runtime/api/a-typography-paragraph.md",
+      "sourceComponents": [
+        "typography"
+      ]
+    },
+    {
+      "name": "ATypographyText",
+      "slug": "a-typography-text",
+      "kind": "component",
+      "summary": "TypographyText: native Ant Design Vue typography API.",
+      "api": "runtime/api/a-typography-text.md",
+      "sourceComponents": [
+        "typography"
+      ]
+    },
+    {
+      "name": "ATypographyTitle",
+      "slug": "a-typography-title",
+      "kind": "component",
+      "summary": "TypographyTitle: native Ant Design Vue typography API.",
+      "api": "runtime/api/a-typography-title.md",
+      "sourceComponents": [
+        "typography"
+      ]
+    },
+    {
+      "name": "AUpload",
+      "slug": "a-upload",
+      "kind": "component",
+      "summary": "Upload: native Ant Design Vue upload API.",
+      "api": "runtime/api/a-upload.md",
+      "sourceComponents": [
+        "upload"
+      ]
+    },
+    {
+      "name": "AUploadDragger",
+      "slug": "a-upload-dragger",
+      "kind": "component",
+      "summary": "UploadDragger: native Ant Design Vue upload API.",
+      "api": "runtime/api/a-upload-dragger.md",
+      "sourceComponents": [
+        "upload"
+      ]
+    },
+    {
+      "name": "ALocaleProvider",
+      "slug": "a-locale-provider",
+      "kind": "component",
+      "summary": "LocaleProvider: native Ant Design Vue locale-provider API.",
+      "api": "runtime/api/a-locale-provider.md",
+      "sourceComponents": [
+        "locale-provider"
+      ]
+    },
+    {
+      "name": "AWatermark",
+      "slug": "a-watermark",
+      "kind": "component",
+      "summary": "Watermark: native Ant Design Vue watermark API.",
+      "api": "runtime/api/a-watermark.md",
+      "sourceComponents": [
+        "watermark"
+      ]
+    },
+    {
+      "name": "ASegmented",
+      "slug": "a-segmented",
+      "kind": "component",
+      "summary": "Segmented: native Ant Design Vue segmented API.",
+      "api": "runtime/api/a-segmented.md",
+      "sourceComponents": [
+        "segmented"
+      ]
+    },
+    {
+      "name": "AQRCode",
+      "slug": "aqr-code",
+      "kind": "component",
+      "summary": "QRCode: native Ant Design Vue qrcode API.",
+      "api": "runtime/api/aqr-code.md",
+      "sourceComponents": [
+        "qrcode"
+      ]
+    },
+    {
+      "name": "ATour",
+      "slug": "a-tour",
+      "kind": "component",
+      "summary": "Tour: native Ant Design Vue tour API.",
+      "api": "runtime/api/a-tour.md",
+      "sourceComponents": [
+        "tour"
+      ]
+    },
+    {
+      "name": "AApp",
+      "slug": "a-app",
+      "kind": "component",
+      "summary": "App: native Ant Design Vue app API.",
+      "api": "runtime/api/a-app.md",
+      "sourceComponents": [
+        "app"
+      ]
+    },
+    {
+      "name": "AFlex",
+      "slug": "a-flex",
+      "kind": "component",
+      "summary": "Flex: native Ant Design Vue flex API.",
+      "api": "runtime/api/a-flex.md",
+      "sourceComponents": [
+        "flex"
+      ]
+    },
+    {
+      "name": "KbAntShell",
+      "slug": "kb-ant-shell",
+      "kind": "component",
+      "summary": "Workspace with independent content scrolling, optional controlled desktop collapse, mobile Drawer, navigation skeleton. Props: appName, navigation [{path,label,group,icon}], navigationLoading=false, activePath, collapsed=false. Events: navigate(path), update:collapsed(boolean). Slots: default, actions({collapsed,toggle}), navigation({collapsed}). Route changes reset the actual main scroller.",
+      "api": "runtime/api/kb-ant-shell.md",
+      "sourceComponents": []
+    },
+    {
+      "name": "KbAntIcon",
+      "slug": "kb-ant-icon",
+      "kind": "component",
+      "summary": "Native Ant icon. Props: name (UserOutlined or reload-outlined; Shell semantic aliases also supported), size=1em, spin=false, twoToneColor. Render through AButton #icon; label icon-only controls. Unknown names show QuestionCircleOutlined with data-icon-missing. See runtime/icons.md.",
+      "api": "runtime/api/kb-ant-icon.md",
+      "sourceComponents": []
+    },
+    {
+      "name": "antIcons",
+      "slug": "ant-icons",
+      "kind": "utility",
+      "summary": "Complete pinned @ant-design/icons-vue namespace. Import { antIcons } from /antdv.js and locally register antIcons.UserOutlined etc. See runtime/icons.md.",
+      "api": "runtime/api/ant-icons.md",
+      "sourceComponents": []
+    },
+    {
+      "name": "KbLucideIcon",
+      "slug": "kb-lucide-icon",
+      "kind": "component",
+      "summary": "Compatibility Lucide icon using the native .anticon container for Button spacing. Props: name (kebab-case, required), size=1em. Prefer KbAntIcon for native Ant style; use Button #icon and label icon-only controls.",
+      "api": "runtime/api/kb-lucide-icon.md",
+      "sourceComponents": []
+    },
+    {
+      "name": "antZhCN",
+      "slug": "ant-zh-cn",
+      "kind": "locale",
+      "summary": "Chinese ConfigProvider locale object. Pass :locale=\"antZhCN\". Set dayjs.locale(\"zh-cn\") separately for date text.",
+      "api": "runtime/api/ant-zh-cn.md",
+      "sourceComponents": []
+    },
+    {
+      "name": "antEnUS",
+      "slug": "ant-en-us",
+      "kind": "locale",
+      "summary": "English ConfigProvider locale object. Set dayjs.locale(\"en\") separately for date text.",
+      "api": "runtime/api/ant-en-us.md",
+      "sourceComponents": []
+    },
+    {
+      "name": "dayjs",
+      "slug": "dayjs",
+      "kind": "utility",
+      "summary": "Pinned Day.js 1.11.13 factory. Default date-picker values are Dayjs objects; prefer valueFormat=\"YYYY-MM-DD\" for plain API strings. Display format does not define serialization.",
+      "api": "runtime/api/dayjs.md",
+      "sourceComponents": []
+    },
+    {
+      "name": "theme",
+      "slug": "theme",
+      "kind": "utility",
+      "summary": "Native theme.useToken() in setup; ConfigProvider theme={token:{colorPrimary},algorithm:theme.darkAlgorithm} controls component styling. Static message/notification/Modal methods do not inherit component context; use AApp.useApp() in a descendant of AApp when context is required.",
+      "api": "runtime/api/theme.md",
+      "sourceComponents": []
+    }
+  ]
+}

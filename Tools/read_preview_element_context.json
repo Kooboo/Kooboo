@@ -1,0 +1,66 @@
+{
+  "type": "function",
+  "function": {
+    "name": "read_preview_element_context",
+    "description": "Resolve a site-preview selected element to its current Page, View, or Layout source HTML.\nUse this for server-rendered Page/View/Layout sources in a preview-element selection.\nFor Vue runtime moduleUrl sources, resolve the Script resource with list_site_object and read it with read_object_text instead.\nPass flat arguments only \u2014 never wrap the whole preview-element object:\n- nameOrId: preview-element.source.nameOrId (Page/View/Layout name or id)\n- objectType: preview-element.source.type when it is Page, View, or Layout\n- cssSelector: preview-element.locator.cssSelector\n- tagName: preview-element.snapshot.tagName\n- text: preview-element.snapshot.text\n- outerHtml: preview-element.snapshot.outerHTML\nIf source.type is Unknown or nameOrId is missing, first identify the owner with list_site_object/read_object_text, then call this function.\nThe selector is source-relative when possible. Snapshot fields disambiguate selectors or rendered markup that do not match source exactly.\nThe result is read-only and contains the matched source element, parent HTML, line, match strategy, and body hash. Use it before update_text_object for edits.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "nameOrId": {
+          "type": "string",
+          "description": "Page/View/Layout name or id. Map from preview-element.source.nameOrId."
+        },
+        "objectType": {
+          "enum": [
+            "Page",
+            "View",
+            "Layout",
+            "Script",
+            "Style",
+            "Api",
+            "CodeBlock"
+          ],
+          "description": "Must be Page, View, or Layout. Map from preview-element.source.type when known."
+        },
+        "cssSelector": {
+          "type": "string",
+          "description": "Source-relative CSS selector. Map from preview-element.locator.cssSelector."
+        },
+        "tagName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Selected rendered element tag. Map from preview-element.snapshot.tagName."
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Selected rendered element text. Map from preview-element.snapshot.text."
+        },
+        "outerHtml": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Selected rendered element outer HTML. Map from preview-element.snapshot.outerHTML."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "nameOrId",
+        "objectType",
+        "cssSelector"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

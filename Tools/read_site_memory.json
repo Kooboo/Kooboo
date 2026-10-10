@@ -1,0 +1,35 @@
+{
+  "type": "function",
+  "function": {
+    "name": "read_site_memory",
+    "description": "Read site-owned Markdown memory. Start with index.md in a new conversation, then read only notes relevant to the user\u0027s task. Missing memory is normal; failed reads are not absence. offset/nextOffset are character offsets. sha256 is a persisted content receipt, not implementation evidence. Do not copy Topics, Milestones or planning into memory.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "default": "index.md",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}\\.md$",
+          "minLength": 4,
+          "maxLength": 83,
+          "description": "ASCII Markdown filename, default index.md. Basename: 1-80 English letters/digits/underscores/hyphens, starting with a letter or digit; followed by lowercase .md. No Chinese, spaces, directories or extra dots. Use index.md exactly in lowercase; other names must match ^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}\\.md$."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647,
+          "default": 0,
+          "description": "Zero-based character offset, from 0 to 2147483647. Default 0. Use nextOffset from the previous read to continue."
+        },
+        "maxChars": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8000,
+          "default": 4000,
+          "description": "Maximum characters to read. Positive integer, default 4000, maximum 8000 per page. Larger values are capped at 8000. Use nextOffset from the result to read the next page."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

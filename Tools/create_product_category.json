@@ -1,0 +1,58 @@
+{
+  "type": "function",
+  "function": {
+    "name": "create_product_category",
+    "description": "Create a new product category. Required fields: title and seoName. AI storefront seed data should also include image.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "seoName": {
+          "type": "string"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "image": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tags": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "parentId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Parent category id. Leave empty for root-level category."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "title",
+        "seoName"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

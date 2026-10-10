@@ -1,0 +1,26 @@
+{
+  "type": "function",
+  "function": {
+    "name": "list_recent_history",
+    "description": "List the most recent CMS history items.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "top": {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Positive integer number of recent logs to return, default 100, maximum 200. Larger values are capped at 200."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

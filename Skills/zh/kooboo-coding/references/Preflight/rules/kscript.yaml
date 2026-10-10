@@ -1,0 +1,71 @@
+# Kooboo Preflight kscript capability rules
+
+rules:
+  - id: PF-KSCRIPT-001
+    capability: kscript
+    profiles: [site, app]
+    title: API calls to Service / Utils must use import
+    severity: BLOCKER
+    appliesTo: [Api, CodeBlock, Script, Page, View]
+    tags: [api, service]
+    patterns:
+      - "k\\.request\\.services"
+      - "k\\.req\\.services"
+      - "k\\.context\\.services"
+      - "k\\.services\\."
+    fix: "Use import { functionName } from \"./Services.xxx\" or \"./Utils.xxx\" instead, and export the corresponding function in the CodeBlock."
+
+  - id: PF-KSCRIPT-002
+    advisory: true
+    customCheck: apiResponseContract
+    capability: kscript
+    profiles: [site, app]
+    title: API responses should be explicitly structured
+    severity: HIGH
+    appliesTo: [Api]
+    tags: [api, response]
+    fix: "Match the declared endpoint response contract. JSON, text, HTML, redirects, and binary responses may all be valid; string responses alone do not prove an error."
+
+  - id: PF-KSCRIPT-003
+    capability: kscript
+    profiles: [site, app]
+    title: URL query parameters must use queryString
+    severity: BLOCKER
+    appliesTo: [Api, CodeBlock, Script, Page, Layout, View]
+    tags: [api, request]
+    patterns:
+      - "k\\.request\\.query\\s*(\\.|\\[)"
+    fix: "Do not use k.request.query.xxx; use k.request.queryString?.xxx or k.request.queryString.get(\"xxx\") instead."
+
+  - id: PF-KSCRIPT-005
+    capability: kscript
+    profiles: [site, app]
+    title: Cookies must use the real k.cookie API
+    severity: BLOCKER
+    appliesTo: [Api, CodeBlock]
+    tags: [api, cookie, auth]
+    patterns:
+      - "k\\.request\\.cookies\\b"
+      - "k\\.cookie\\.delete\\s*\\("
+    fix: "Use k.cookie.get(name) and k.cookie.remove(name). Commerce customer-session requirements belong to the Commerce authentication capability."
+
+  - id: PF-KSCRIPT-006
+    advisory: true
+    customCheck: queryCallbackContract
+    capability: kscript
+    profiles: [site, app]
+    title: GET callback parameters must not masquerade as queryString
+    severity: BLOCKER
+    appliesTo: [Api, CodeBlock]
+    tags: [api, request, query-string]
+    fix: "Verify how this callback uses its route argument. Names such as params are allowed for dynamic routes; URL query values come from k.request.queryString."
+
+  - id: PF-KSCRIPT-007
+    capability: kscript
+    profiles: [site, app]
+    title: Named API actions must use a Route with an action placeholder
+    severity: BLOCKER
+    appliesTo: [Api]
+    tags: [api, route, action]
+    customCheck: apiNamedActionRoute
+    fix: "When an API uses `k.api.get/post/put/patch/delete(\"action\", ...)`, the object's Url must contain `{action}`, such as `/api/auth/{action}`. When no subroute is needed, keep a single-route Url and use a wildcard callback without an action name."

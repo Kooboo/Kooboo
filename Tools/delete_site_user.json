@@ -1,0 +1,20 @@
+{
+  "type": "function",
+  "function": {
+    "name": "delete_site_user",
+    "description": "Delete a site user by username.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "userName": {
+          "type": "string",
+          "description": "The username to remove from current site"
+        }
+      },
+      "required": [
+        "userName"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

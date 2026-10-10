@@ -1,0 +1,45 @@
+{
+  "type": "function",
+  "function": {
+    "name": "update_content",
+    "description": "Update content in the specified content folder; data must comply with the content type schema.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "folderNameOrId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "culture": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dataJson": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The data that needs to be modified, provided as a static JSON string; must comply with the schema returned by get_content_schema, e.g. { \u0027field1\u0027: \u0027value\u0027, ... }."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "type": "function",
+  "function": {
+    "name": "create_app_base",
+    "description": "Initialize a client-rendered App using direct configuration when both Blueprint and App Plan are absent, or the current App Plan when planning exists. Before calling, use get_site_info and conditionally load/call update_site_settings when DisplayName is empty or temporary, setting it to the agreed App name. Existing planning must be readable and valid; reject non-client rendering or a mismatched built-in design system. Install separated base resources, managed reset CSS, design CSS, a composition-only App Style, pinned runtimes, separate user/notification APIs, server-owned identity, and Plan route placeholders without overwriting non-base objects. For a back office on an existing public site, set entryUrl and pageName (e.g. \u0027/manage\u0027, \u0027blog-manager\u0027); never move the homepage to free \u0027/\u0027. Omitted values retain the standalone root entry. On first creation, include the optional response and notifications backend templates; backendTemplates=[] opts out of both and disables frontend notification requests, an explicit list selects templates. Existing App Bases get no implicit backend template installation. Use install_backend_templates for later additions; response helpers return k.api.httpCode with a flat JSON body but never bind the runtime or existing API contracts. Optionally provide navigationIcons keyed by exact Plan screen ID when icon choices are known; omitted icons can be completed with the Shell later. Before installation, read references/Frontend/app-design-systems.md and the selected package guide for component selection and Shell options. DesignRuntime.UsageGuides returns shared usage and requested APIs, with paths for deferred guides. Installation does not implement business Screens; follow references/Frontend/cdn-vue/delivery.md. Read references/Backend/app-base-services.md before extending user/notification APIs. DatabaseDefinitions returns initial schema resources with status not-checked; no tables are checked or created. Before real API use, read these resources and prepare storage with SQLite Functions. Only authenticationMode=mock previews need no tables; with authenticationMode=kooboo the user endpoint (and installed notifications) read and write AppUsers/AppNotifications from the first signed-in request, so create those FoundationTables before first sign-in even when business data stays mock. Mock identity exists only in server CodeBlocks; before real data or delivery remove every mock:start/mock:end block and verify anonymous requests return 401. authenticationMode=kooboo installs no mock branches. Do not operate a browser unless explicitly requested.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "entryUrl": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200,
+          "description": "App document URL, default \u0027/\u0027. On a site with an existing public homepage, choose an available path such as \u0027/manage\u0027; do not move/delete the homepage to install App Base. This is a single Page entry, not an asset/API prefix or Vue route prefix. Hash routes become \u0027/manage#/...\u0027. System paths such as \u0027/_Admin\u0027, \u0027/_api\u0027 and \u0027/__kb\u0027 are reserved. Repeat installation must use the same entryUrl and pageName; this does not migrate an existing App."
+        },
+        "pageName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 100,
+          "description": "App Page object name. Defaults to \u0027index\u0027 for entryUrl=\u0027/\u0027, otherwise \u0027app-entry\u0027. Choose an available meaningful name if needed, e.g. \u0027blog-manager\u0027. Existing Page objects and routes are never overwritten. One App Base per site; scripts and APIs retain their shared names."
+        },
+        "backendTemplates": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional backend template IDs from assets/backend-templates/index.json. Omitted: install response and notifications on first App Base creation; existing App Bases receive no implicit template writes, preserving edits and deletions. [] opts out of both; the App starts without notification requests. An explicit list installs only those templates, including on an existing App. Same-name code with different content is a conflict, never overwritten. Use install_backend_templates for later additions without recreating App Base."
+        },
+        "navigationIcons": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Optional map from exact App Plan navigation Screen IDs to explicitly chosen Lucide kebab-case icon names, e.g. {\u0022screen.products\u0022:\u0022package\u0022}. Omit undecided entries; they produce no navigationIcon metadata and can be completed when authoring the Shell. Names are syntax-checked, not restricted to bundled icons. Without an App Plan, omit this map and set icons when creating business navigation. Existing router.js is preserved; this is not an icon update operation."
+        },
+        "components": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "For Element Plus and Ant Design Vue, this optional list requests API guides only; the complete fixed distribution is installed regardless of omitted, empty or nonempty components. For Yuanli, pass exact exports selected from assets/design-systems/volcengine/runtime/component-selection.json for selective installation, in usage priority order. Example: [\u0027YlListPage\u0027,\u0027YlTable\u0027,\u0027YlInput\u0027,\u0027YlSelect\u0027,\u0027YlButton\u0027,\u0027YlDialog\u0027,\u0027YlForm\u0027,\u0027YlFormItem\u0027,\u0027YlConfirmDialog\u0027,\u0027YlMessage\u0027,\u0027YlPagination\u0027,\u0027YlStatusTag\u0027]; adapt to the task, do not copy blindly. Dependencies and selected Shell requirements are automatic. For Yuanli, these requested exports determine both installation roots and the API guides embedded in the response. For Yuanli the field remains optional for compatibility: omission installs the full library with only the shared guide; [] installs foundation plus any requested Shell requirements."
+        },
+        "shellTemplate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 80,
+          "description": "Optional installed Shell template. For volcengine use \u0027yuanli-workspace\u0027; for element-plus use \u0027element-plus-workspace\u0027, for antdv use \u0027antdv-workspace\u0027, when the current requirements call for a sidebar workspace. Omit to author a custom layout. Existing layouts are never replaced by this option."
+        },
+        "appName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "User-facing App name used for the initial HTML document title."
+        },
+        "designSystemId": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[a-z0-9-]\u002B$",
+          "description": "Exact built-in design-system ID selected from the catalog. When an App Plan exists it must match foundation.designSystem.id; without planning it is direct installation configuration."
+        },
+        "authenticationMode": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(mock|kooboo)$",
+          "description": "Authentication mode for the target implementation stage. Use \u0027mock\u0027 only for server-side mock-data preview. Use \u0027kooboo\u0027 for real data or delivery; generated CodeBlocks then contain no mock branches. Switching an existing mock App requires explicitly removing all mock:start/mock:end blocks before real use; repeat creation never upgrades existing code."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "appName",
+        "designSystemId",
+        "authenticationMode"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

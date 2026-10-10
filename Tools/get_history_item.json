@@ -1,0 +1,24 @@
+{
+  "type": "function",
+  "function": {
+    "name": "get_history_item",
+    "description": "Get one CMS history item by its log ID.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "logId": {
+          "type": "integer",
+          "description": "Positive log ID returned by list_recent_history or list_history."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

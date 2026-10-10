@@ -1,0 +1,38 @@
+{
+  "type": "function",
+  "function": {
+    "name": "show_next_recommended_action",
+    "description": "Show recommended next actions in the AI chat. Pass actions as [{ title, description }] so the user can choose what to do next.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Required short action title shown to the user."
+              },
+              "description": {
+                "type": "string",
+                "description": "Required short description explaining why this action is recommended."
+              }
+            },
+            "required": [
+              "title",
+              "description"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Recommended next actions shown to the user, each with title and description."
+        }
+      },
+      "required": [
+        "actions"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

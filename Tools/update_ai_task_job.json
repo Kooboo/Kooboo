@@ -1,0 +1,83 @@
+{
+  "type": "function",
+  "function": {
+    "name": "update_ai_task_job",
+    "description": "Update an existing AI task job by its id or name.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "nameOrId": {
+          "type": "string",
+          "description": "AI task job id or name"
+        },
+        "startTime": {
+          "description": "Optional new start time in UTC"
+        },
+        "active": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Optional new active status"
+        },
+        "repeat": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Optional new repeat status"
+        },
+        "frequence": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "enum": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            6,
+            null
+          ],
+          "description": "Repeat frequency as a JSON integer: 0=Day, 1=Hour, 3=Minutes, 4=Week, 5=Month, 6=Second. Do not send a name or 2."
+        },
+        "frequenceUnit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Optional positive integer number of frequency units between runs. Omit or null to preserve the existing interval."
+        },
+        "prompt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional new prompt"
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional new AI model name"
+        },
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional new AI provider name. Omit or null to preserve the existing provider."
+        }
+      },
+      "required": [
+        "nameOrId"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

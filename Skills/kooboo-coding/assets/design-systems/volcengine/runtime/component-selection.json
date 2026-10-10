@@ -1,0 +1,218 @@
+{
+  "version": "0.10.1",
+  "instruction": "Before create_app_base, choose exact component names for the current capability and pass components in usage priority order. Dependencies and Shell internals are automatic; omit future capabilities. Names and summaries are selection evidence, not API contracts. Use the returned UsageGuides after installation; read only missing API guides needed now.",
+  "components": [
+    {
+      "name": "YlButton",
+      "summary": "Action button with disabled/loading guard; default slot; click event."
+    },
+    {
+      "name": "YlInput",
+      "summary": "Native text input with string v-model, IME, readonly/disabled/invalid states."
+    },
+    {
+      "name": "YlTable",
+      "summary": "Source table with selection, striped rows, cell/action slots, toolbar and pagination composition; controlled sorting and centered load/empty/error states."
+    },
+    {
+      "name": "YlPagination",
+      "summary": "Basic, total count, page-size chooser, validated jump and simple modes; bounded controlled pages and disabled controls."
+    },
+    {
+      "name": "YlDialog",
+      "summary": "Controlled native modal dialog with Escape, focus return, busy guard and footer slot."
+    },
+    {
+      "name": "YlListPage",
+      "summary": "Page composition: title, description, actions/filters/default/pagination slots. No navigation or data."
+    },
+    {
+      "name": "YlShell",
+      "summary": "Responsive workspace Shell with flat/grouped or recursive navigation children, accessible disclosure, active ancestors and mobile navigation."
+    },
+    {
+      "name": "YlSelect",
+      "summary": "Single/multiple, four sizes, native-like states, grouped/empty/search panels, removable and overflow tags, clear and inset labels; controlled typed values."
+    },
+    {
+      "name": "YlIcon",
+      "summary": "Reactive Lucide SVG; kebab-case name, numeric size. Bundled common icons; App Base loader for others."
+    },
+    {
+      "name": "YlPopover",
+      "summary": "Controlled anchored non-modal panel with trigger slot, outside/Tab/Escape dismissal; use for account and notifications."
+    },
+    {
+      "name": "YlConfirmDialog",
+      "summary": "Controlled confirmation modal with busy guard. Confirm before publishing/unpublishing or deleting; caller owns async mutation."
+    },
+    {
+      "name": "YlMessage",
+      "summary": "Success/warning/error/info/loading; controlled top-center message, timeout/pause/dismissal. Loading persists until replaced or cleared."
+    },
+    {
+      "name": "YlCheckbox",
+      "summary": "Boolean v-model; default slot labels the native checkbox. indeterminate is visual/mixed state; caller owns checkbox groups."
+    },
+    {
+      "name": "YlSwitch",
+      "summary": "Default 20px and small 16px sizes, checked/unchecked, disabled and loading guards."
+    },
+    {
+      "name": "YlForm",
+      "summary": "Native form with submit prevention and busy guard. Default slot; native validation works for native inputs. Caller validates custom controls and owns async requests."
+    },
+    {
+      "name": "YlFormItem",
+      "summary": "Default scoped slot receives id, aria-describedby, aria-invalid and required: bind them to the input. Set invalid on YlInput/YlSelect when error is present. No automatic schema validator."
+    },
+    {
+      "name": "YlStatusTag",
+      "summary": "Text/fill/outline variants for success/warning/processing/stop/error/loading/waiting; visible labels and reduced-motion loading."
+    },
+    {
+      "name": "YlAlert",
+      "summary": "Four semantic types, optional description, controlled dismissal and full-width banner. Use Message for transient mutation feedback."
+    },
+    {
+      "name": "YlBadge",
+      "summary": "Three sizes, dot, count, overflow count, muted and five icon states, standalone or target/Avatar composition."
+    },
+    {
+      "name": "YlAvatar",
+      "summary": "Four sizes and seven colors, bordered icons, person/department combinations, capsule, subtitle and guarded editing; image-error fallback."
+    },
+    {
+      "name": "YlProgress",
+      "summary": "Linear default/large/small/mini sizes and normal/success/warning/error states; accessible clamped percentage, mini without visible text."
+    },
+    {
+      "name": "YlDescriptions",
+      "summary": "Stacked, label-left, label-right, inline and inline-colon layouts; per-item slots and narrow-screen stacking."
+    },
+    {
+      "name": "YlBreadcrumb",
+      "summary": "Default/large sizes, ellipsis expansion, disabled/current items and controlled navigation; modified links stay native."
+    },
+    {
+      "name": "YlDrawer",
+      "summary": "Right-side native modal drawer with source widths 480/600/720/1080px, viewport bounds, body/footer slots and busy guards."
+    },
+    {
+      "name": "YlTabs",
+      "summary": "Line/card/capsule/button/segmented/vertical variants, sizes, icons/counts/badges, scroll/add/extra controls and optional bordered content panels."
+    },
+    {
+      "name": "YlTooltip",
+      "summary": "Top/bottom/left/right, opposite-side flip and viewport clamp, hover/focus/Escape with top-layer support."
+    },
+    {
+      "name": "YlTextarea",
+      "summary": "String v-model with IME guard. Native rows, maxlength, required and label attributes. Resize vertically; caller owns validation."
+    },
+    {
+      "name": "YlInputNumber",
+      "summary": "Number|null v-model; native number control. min/max/step use native constraint validation, never silently clamp typed values. Empty emits null; bad intermediate input emits nothing. Validate custom API submissions."
+    },
+    {
+      "name": "YlRadioGroup",
+      "summary": "options: Array<{value:string|number,label:string,disabled?:boolean}>. Native radio group with legend and browser keyboard navigation. Value types are preserved. Source radio styling is in the original Form section, outside the source component index."
+    },
+    {
+      "name": "YlLayout",
+      "summary": "Composable horizontal/vertical container; flow, parent-fill or viewport sizing."
+    },
+    {
+      "name": "YlHeader",
+      "summary": "Optional header region with content-driven or explicit height."
+    },
+    {
+      "name": "YlAside",
+      "summary": "Optional left or right region with explicit width and independent overflow; no menu coupling."
+    },
+    {
+      "name": "YlMain",
+      "summary": "Flexible main/content region; optional independent scrolling and semantic tag."
+    },
+    {
+      "name": "YlFooter",
+      "summary": "Optional footer region with content-driven or explicit height."
+    },
+    {
+      "name": "YlDatePicker",
+      "summary": "Native date, month and local datetime input with explicit string values."
+    },
+    {
+      "name": "YlDateRangePicker",
+      "summary": "Two native date controls with visible reversed-range validation."
+    },
+    {
+      "name": "YlUpload",
+      "summary": "File selection, raster image preview and cancellable caller-provided upload requests."
+    },
+    {
+      "name": "YlAnchor",
+      "summary": "Three-level section navigation, container-aware scroll and active tracking; ordinary clicks preserve App hash routing."
+    },
+    {
+      "name": "YlCascader",
+      "summary": "Single and multiple leaf paths, local full-path search, groups/icons, disabled subtrees, parent checkbox selection and column keyboard navigation."
+    },
+    {
+      "name": "YlPopconfirm",
+      "summary": "Anchored default/icon/description and simple confirmation; controlled success/failure and busy dismissal guards."
+    },
+    {
+      "name": "YlSegmentedPicker",
+      "summary": "Four source sizes, controlled primitive values, disabled items and radio-group keyboard navigation."
+    },
+    {
+      "name": "YlSlider",
+      "summary": "Default/small native single-value and dual-handle ranges; bounds, step, disabled and non-crossing updates."
+    },
+    {
+      "name": "YlSteps",
+      "summary": "Horizontal/vertical ordered steps with or without descriptions; completed/active/pending/disabled/error states and parent-owned progress."
+    },
+    {
+      "name": "YlTimePicker",
+      "summary": "Single/range local time strings, default/large/small, seconds, placeholders and disabled/readonly/error states; native panel, parent validates range order."
+    },
+    {
+      "name": "YlCheckboxGroup",
+      "summary": "Controlled horizontal/vertical checkbox groups."
+    },
+    {
+      "name": "YlButtonGroup",
+      "summary": "Source joined-button composition."
+    },
+    {
+      "name": "YlSplitButton",
+      "summary": "Primary action with a separate dropdown trigger."
+    },
+    {
+      "name": "YlFormGroup",
+      "summary": "Labeled fieldsets with one/two-column form layouts."
+    },
+    {
+      "name": "YlDropdown",
+      "summary": "Single/multiple hierarchical menu selection with groups, search, icons and descriptions."
+    },
+    {
+      "name": "YlPageHeader",
+      "summary": "Configurable breadcrumbs, title/status, actions and card tabs."
+    },
+    {
+      "name": "YlSidenav",
+      "summary": "Standalone grouped/tree navigation with optional icon rail."
+    },
+    {
+      "name": "YlTopNav",
+      "summary": "Light/dark header, optional product tabs, secondary navigation, links/search/actions; business owns navigation and optional menu trigger."
+    },
+    {
+      "name": "YlSkeleton",
+      "summary": "Loading placeholder with bounded rows, optional title, reduced-motion animation and loaded-content slot."
+    }
+  ]
+}

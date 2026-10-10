@@ -1,0 +1,54 @@
+# Kooboo Preflight commerce-template capability rules
+
+rules:
+  - id: PF-COMMERCE-001
+    requires: [k-data]
+    capability: commerce
+    profiles: [site]
+    requiredStage: commerce-runtime
+    title: Commerce business entities must use the Commerce data source
+    severity: BLOCKER
+    appliesTo: [Page, Layout, View]
+    requiredArtifactFields: [commerceSurface]
+    tags: [commerce, data-source]
+    customCheck: commerceSourceOfTruth
+    fix: "Use <query source=\"commerce\"> for Commerce business entities such as Product, Category, Cart, and Order. Use content only for non-transactional content such as Blog, FAQ, and Lookbook; do not duplicate the product master data in Content."
+
+  - id: PF-COMMERCE-003
+    requires: [k-data]
+    capability: commerce
+    profiles: [site]
+    requiredStage: commerce-runtime
+    title: Products category filtering must handle active and All
+    severity: BLOCKER
+    appliesTo: [Page, View]
+    requiredArtifactFields: [commerceSurface]
+    tags: [commerce, category, filter]
+    customCheck: commerceProductsFilter
+    fix: "Filter both category and product queries with active=true; read category from queryString; pass category in the filtered branch and omit the category condition entirely in the All branch; derive the active UI from the same selectedCategory."
+
+  - id: PF-COMMERCE-005
+    requires: [k-data]
+    capability: commerce
+    profiles: [site]
+    requiredStage: commerce-runtime
+    title: Product-detail item queries must bind to real route parameters
+    severity: BLOCKER
+    appliesTo: [Page, View]
+    requiredArtifactFields: [commerceSurface]
+    tags: [commerce, product, routing, k-data]
+    customCheck: commerceProductDetailQuery
+    fix: "First read the current detail route parameter with <let source=\"queryString\" from=\"id|seoName|product\" as=\"product_key\">, then have <query source=\"commerce\" resource=\"product\" action=\"item\" id=\"product_key\"> reference the same variable."
+
+  - id: PF-COMMERCE-011
+    requires: [k-data]
+    capability: commerce
+    profiles: [site]
+    requiredStage: commerce-runtime
+    title: PDP client code must not directly reference k-data server-side template variables
+    severity: BLOCKER
+    appliesTo: [Page, View]
+    requiredArtifactFields: [commerceSurface]
+    tags: [commerce, product, variant, client-boundary]
+    customCheck: commerceClientDataBoundary
+    fix: "Select the default variant with SSR/k-data and render productId/variantId into data-* or safe JSON. Client scripts must read only from the DOM and must not directly use server-side variables such as product_detail.variants[0].id."

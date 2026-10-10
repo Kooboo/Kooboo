@@ -1,0 +1,41 @@
+{
+  "type": "function",
+  "function": {
+    "name": "get_customer",
+    "description": "Get a customer by id, phone, or email.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Customer id."
+        },
+        "phone": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Customer phone."
+        },
+        "email": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Customer email."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

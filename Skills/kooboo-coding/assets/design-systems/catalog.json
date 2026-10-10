@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Catalog of executable runtime design systems for new App installations. Read only the selected runtime usage and component APIs.",
+  "systems": [
+    {
+      "id": "volcengine",
+      "componentSelection": "assets/design-systems/volcengine/runtime/component-selection.json",
+      "installationGuidance": "Before create_app_base, read componentSelection once and pass exact exports for the current capability in components. Dependencies and Shell internals are automatic. The selection determines both installation roots and returned API guides; ordinary business implementation should not omit components.",
+      "name": "Yuanli Design System",
+      "summary": "High-density enterprise console. Includes a modular Vue runtime with forms, searchable single/multiple selects, data display, overlays and a workspace Shell. Supports selective installation and managed updates; undocumented variants remain references.",
+      "bestFor": [
+        "enterprise console",
+        "B2B administration",
+        "cloud management",
+        "complex list and detail workflows",
+        "configuration UI"
+      ],
+      "kits": [],
+      "signatureTraits": [
+        "48px compact top navigation",
+        "200px grouped enterprise sidebar",
+        "compact product-icon containers",
+        "32px operational controls",
+        "dense filter-toolbar-table workflows",
+        "status-dot semantic tags",
+        "chart headers with time and inspection controls"
+      ],
+      "reuseDefaults": {
+        "tokens": "exact",
+        "components": "exact",
+        "shell": "adapt",
+        "icons": "replace",
+        "brandLogo": "replace",
+        "composition": "adapt"
+      },
+      "contractLevel": "runtime",
+      "runtime": "runtime/manifest.json"
+    },
+    {
+      "id": "element-plus",
+      "name": "Element Plus",
+      "summary": "Official Element Plus Vue components with native theme-chalk, fixed full local ESM distribution and Kooboo workspace integration.",
+      "bestFor": [
+        "business administration",
+        "forms and validation",
+        "data tables",
+        "date and time workflows",
+        "operations workspace"
+      ],
+      "kits": [],
+      "signatureTraits": [
+        "native Element Plus controls",
+        "blue semantic primary color",
+        "clear form validation",
+        "structured data tables",
+        "composable containers and navigation"
+      ],
+      "reuseDefaults": {
+        "tokens": "exact",
+        "components": "exact",
+        "shell": "adapt",
+        "icons": "adapt",
+        "brandLogo": "replace",
+        "composition": "adapt"
+      },
+      "contractLevel": "runtime",
+      "runtime": "runtime/manifest.json"
+    },
+    {
+      "id": "antdv",
+      "name": "Ant Design Vue",
+      "summary": "Official Ant Design Vue 4.2.6 with native component APIs, complete fixed local browser ESM, CSS-in-JS themes and optional Kooboo workspace.",
+      "componentSelection": "assets/design-systems/antdv/runtime/component-selection.json",
+      "installationGuidance": "Fixed complete runtime; components optionally requests API guides only. Use antdv-workspace for a sidebar workspace.",
+      "bestFor": [
+        "enterprise administration",
+        "forms and validation",
+        "data tables",
+        "customizable business workspaces"
+      ],
+      "kits": [],
+      "signatureTraits": [
+        "native Ant Design Vue components",
+        "ConfigProvider theme tokens",
+        "composable layouts and navigation"
+      ],
+      "reuseDefaults": {
+        "tokens": "exact",
+        "components": "exact",
+        "shell": "adapt",
+        "icons": "adapt",
+        "brandLogo": "replace",
+        "composition": "adapt"
+      },
+      "contractLevel": "runtime",
+      "runtime": "runtime/manifest.json"
+    }
+  ]
+}

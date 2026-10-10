@@ -1,0 +1,41 @@
+{
+  "type": "function",
+  "function": {
+    "name": "get_resource_guardian_overview",
+    "description": "Get the current site\u0027s complete resource analytics summary. The inclusive date range defaults to Monday through the current analytics day.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "includeRelations": {
+          "type": "boolean",
+          "description": "Include the complete found, not-found, and protected resource/source relationship arrays."
+        },
+        "top": {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Maximum number of entries returned for each ranking or distribution. Default 20, maximum 200."
+        },
+        "includeDimensions": {
+          "type": "boolean",
+          "description": "Include the native aggregated dimensions in addition to the named report fields."
+        },
+        "startDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Inclusive analytics date in yyyy-MM-dd format. Defaults to Monday of the current analytics week."
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Inclusive analytics date in yyyy-MM-dd format. Defaults to the current analytics day."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

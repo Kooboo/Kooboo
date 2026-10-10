@@ -1,0 +1,75 @@
+{
+  "type": "function",
+  "function": {
+    "name": "create_product",
+    "description": "Create a new product with a default variant and its manual Commerce category relations. Required fields: title, seoName, price, inventory, categoryIds. AI storefront seed data should also include featuredImage. Pass categoryIds=[] only when the product is intentionally uncategorized.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Required nonempty product title."
+        },
+        "seoName": {
+          "type": "string",
+          "description": "Required nonempty SEO name used to identify the product in storefront URLs."
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "featuredImage": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "price": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1.7976931348623157E+308,
+          "description": "Required finite JSON number greater than or equal to 0. Do not send a numeric string, NaN or Infinity."
+        },
+        "inventory": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647,
+          "description": "Required integer stock quantity from 0 to 2147483647."
+        },
+        "categoryIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Required manual Commerce category IDs returned by create_product_category. Pass an empty array only when the product is intentionally uncategorized."
+        },
+        "tags": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "title",
+        "seoName",
+        "price",
+        "inventory",
+        "categoryIds"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

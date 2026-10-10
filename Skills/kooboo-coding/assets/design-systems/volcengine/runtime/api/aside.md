@@ -1,0 +1,4 @@
+# YlAside
+Import and register from /yuanli.js. Props: width: string | number = 200; scroll: boolean = true. Numeric widths are pixels. Default slot. Renders aside with a fixed flex width and optional independent overflow.
+Can contain navigation, filters or properties and appear before or after YlMain. Scrolling requires a bounded parent; normally use a horizontal fill YlLayout under a viewport root. Provide aria-label when multiple complementary regions exist.
+collapsed: boolean = false fully hides/restores the aside through the native hidden attribute while keeping its contents mounted. Hidden content is excluded from keyboard navigation. Caller owns the toggle, optional persistence and mobile policy; no icon rail, hover menu or built-in toggle is provided. YlShell provides its own header toggle for the workspace preset.

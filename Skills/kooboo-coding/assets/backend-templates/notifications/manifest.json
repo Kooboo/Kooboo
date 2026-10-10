@@ -1,0 +1,16 @@
+{
+  "database": "database.json",
+  "files": [
+    {
+      "objectType": "CodeBlock",
+      "name": "Services.notification",
+      "source": "files/Services.notification.ts"
+    },
+    {
+      "objectType": "API",
+      "name": "app.notifications",
+      "source": "files/app.notifications.ts",
+      "route": "/api/app/notifications/{action}"
+    }
+  ]
+}

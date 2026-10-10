@@ -1,0 +1,195 @@
+{
+  "type": "function",
+  "function": {
+    "name": "save_screen",
+    "description": "Save reviewed complete screens in the current server App Plan. Submit one or more same-type objects; reuse stable IDs for full replacement. Unsubmitted objects are retained, omitted optional fields in submitted objects are cleared. References must already exist or be included in this same-type batch. Empty arrays are a no-op. Requires an existing Blueprint. The entire batch is validated before one aggregate write; no runtime resources or progress are created.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "screens": {
+          "type": [
+            "array"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "purpose": {
+                "type": "string"
+              },
+              "routePath": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "scenarioIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "dataContractIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "sourceFileIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "accessRuleIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "blocks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "enum": [
+                        "filter",
+                        "table",
+                        "form",
+                        "detail",
+                        "chart",
+                        "custom"
+                      ]
+                    },
+                    "title": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "dataContractId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "fieldIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "actionIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "actions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "scenarioIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uuid"
+                      }
+                    },
+                    "serviceOperationId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "targetBlockId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "targetScreenId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "presentation": {
+                      "enum": [
+                        "page",
+                        "drawer",
+                        "modal",
+                        "inline",
+                        null
+                      ]
+                    },
+                    "confirmationMessage": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "label"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "purpose"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "screens"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

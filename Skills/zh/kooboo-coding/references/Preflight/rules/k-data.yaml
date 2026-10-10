@@ -1,0 +1,113 @@
+# Kooboo Preflight k-data capability rules
+
+rules:
+  - id: PF-KOBOO-TEMPLATE-021
+    capability: k-data
+    profiles: [site]
+    title: k-data conditional branches must preserve a valid parent-child structure
+    severity: BLOCKER
+    appliesTo: [Page, Layout, View]
+    tags: [template, k-data, condition]
+    customCheck: kDataBranchStructure
+    fix: "`<else-if>` and `<else>` must be directly inside the corresponding `<when>`; a `<when>` may have only one `<else>`, and `<else-if>` must come before `<else>`. Do not write branch tags as siblings outside `<when>`."
+
+  - id: PF-KOBOO-TEMPLATE-006
+    capability: k-data
+    profiles: [site]
+    title: Do not perform math directly in k-attribute brace interpolation
+    severity: BLOCKER
+    knownErrorId: KOOB-KDATA-STRUCTURE
+    debugPriority: immediate
+    debugPlaybookAnchor: 6-koob-kdata-structure
+    appliesTo: [Page, Layout, View]
+    tags: [template, k-attribute, k-data]
+    customCheck: kAttributeNoMath
+    fix: "Precompute in <k-data> first (prefer <let use=\"add|subtract|multiply|divide|modulo\">), then bind only variables, field paths, or ordinary interpolation in k-attribute; precompute in <script env=\"server\"> only when the logic cannot be expressed with k-data."
+
+  - id: PF-KOBOO-TEMPLATE-012
+    capability: k-data
+    profiles: [site]
+    title: when / else-if / else may only be used as tags inside k-data
+    severity: BLOCKER
+    knownErrorId: KOOB-KDATA-STRUCTURE
+    debugPriority: immediate
+    debugPlaybookAnchor: 6-koob-kdata-structure
+    appliesTo: [Page, Layout, View]
+    tags: [template, k-data, branching]
+    customCheck: kDataBranchTagsInsideKData
+    fix: "Move <when> / <else-if> / <else> back inside <k-data>; use k-if / k-else-if / k-else for template-level conditional rendering."
+
+  - id: PF-KOBOO-TEMPLATE-008
+    capability: k-data
+    profiles: [site]
+    title: A tag must not declare k-attribute more than once
+    severity: BLOCKER
+    appliesTo: [Page, Layout, View]
+    tags: [template, k-attribute]
+    customCheck: duplicateKAttribute
+    fix: "The HTML parser discards duplicate attributes with the same name, so only the first k-attribute takes effect. Merge non-href bindings into one k-attribute, separated by semicolons, such as k-attribute=\"src item.image; class item.imageClass\"; keep link URLs in the native href attribute."
+
+  - id: PF-KOBOO-TEMPLATE-011
+    capability: k-data
+    profiles: [site]
+    title: k-data query must not use self-closing tags
+    severity: BLOCKER
+    knownErrorId: KOOB-KDATA-STRUCTURE
+    debugPriority: immediate
+    debugPlaybookAnchor: 6-koob-kdata-structure
+    appliesTo: [Page, Layout, View]
+    tags: [template, k-data, query]
+    customCheck: kDataQueryNoSelfClosing
+    fix: "query is not a void element and must have an explicit closing tag. Change <query ... /> to <query ...></query> to prevent subsequent k-data steps from being nested incorrectly inside query."
+
+  - id: PF-KOBOO-TEMPLATE-015
+    capability: k-data
+    profiles: [site]
+    title: k-data query must declare valid as/source/resource/action
+    severity: BLOCKER
+    knownErrorId: KOOB-KDATA-STRUCTURE
+    debugPriority: immediate
+    debugPlaybookAnchor: 6-koob-kdata-structure
+    appliesTo: [Page, Layout, View]
+    tags: [template, k-data, query]
+    customCheck: kDataQueryContract
+    fix: "Every <query> must declare non-empty as, source, resource, and action. Built-in sources are commerce/content/culture/indexeddb/mysql/sqlite/sqlserver, and actions are item/list/paged; the source/action combination must exist in the k-data query reference. When missing or invalid, the runtime silently does not generate the result variable."
+
+  - id: PF-KOBOO-TEMPLATE-016
+    capability: k-data
+    profiles: [site]
+    title: k-data export must be used on a query or let with as
+    severity: BLOCKER
+    knownErrorId: KOOB-KDATA-STRUCTURE
+    debugPriority: immediate
+    debugPlaybookAnchor: 6-koob-kdata-structure
+    appliesTo: [Page, Layout, View]
+    tags: [template, k-data, export]
+    customCheck: kDataExportContract
+    fix: "Add export to a <query> or <let> that must be exposed to the template, such as <query as=\"products\" ... export></query>. export may have no value or be set to true/false; a tag with export must declare a non-empty as."
+
+  - id: PF-KOBOO-TEMPLATE-017
+    capability: k-data
+    profiles: [site]
+    title: query/try/catch/redirect must be inside k-data
+    severity: BLOCKER
+    knownErrorId: KOOB-KDATA-STRUCTURE
+    debugPriority: immediate
+    debugPlaybookAnchor: 6-koob-kdata-structure
+    appliesTo: [Page, Layout, View]
+    tags: [template, k-data, containment]
+    customCheck: kDataElementsInsideKData
+    fix: "DataEvaluator parses only the InnerHtml of <k-data>. Move query/try/catch/redirect into the same <k-data> container; continue using k-if/k-else-if/k-else for template-level conditions."
+
+  - id: PF-KOBOO-TEMPLATE-019
+    capability: k-data
+    profiles: [site]
+    title: k-data tags must not declare duplicate attributes with the same name
+    severity: BLOCKER
+    knownErrorId: KOOB-KDATA-STRUCTURE
+    debugPriority: immediate
+    debugPlaybookAnchor: 6-koob-kdata-structure
+    appliesTo: [Page, Layout, View]
+    tags: [template, k-data, attributes]
+    customCheck: duplicateKDataAttributes
+    fix: "Each let/query/map/when attribute may be declared only once. For example, read product_paged.total directly with k-content=\"product_paged.total\", or write <let as=\"total\" from=\"product_paged.total\"></let>; do not write two from attributes on the same let."

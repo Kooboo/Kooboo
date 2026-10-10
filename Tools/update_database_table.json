@@ -1,0 +1,107 @@
+{
+  "type": "function",
+  "function": {
+    "name": "update_database_table",
+    "description": "Update internal SQLite schema atomically: rename columns, drop columns, add columns, then optionally rename the table. Dropping columns deletes their data. Existing column types and constraints cannot be changed.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "newName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "renameColumns": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "newName": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "newName"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "deleteColumns": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "appendColumns": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "TEXT",
+                  "INTEGER",
+                  "REAL",
+                  "BLOB",
+                  "NUMERIC"
+                ]
+              },
+              "notNull": {
+                "type": "boolean"
+              },
+              "primaryKey": {
+                "type": "boolean"
+              },
+              "unique": {
+                "type": "boolean"
+              },
+              "defaultValue": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Optional literal default value, not a SQL expression."
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Columns to add. PRIMARY KEY and UNIQUE are not supported. NOT NULL columns on populated tables require a non-null default."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

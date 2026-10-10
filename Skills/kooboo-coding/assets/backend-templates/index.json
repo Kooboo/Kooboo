@@ -1,0 +1,19 @@
+{
+  "templates": [
+    {
+      "id": "files",
+      "description": "Lightweight k.file helpers for temporary saves, promotion, metadata reads, explicit deletion and temporary cleanup. No tables, identity integration, API routes or automatic scheduler.",
+      "guide": "assets/backend-templates/files/README.md"
+    },
+    {
+      "id": "response",
+      "description": "Optional helpers for flat JSON success/error bodies with HTTP status responses.",
+      "guide": "assets/backend-templates/response/README.md"
+    },
+    {
+      "id": "notifications",
+      "description": "Optional notification API, recipient-scoped storage, server settings and replaceable identity integration.",
+      "guide": "assets/backend-templates/notifications/README.md"
+    }
+  ]
+}

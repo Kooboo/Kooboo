@@ -1,0 +1,36 @@
+# Kooboo Preflight assets capability rules
+
+rules:
+  - id: PF-APP-001
+    customCheck: importMapContract
+    capability: modules
+    title: "Import maps must have a valid inline JSON contract"
+    severity: BLOCKER
+    profiles: [site, app]
+    appliesTo: [Page]
+    tags: [app, importmap, resource-boundary]
+    fix: "Use a valid inline JSON import map with string addresses, before dependent module execution. Preserve type=importmap through saving/rendering. A normal inline import map is supported; module loading still requires runtime verification."
+
+  - id: PF-FRONTEND-001
+    advisory: true
+    customCheck: imageSourcePolicy
+    capability: assets
+    title: "Review placeholder image sources against the asset plan"
+    severity: BLOCKER
+    profiles: [site, app]
+    appliesTo: [Page, Layout, View, Style, Script]
+    tags: [image, asset]
+    fix: "Review random placeholder image URLs against the approved asset plan. User-selected or verified external assets and attribution links are allowed; use a suitable real asset or ImagePlaceholder only when replacement is needed."
+
+  - id: PF-KOBOO-RESOURCE-002
+    capability: assets
+    profiles: [site, app]
+    title: Local static-resource references must use existing Route URLs
+    severity: HIGH
+    knownErrorId: KOOB-RESOURCE-REFERENCE
+    debugPriority: normal
+    debugPlaybookAnchor: 7-koob-resource-reference
+    appliesTo: [Page, Layout, View, Style, Script]
+    tags: [resource, route, network, cross-artifact]
+    implementation: scanCrossArtifactLocalResourceRoutes
+    fix: "Resolve references against the real owning Page/Style/Script URL, including base href where present, and confirm the target resource route exists. Relative URLs are allowed when they resolve correctly. Verify bare module imports through the Page import map and browser module loading. A missing route for a static import or script src is a BLOCKER: one failed module request stops the whole module graph and leaves the page blank."

@@ -1,0 +1,35 @@
+{
+  "type": "function",
+  "function": {
+    "name": "run_skill_script",
+    "description": "Runs a JavaScript file associated with a skill. Prefer the canonical skill-relative path shown by the skill, such as scripts/search.js; a unique basename such as search.js or search is also accepted.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "skillName": {
+          "type": "string",
+          "description": "Exact skill name returned by load_skill, for example ui-ux-pro-max-pp."
+        },
+        "scriptName": {
+          "type": "string",
+          "description": "Canonical path relative to the skill root, for example scripts/search.js. A unique basename with or without the .js extension is also accepted."
+        },
+        "arguments": {
+          "description": "Arguments passed to the script. Do not place skillName or scriptName inside this object."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "skillName",
+        "scriptName"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

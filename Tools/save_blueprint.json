@@ -1,0 +1,216 @@
+{
+  "type": "function",
+  "function": {
+    "name": "save_blueprint",
+    "description": "Save the reviewed initial Blueprint structure: root, Actors, Goals, Modules, Scenarios and their relations. For root updates, submit the root with its stable ID. Save subsequent semantic objects individually using save_actor, save_goal, save_module, save_scenario, save_fact, save_business_object, save_business_rule and save_user_story. This records semantics only, without runtime implementation. Only call after user approval.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "proposal": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "blueprint": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            "actors": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "type": {
+                    "enum": [
+                      "human",
+                      "system"
+                    ]
+                  },
+                  "boundary": {
+                    "enum": [
+                      "internal",
+                      "external"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "goals": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "modules": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "scenarios": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "relations": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "sourceType": {
+                    "enum": [
+                      "blueprint",
+                      "goal",
+                      "actor",
+                      "scenario",
+                      "module"
+                    ]
+                  },
+                  "sourceId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "targetType": {
+                    "enum": [
+                      "blueprint",
+                      "goal",
+                      "actor",
+                      "scenario",
+                      "module"
+                    ]
+                  },
+                  "targetId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "proposal"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

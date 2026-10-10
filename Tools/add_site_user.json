@@ -1,0 +1,27 @@
+{
+  "type": "function",
+  "function": {
+    "name": "add_site_user",
+    "description": "Add a user to current site by username. Role is optional; default is master.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "userName": {
+          "type": "string",
+          "description": "Username to add to current site"
+        },
+        "role": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional role name. Defaults to master. Common values: master, developer, contentmanager, member"
+        }
+      },
+      "required": [
+        "userName"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

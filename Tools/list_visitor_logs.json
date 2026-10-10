@@ -1,0 +1,69 @@
+{
+  "type": "function",
+  "function": {
+    "name": "list_visitor_logs",
+    "description": "List paginated visitor analytics logs for the current site. Supports inclusive dates, human/bot/error type, status, mobile, keyword, and pagination filters.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Available values: all, human, bot, or error."
+        },
+        "isMobile": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Optional mobile-device filter."
+        },
+        "pageIndex": {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Page index for pagination. Default 1."
+        },
+        "pageSize": {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Page size for pagination. Default 20, maximum 200."
+        },
+        "keyword": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional case-insensitive search keyword."
+        },
+        "statusCode": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Optional exact HTTP status code."
+        },
+        "startDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Inclusive analytics date in yyyy-MM-dd format. Defaults to Monday of the current analytics week."
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Inclusive analytics date in yyyy-MM-dd format. Defaults to the current analytics day."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

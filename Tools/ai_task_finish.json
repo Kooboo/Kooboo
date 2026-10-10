@@ -1,0 +1,28 @@
+{
+  "type": "function",
+  "function": {
+    "name": "ai_task_finish",
+    "description": "",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "Success",
+            "Warning",
+            "Suggestion"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "description": "one short text (no more than 50 words) summarizing the result or why the task could not be completed"
+        }
+      },
+      "required": [
+        "status",
+        "message"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

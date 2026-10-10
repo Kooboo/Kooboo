@@ -1,0 +1,18 @@
+{
+  "tables": [
+    {
+      "name": "AppNotifications",
+      "columns": [
+        { "name": "Id", "type": "TEXT", "primaryKey": true },
+        { "name": "RecipientUserId", "type": "TEXT", "notNull": true },
+        { "name": "Type", "type": "TEXT", "notNull": true },
+        { "name": "Title", "type": "TEXT", "notNull": true },
+        { "name": "Message", "type": "TEXT" },
+        { "name": "ActionUrl", "type": "TEXT" },
+        { "name": "MetadataJson", "type": "TEXT" },
+        { "name": "ReadAt", "type": "TEXT" },
+        { "name": "CreatedAt", "type": "TEXT", "notNull": true }
+      ]
+    }
+  ]
+}

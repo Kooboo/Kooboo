@@ -1,0 +1,20 @@
+{
+  "type": "function",
+  "function": {
+    "name": "list_database_table",
+    "description": "List user tables in the site\u0027s internal SQLite database.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

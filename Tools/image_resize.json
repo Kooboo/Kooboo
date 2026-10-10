@@ -1,0 +1,45 @@
+{
+  "type": "function",
+  "function": {
+    "name": "image_resize",
+    "description": "Resize an image stored as a site Image, CmsFile, or FileIO file while preserving its aspect ratio. The result overwrites the source unless SaveAs is provided, and the saved path is returned.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "width": {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Nonnegative integer width in pixels, default 0. Set 0 to calculate from height. At least one of width or height must be greater than 0."
+        },
+        "height": {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Nonnegative integer height in pixels, default 0. Set 0 to calculate from width. At least one of width or height must be greater than 0."
+        },
+        "saveAs": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional output path. When omitted, the source image is overwritten."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

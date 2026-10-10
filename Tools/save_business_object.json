@@ -1,0 +1,247 @@
+{
+  "type": "function",
+  "function": {
+    "name": "save_business_object",
+    "description": "Save one reviewed enriched Business Object through the shared Blueprint save contract. Requires an existing reviewed Blueprint graph. Source Facts must exist and the update must preserve valid existing rule references. Reuse the Business Object id for updates. Only call after user approval.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "businessObject": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "englishName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "otherNames": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              }
+            },
+            "dbName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "modelKind": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "storage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "humanDefined": {
+              "type": "boolean"
+            },
+            "sourceFactIds": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "fields": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "objectId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "englishName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "otherNames": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "dbName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "valueObjectTypeId": true,
+                  "valueType": {
+                    "enum": [
+                      "text",
+                      "integer",
+                      "decimal",
+                      "boolean",
+                      "date",
+                      "datetime",
+                      "money",
+                      "enum"
+                    ]
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "identifier": {
+                    "type": "boolean"
+                  },
+                  "unique": {
+                    "type": "boolean"
+                  },
+                  "computed": {
+                    "type": "boolean"
+                  },
+                  "humanDefined": {
+                    "type": "boolean"
+                  },
+                  "sourceFactIds": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  },
+                  "allowedValues": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "stateDimensions": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "initialStateId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "states": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "terminal": {
+                          "type": "boolean"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "businessObject"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

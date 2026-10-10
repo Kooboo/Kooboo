@@ -1,0 +1,28 @@
+{
+  "type": "function",
+  "function": {
+    "name": "compare_history_versions",
+    "description": "Compare two history versions of the same CMS object.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "firstLogId": {
+          "type": "integer",
+          "description": "Positive log ID of the first version."
+        },
+        "secondLogId": {
+          "type": "integer",
+          "description": "Positive log ID of the second version."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

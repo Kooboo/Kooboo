@@ -1,0 +1,190 @@
+{
+  "type": "function",
+  "function": {
+    "name": "update_planning_topic",
+    "description": "Create or replace one site-level planning topic by stable ID. Pass the complete topic under item, not as top-level fields: { item: { id, kind, question, context, status, impact, resolveBefore, ... }, expectedUpdatedAt? }. Follow the tool schema for required fields and enums; title is not a topic field. Read an existing item before updating it; pass the response updatedAt as expectedUpdatedAt and preserve its unrelated fields. Omit expectedUpdatedAt only when creating a new ID. On TOPICS_CHANGED, reread and merge with the current answer and confirmation evidence; never retry the stale item blindly. Use open for a question or assumption, answered for an unconfirmed answer, and confirmed/dismissed only when the user explicitly confirmed the answer or dismissed the topic; quote that response in confirmationEvidence. AI suggestions alone are not confirmation. This records discussion only: it does not update Blueprint/App Plan or authorize implementation.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "kind": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "assumption or open-question."
+            },
+            "question": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The business question to clarify, including for an assumption."
+            },
+            "context": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "suggestion": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Proposed answer or assumption; null when there is no suggestion."
+            },
+            "options": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "description"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "answer": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "open, answered, confirmed or dismissed. Answered is still unconfirmed."
+            },
+            "confirmationEvidence": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "User\u0027s explicit confirmation or dismissal and its context; required for confirmed/dismissed, otherwise null. This is a discussion record, not an authorization token."
+            },
+            "impact": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "low, medium or high."
+            },
+            "resolveBefore": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "app-plan-creation, implementation or production-release. Unconfirmed items block the named stage and later stages."
+            },
+            "scope": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "artifact": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "site, blueprint or app-plan; categorizes the discussion without embedding it in that document."
+                },
+                "relatedIds": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Related business/planning object IDs for navigation; may refer to objects not planned yet."
+                },
+                "milestoneIds": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Restrict implementation blocking to these Milestone IDs; empty applies to all. Does not restrict the app-plan-creation gate."
+                }
+              },
+              "required": [
+                "artifact"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "question",
+            "context",
+            "status",
+            "impact",
+            "resolveBefore",
+            "scope"
+          ],
+          "additionalProperties": false
+        },
+        "expectedUpdatedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Required for replacing an existing topic: copy updatedAt from the latest read_planning_topics response. Omit only for a new ID. TOPICS_CHANGED requires rereading and merging with current user answers before retrying."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "item"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

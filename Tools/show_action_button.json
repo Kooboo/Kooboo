@@ -1,0 +1,32 @@
+{
+  "type": "function",
+  "function": {
+    "name": "show_action_button",
+    "description": "Show a simple clickable action button in the AI chat with optional explanatory text and a target link.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional short message shown above or beside the button to explain why the user should click it."
+        },
+        "label": {
+          "type": "string",
+          "description": "Required short button label shown to the user."
+        },
+        "url": {
+          "type": "string",
+          "description": "Required target link. Use an https/http URL or a Kooboo relative path that starts with \u0027/\u0027."
+        }
+      },
+      "required": [
+        "label",
+        "url"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

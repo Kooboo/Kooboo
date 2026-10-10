@@ -1,0 +1,30 @@
+{
+  "type": "function",
+  "function": {
+    "name": "create_sandbox",
+    "description": "Create a new sandbox site.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "siteName": {
+          "type": "string",
+          "description": "Name suffix of the new sandbox site"
+        },
+        "contentTypes": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Content types to copy from the current site into the sandbox. Available values: Layout, View, Style, Script, Image, File, Menu, HtmlBlock, Label, Form, ContentFolder, ContentType, ContentCategory, TextContent, Code, OpenApi, Page. Leave empty to create an empty sandbox."
+        }
+      },
+      "required": [
+        "siteName"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

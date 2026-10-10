@@ -1,0 +1,17 @@
+# Kooboo Preflight assembly capability rules
+
+rules:
+  - id: PF-KOBOO-TEMPLATE-022
+    advisory: true
+    customCheck: pageSkeleton
+    capability: html
+    profiles: [site, app]
+    title: Static delivery must not leave empty Page block skeletons
+    severity: BLOCKER
+    knownErrorId: KOOB-LAYOUT-PAGE-ASSEMBLY
+    debugPriority: immediate
+    debugPlaybookAnchor: 5-koob-layout-page-assembly
+    appliesTo: [Page]
+    requiredStage: static-first
+    tags: [template, page, view, assembly, completeness]
+    fix: "Confirm whether the empty data-block is an unfinished Page Plan skeleton or an intentional client mount. Complete only unfinished assembly; preserve intentional mounts."

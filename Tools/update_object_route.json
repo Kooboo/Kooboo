@@ -1,0 +1,30 @@
+{
+  "type": "function",
+  "function": {
+    "name": "update_object_route",
+    "description": "Update the route (URL) of a site object by specifying the old URL and the new URL.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "oldUrl": {
+          "type": "string"
+        },
+        "newUrl": {
+          "type": "string"
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "oldUrl",
+        "newUrl"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "type": "function",
+  "function": {
+    "name": "list_order",
+    "description": "List orders in descending creation time, with optional status/customer filter and pagination by skip/take.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional order status filter. Supported values: Normal, Paid, Unpaid, Canceled."
+        },
+        "customerId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional customer id filter. Only returns orders for the specified customer."
+        },
+        "skip": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Nonnegative integer offset, default 0. Negative values are treated as 0. For the next page, add the number of returned items to skip."
+        },
+        "take": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Nonnegative integer result limit. Omitted or null returns all remaining items; use an explicit budget such as 20 for paging. Zero returns no items; negative values are treated as 0."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

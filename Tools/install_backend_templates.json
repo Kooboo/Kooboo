@@ -1,0 +1,32 @@
+{
+  "type": "function",
+  "function": {
+    "name": "install_backend_templates",
+    "description": "Copy selected backend templates into the current site as application-owned CodeBlocks and routed APIs, without requiring App Base or an App Plan. Discover IDs with read_skill_resource (skillName=kooboo-coding, resourceName=assets/backend-templates/index.json), then read the selected template README. Identical existing objects are skipped; different same-name code is a conflict and no templates are written. Never overwrite or upgrade existing code. Users may edit or remove the copies; no runtime response format is enforced. The catalog is authoritative for available capabilities. Read each selected guide for identity integration, configuration and access boundaries. After adding notifications to an existing App Base, explicitly enable appConfig.notificationsEnabled; this tool never rewrites frontend code. DatabaseDefinitions returns package resource paths with status not-checked. No tables are checked or created. Before real API use, read those resources and initialize required storage with SQLite Functions, preserving existing schemas and data. Mock preview needs no tables.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "templates": {
+          "type": [
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Exact template IDs from assets/backend-templates/index.json, e.g. [\u0027response\u0027]. Only selected templates are copied; [] performs no writes. Reinstallation never overwrites customized code."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "templates"
+      ]
+    }
+  }
+}

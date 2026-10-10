@@ -1,0 +1,36 @@
+{
+  "type": "function",
+  "function": {
+    "name": "update_htmlblock",
+    "description": "Update the HTML content of a specified HtmlBlock by name and culture/language.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "culture": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "html": {
+          "type": "string"
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "name",
+        "html"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

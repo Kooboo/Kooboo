@@ -1,0 +1,26 @@
+{
+  "type": "function",
+  "function": {
+    "name": "get_product_detail",
+    "description": "Get detailed information of a product by its id or seoName, including variants and categories.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "seoNameOrId": {
+          "type": "string"
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "seoNameOrId"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

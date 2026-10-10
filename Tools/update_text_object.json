@@ -1,0 +1,71 @@
+{
+  "type": "function",
+  "function": {
+    "name": "update_text_object",
+    "description": "Update a text object (Page, Layout, View, Script, Style, Api, CodeBlock). Top-level arguments are nameOrId, objectType, and updates. oldContent and newContent belong inside each updates item, not at the top level, and nameOrId/objectType do not belong inside updates. Read the current object with read_object_text(showLineNumber=false) before preparing a patch; do not reconstruct it from earlier generated code. startLine is an optional search lower bound on an updates item, not an insertion line: omit it unless needed to disambiguate. To append, match the last nonempty source text and include it plus the appended text in newContent; do not use a displayed EOF blank line as oldContent. Updates apply sequentially and the batch is saved only if all matches succeed. After a match failure, reread the object and rebuild the patch rather than retrying guessed text or line numbers.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "nameOrId": {
+          "type": "string",
+          "description": "The unique Identifier (GUID) or Name of the object to be read."
+        },
+        "objectType": {
+          "enum": [
+            "Page",
+            "View",
+            "Layout",
+            "Script",
+            "Style",
+            "Api",
+            "CodeBlock"
+          ]
+        },
+        "updates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "startLine": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1,
+                "maximum": 2147483647,
+                "description": "Optional search lower bound, 1 to 2147483647. Omit or null searches from the beginning. This is NOT an insertion position. Never choose a line after oldContent begins; later patches use the text produced by earlier patches."
+              },
+              "oldContent": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Nonempty source text from read_object_text(showLineNumber=false). Exclude display prefixes and preserve actual trailing newlines. For appending, match the final nonempty source fragment and include it before the appended text in newContent."
+              },
+              "newContent": {
+                "type": "string",
+                "description": "The replacement text that will overwrite the matched content."
+              }
+            },
+            "required": [
+              "oldContent",
+              "newContent"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "nameOrId",
+        "objectType",
+        "updates"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

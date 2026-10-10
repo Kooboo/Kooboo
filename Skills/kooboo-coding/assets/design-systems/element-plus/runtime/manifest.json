@@ -1,0 +1,2047 @@
+{
+  "schemaVersion": 2,
+  "id": "element-plus",
+  "name": "Element Plus",
+  "version": "0.3.0",
+  "upstream": {
+    "name": "element-plus",
+    "version": "2.14.5",
+    "license": "MIT",
+    "repository": "git+https://github.com/element-plus/element-plus.git",
+    "vue": "3.5.13",
+    "distribution": "dist/index.full.min.mjs",
+    "url": "https://cdn.jsdelivr.net/npm/element-plus@2.14.5/dist/index.full.min.mjs",
+    "sha256": "59be33bc2940648ec88ddacdf9b0b98d5740b9e14dadc9ecad8a678555978fef",
+    "cssSha256": "b8e0285a92f57d52d66c8d07fe2d1e135eb6b2cf3f467840ddb72bb76e92b4dc"
+  },
+  "buildStrategy": "fixed-assets",
+  "moduleUrl": "/element-plus.js",
+  "guide": "runtime/usage.md",
+  "shell": {
+    "id": "element-plus-workspace",
+    "source": "runtime/layout.default.js"
+  },
+  "files": [
+    {
+      "type": "Script",
+      "name": "element-plus.vendor.js",
+      "source": "runtime/element-plus.vendor.js"
+    },
+    {
+      "type": "Script",
+      "name": "element-plus.js",
+      "source": "runtime/element-plus.js"
+    },
+    {
+      "type": "Style",
+      "name": "element-plus.css",
+      "source": "runtime/element-plus.css"
+    },
+    {
+      "type": "Style",
+      "name": "element-plus.adapters.css",
+      "source": "runtime/element-plus.adapters.css"
+    }
+  ],
+  "exports": [
+    {
+      "name": "ElAffix",
+      "slug": "el-affix",
+      "kind": "component",
+      "summary": "Fix the element to a specific visible area.",
+      "api": "runtime/api/el-affix.md",
+      "sourceComponents": [
+        "affix"
+      ]
+    },
+    {
+      "name": "ElAlert",
+      "slug": "el-alert",
+      "kind": "component",
+      "summary": "Displays important alert messages.",
+      "api": "runtime/api/el-alert.md",
+      "sourceComponents": [
+        "alert"
+      ]
+    },
+    {
+      "name": "ElAnchor",
+      "slug": "el-anchor",
+      "kind": "component",
+      "summary": "Through the anchor point, you can quickly find the position of the information content on the current page.",
+      "api": "runtime/api/el-anchor.md",
+      "sourceComponents": [
+        "anchor"
+      ]
+    },
+    {
+      "name": "ElAnchorLink",
+      "slug": "el-anchor-link",
+      "kind": "component",
+      "summary": "ElAnchorLink: native Element Plus component.",
+      "api": "runtime/api/el-anchor-link.md",
+      "sourceComponents": [
+        "anchor"
+      ]
+    },
+    {
+      "name": "ElAside",
+      "slug": "el-aside",
+      "kind": "component",
+      "summary": "ElAside: native Element Plus component.",
+      "api": "runtime/api/el-aside.md",
+      "sourceComponents": [
+        "container"
+      ]
+    },
+    {
+      "name": "ElAutocomplete",
+      "slug": "el-autocomplete",
+      "kind": "component",
+      "summary": "Get some recommended tips based on the current input.",
+      "api": "runtime/api/el-autocomplete.md",
+      "sourceComponents": [
+        "autocomplete"
+      ]
+    },
+    {
+      "name": "ElAutoResizer",
+      "slug": "el-auto-resizer",
+      "kind": "component",
+      "summary": "Measure available width/height for virtual tables using a scoped default slot.",
+      "api": "runtime/api/el-auto-resizer.md",
+      "sourceComponents": [
+        "table-v2"
+      ]
+    },
+    {
+      "name": "ElAvatar",
+      "slug": "el-avatar",
+      "kind": "component",
+      "summary": "Avatars can be used to represent people or objects. It supports images, Icons, or characters.",
+      "api": "runtime/api/el-avatar.md",
+      "sourceComponents": [
+        "avatar"
+      ]
+    },
+    {
+      "name": "ElAvatarGroup",
+      "slug": "el-avatar-group",
+      "kind": "component",
+      "summary": "ElAvatarGroup: native Element Plus component.",
+      "api": "runtime/api/el-avatar-group.md",
+      "sourceComponents": [
+        "avatar"
+      ]
+    },
+    {
+      "name": "ElBacktop",
+      "slug": "el-backtop",
+      "kind": "component",
+      "summary": "A button to back to top.",
+      "api": "runtime/api/el-backtop.md",
+      "sourceComponents": [
+        "backtop"
+      ]
+    },
+    {
+      "name": "ElBadge",
+      "slug": "el-badge",
+      "kind": "component",
+      "summary": "A number or status mark on buttons and icons.",
+      "api": "runtime/api/el-badge.md",
+      "sourceComponents": [
+        "badge"
+      ]
+    },
+    {
+      "name": "ElBreadcrumb",
+      "slug": "el-breadcrumb",
+      "kind": "component",
+      "summary": "Displays the location of the current page, making it easier to browser back.",
+      "api": "runtime/api/el-breadcrumb.md",
+      "sourceComponents": [
+        "breadcrumb"
+      ]
+    },
+    {
+      "name": "ElBreadcrumbItem",
+      "slug": "el-breadcrumb-item",
+      "kind": "component",
+      "summary": "ElBreadcrumbItem: native Element Plus component.",
+      "api": "runtime/api/el-breadcrumb-item.md",
+      "sourceComponents": [
+        "breadcrumb"
+      ]
+    },
+    {
+      "name": "ElButton",
+      "slug": "el-button",
+      "kind": "component",
+      "summary": "Commonly used button.",
+      "api": "runtime/api/el-button.md",
+      "sourceComponents": [
+        "button"
+      ]
+    },
+    {
+      "name": "ElButtonGroup",
+      "slug": "el-button-group",
+      "kind": "component",
+      "summary": "ElButtonGroup: native Element Plus component.",
+      "api": "runtime/api/el-button-group.md",
+      "sourceComponents": [
+        "button"
+      ]
+    },
+    {
+      "name": "ElCalendar",
+      "slug": "el-calendar",
+      "kind": "component",
+      "summary": "Display date.",
+      "api": "runtime/api/el-calendar.md",
+      "sourceComponents": [
+        "calendar"
+      ]
+    },
+    {
+      "name": "ElCard",
+      "slug": "el-card",
+      "kind": "component",
+      "summary": "Integrate information in a card container.",
+      "api": "runtime/api/el-card.md",
+      "sourceComponents": [
+        "card"
+      ]
+    },
+    {
+      "name": "ElCarousel",
+      "slug": "el-carousel",
+      "kind": "component",
+      "summary": "Loop a series of images or texts in a limited space",
+      "api": "runtime/api/el-carousel.md",
+      "sourceComponents": [
+        "carousel"
+      ]
+    },
+    {
+      "name": "ElCarouselItem",
+      "slug": "el-carousel-item",
+      "kind": "component",
+      "summary": "ElCarouselItem: native Element Plus component.",
+      "api": "runtime/api/el-carousel-item.md",
+      "sourceComponents": [
+        "carousel"
+      ]
+    },
+    {
+      "name": "ElCascader",
+      "slug": "el-cascader",
+      "kind": "component",
+      "summary": "If the options have a clear hierarchical structure, Cascader can be used to view and select them.",
+      "api": "runtime/api/el-cascader.md",
+      "sourceComponents": [
+        "cascader"
+      ]
+    },
+    {
+      "name": "ElCascaderPanel",
+      "slug": "el-cascader-panel",
+      "kind": "component",
+      "summary": "ElCascaderPanel: native Element Plus component.",
+      "api": "runtime/api/el-cascader-panel.md",
+      "sourceComponents": [
+        "cascader-panel"
+      ]
+    },
+    {
+      "name": "ElCheckbox",
+      "slug": "el-checkbox",
+      "kind": "component",
+      "summary": "A group of options for multiple choices.",
+      "api": "runtime/api/el-checkbox.md",
+      "sourceComponents": [
+        "checkbox"
+      ]
+    },
+    {
+      "name": "ElCheckboxButton",
+      "slug": "el-checkbox-button",
+      "kind": "component",
+      "summary": "ElCheckboxButton: native Element Plus component.",
+      "api": "runtime/api/el-checkbox-button.md",
+      "sourceComponents": [
+        "checkbox"
+      ]
+    },
+    {
+      "name": "ElCheckboxGroup",
+      "slug": "el-checkbox-group",
+      "kind": "component",
+      "summary": "ElCheckboxGroup: native Element Plus component.",
+      "api": "runtime/api/el-checkbox-group.md",
+      "sourceComponents": [
+        "checkbox"
+      ]
+    },
+    {
+      "name": "ElCheckTag",
+      "slug": "el-check-tag",
+      "kind": "component",
+      "summary": "ElCheckTag: native Element Plus component.",
+      "api": "runtime/api/el-check-tag.md",
+      "sourceComponents": [
+        "check-tag"
+      ]
+    },
+    {
+      "name": "ElCol",
+      "slug": "el-col",
+      "kind": "component",
+      "summary": "ElCol: native Element Plus component.",
+      "api": "runtime/api/el-col.md",
+      "sourceComponents": [
+        "col"
+      ]
+    },
+    {
+      "name": "ElCollapse",
+      "slug": "el-collapse",
+      "kind": "component",
+      "summary": "Use Collapse to store contents.",
+      "api": "runtime/api/el-collapse.md",
+      "sourceComponents": [
+        "collapse"
+      ]
+    },
+    {
+      "name": "ElCollapseItem",
+      "slug": "el-collapse-item",
+      "kind": "component",
+      "summary": "ElCollapseItem: native Element Plus component.",
+      "api": "runtime/api/el-collapse-item.md",
+      "sourceComponents": [
+        "collapse"
+      ]
+    },
+    {
+      "name": "ElCollapseTransition",
+      "slug": "el-collapse-transition",
+      "kind": "component",
+      "summary": "Native Element Plus height transition wrapper.",
+      "api": "runtime/api/el-collapse-transition.md",
+      "sourceComponents": [
+        "collapse-transition"
+      ]
+    },
+    {
+      "name": "ElColorPicker",
+      "slug": "el-color-picker",
+      "kind": "component",
+      "summary": "ColorPicker is a color selector supporting multiple color formats.",
+      "api": "runtime/api/el-color-picker.md",
+      "sourceComponents": [
+        "color-picker"
+      ]
+    },
+    {
+      "name": "ElColorPickerPanel",
+      "slug": "el-color-picker-panel",
+      "kind": "component",
+      "summary": "`ColorPickerPanel` is the core component of `ColorPicker`.",
+      "api": "runtime/api/el-color-picker-panel.md",
+      "sourceComponents": [
+        "color-picker-panel"
+      ]
+    },
+    {
+      "name": "ElConfigProvider",
+      "slug": "el-config-provider",
+      "kind": "component",
+      "summary": "Config Provider is used for providing global configurations, which enables your entire application to access these configurations everywhere.",
+      "api": "runtime/api/el-config-provider.md",
+      "sourceComponents": [
+        "config-provider"
+      ]
+    },
+    {
+      "name": "ElContainer",
+      "slug": "el-container",
+      "kind": "component",
+      "summary": "Container components for scaffolding basic structure of the page:",
+      "api": "runtime/api/el-container.md",
+      "sourceComponents": [
+        "container"
+      ]
+    },
+    {
+      "name": "ElCountdown",
+      "slug": "el-countdown",
+      "kind": "component",
+      "summary": ":::demo Countdown component, support to add other components control countdown.",
+      "api": "runtime/api/el-countdown.md",
+      "sourceComponents": [
+        "countdown"
+      ]
+    },
+    {
+      "name": "ElDatePicker",
+      "slug": "el-date-picker",
+      "kind": "component",
+      "summary": "Use Date Picker for date input.",
+      "api": "runtime/api/el-date-picker.md",
+      "sourceComponents": [
+        "date-picker"
+      ]
+    },
+    {
+      "name": "ElDatePickerPanel",
+      "slug": "el-date-picker-panel",
+      "kind": "component",
+      "summary": "`DatePickerPanel` is the core component of `DatePicker`.",
+      "api": "runtime/api/el-date-picker-panel.md",
+      "sourceComponents": [
+        "date-picker-panel"
+      ]
+    },
+    {
+      "name": "ElDescriptions",
+      "slug": "el-descriptions",
+      "kind": "component",
+      "summary": "Display multiple fields in list form.",
+      "api": "runtime/api/el-descriptions.md",
+      "sourceComponents": [
+        "descriptions"
+      ]
+    },
+    {
+      "name": "ElDescriptionsItem",
+      "slug": "el-descriptions-item",
+      "kind": "component",
+      "summary": "ElDescriptionsItem: native Element Plus component.",
+      "api": "runtime/api/el-descriptions-item.md",
+      "sourceComponents": [
+        "descriptions"
+      ]
+    },
+    {
+      "name": "ElDialog",
+      "slug": "el-dialog",
+      "kind": "component",
+      "summary": "Informs users while preserving the current page state.",
+      "api": "runtime/api/el-dialog.md",
+      "sourceComponents": [
+        "dialog"
+      ]
+    },
+    {
+      "name": "ElDivider",
+      "slug": "el-divider",
+      "kind": "component",
+      "summary": "The dividing line that separates the content.",
+      "api": "runtime/api/el-divider.md",
+      "sourceComponents": [
+        "divider"
+      ]
+    },
+    {
+      "name": "ElDrawer",
+      "slug": "el-drawer",
+      "kind": "component",
+      "summary": "Sometimes, `Dialog` does not always satisfy our requirements, let's say you have a massive form, or you need space to display something like `terms & conditions`, `Drawer` has almost identical API with `Dialog`, but it introduces different user experience.",
+      "api": "runtime/api/el-drawer.md",
+      "sourceComponents": [
+        "drawer"
+      ]
+    },
+    {
+      "name": "ElDropdown",
+      "slug": "el-dropdown",
+      "kind": "component",
+      "summary": "Toggleable menu for displaying lists of links and actions.",
+      "api": "runtime/api/el-dropdown.md",
+      "sourceComponents": [
+        "dropdown"
+      ]
+    },
+    {
+      "name": "ElDropdownItem",
+      "slug": "el-dropdown-item",
+      "kind": "component",
+      "summary": "ElDropdownItem: native Element Plus component.",
+      "api": "runtime/api/el-dropdown-item.md",
+      "sourceComponents": [
+        "dropdown"
+      ]
+    },
+    {
+      "name": "ElDropdownMenu",
+      "slug": "el-dropdown-menu",
+      "kind": "component",
+      "summary": "ElDropdownMenu: native Element Plus component.",
+      "api": "runtime/api/el-dropdown-menu.md",
+      "sourceComponents": [
+        "dropdown"
+      ]
+    },
+    {
+      "name": "ElEmpty",
+      "slug": "el-empty",
+      "kind": "component",
+      "summary": "Placeholder hints for empty states.",
+      "api": "runtime/api/el-empty.md",
+      "sourceComponents": [
+        "empty"
+      ]
+    },
+    {
+      "name": "ElFooter",
+      "slug": "el-footer",
+      "kind": "component",
+      "summary": "ElFooter: native Element Plus component.",
+      "api": "runtime/api/el-footer.md",
+      "sourceComponents": [
+        "container"
+      ]
+    },
+    {
+      "name": "ElForm",
+      "slug": "el-form",
+      "kind": "component",
+      "summary": "Form consists of `input`, `radio`, `select`, `checkbox` and so on. With form, you can collect, verify and submit data.",
+      "api": "runtime/api/el-form.md",
+      "sourceComponents": [
+        "form"
+      ]
+    },
+    {
+      "name": "ElFormItem",
+      "slug": "el-form-item",
+      "kind": "component",
+      "summary": "ElFormItem: native Element Plus component.",
+      "api": "runtime/api/el-form-item.md",
+      "sourceComponents": [
+        "form"
+      ]
+    },
+    {
+      "name": "ElHeader",
+      "slug": "el-header",
+      "kind": "component",
+      "summary": "ElHeader: native Element Plus component.",
+      "api": "runtime/api/el-header.md",
+      "sourceComponents": [
+        "container"
+      ]
+    },
+    {
+      "name": "ElIcon",
+      "slug": "el-icon",
+      "kind": "component",
+      "summary": "Element Plus provides a set of common icons.",
+      "api": "runtime/api/el-icon.md",
+      "sourceComponents": [
+        "icon"
+      ]
+    },
+    {
+      "name": "ElImage",
+      "slug": "el-image",
+      "kind": "component",
+      "summary": "Besides the native features of img, support lazy load, custom placeholder and load failure, etc.",
+      "api": "runtime/api/el-image.md",
+      "sourceComponents": [
+        "image"
+      ]
+    },
+    {
+      "name": "ElImageViewer",
+      "slug": "el-image-viewer",
+      "kind": "component",
+      "summary": "ElImageViewer: native Element Plus component.",
+      "api": "runtime/api/el-image-viewer.md",
+      "sourceComponents": [
+        "image-viewer"
+      ]
+    },
+    {
+      "name": "ElInput",
+      "slug": "el-input",
+      "kind": "component",
+      "summary": "Input data using mouse or keyboard.",
+      "api": "runtime/api/el-input.md",
+      "sourceComponents": [
+        "input"
+      ]
+    },
+    {
+      "name": "ElInputNumber",
+      "slug": "el-input-number",
+      "kind": "component",
+      "summary": "Input numerical values with a customizable range.",
+      "api": "runtime/api/el-input-number.md",
+      "sourceComponents": [
+        "input-number"
+      ]
+    },
+    {
+      "name": "ElInputOtp",
+      "slug": "el-input-otp",
+      "kind": "component",
+      "summary": "Used to enter a one-time password",
+      "api": "runtime/api/el-input-otp.md",
+      "sourceComponents": [
+        "input-otp"
+      ]
+    },
+    {
+      "name": "ElInputTag",
+      "slug": "el-input-tag",
+      "kind": "component",
+      "summary": "The InputTag component allows users to add content as tags.",
+      "api": "runtime/api/el-input-tag.md",
+      "sourceComponents": [
+        "input-tag"
+      ]
+    },
+    {
+      "name": "ElLink",
+      "slug": "el-link",
+      "kind": "component",
+      "summary": "Text hyperlink",
+      "api": "runtime/api/el-link.md",
+      "sourceComponents": [
+        "link"
+      ]
+    },
+    {
+      "name": "ElLoadingDirective",
+      "slug": "el-loading-directive",
+      "kind": "directive",
+      "summary": "Vue directive for v-loading; register locally as loading.",
+      "api": "runtime/api/el-loading-directive.md",
+      "sourceComponents": [
+        "loading"
+      ]
+    },
+    {
+      "name": "ElLoadingService",
+      "slug": "el-loading-service",
+      "kind": "service",
+      "summary": "Imperative loading overlay service; close it when the request settles.",
+      "api": "runtime/api/el-loading-service.md",
+      "sourceComponents": [
+        "loading"
+      ]
+    },
+    {
+      "name": "ElMain",
+      "slug": "el-main",
+      "kind": "component",
+      "summary": "ElMain: native Element Plus component.",
+      "api": "runtime/api/el-main.md",
+      "sourceComponents": [
+        "container"
+      ]
+    },
+    {
+      "name": "ElMention",
+      "slug": "el-mention",
+      "kind": "component",
+      "summary": "Used to mention someone or something in an input.",
+      "api": "runtime/api/el-mention.md",
+      "sourceComponents": [
+        "mention"
+      ]
+    },
+    {
+      "name": "ElMenu",
+      "slug": "el-menu",
+      "kind": "component",
+      "summary": "Menu that provides navigation for your website.",
+      "api": "runtime/api/el-menu.md",
+      "sourceComponents": [
+        "menu"
+      ]
+    },
+    {
+      "name": "ElMenuItem",
+      "slug": "el-menu-item",
+      "kind": "component",
+      "summary": "ElMenuItem: native Element Plus component.",
+      "api": "runtime/api/el-menu-item.md",
+      "sourceComponents": [
+        "menu"
+      ]
+    },
+    {
+      "name": "ElMenuItemGroup",
+      "slug": "el-menu-item-group",
+      "kind": "component",
+      "summary": "ElMenuItemGroup: native Element Plus component.",
+      "api": "runtime/api/el-menu-item-group.md",
+      "sourceComponents": [
+        "menu"
+      ]
+    },
+    {
+      "name": "ElMessage",
+      "slug": "el-message",
+      "kind": "service",
+      "summary": "Imperative transient message service; call it, do not mount it as a component.",
+      "api": "runtime/api/el-message.md",
+      "sourceComponents": [
+        "message"
+      ]
+    },
+    {
+      "name": "ElMessageBox",
+      "slug": "el-message-box",
+      "kind": "service",
+      "summary": "Promise-based alert, confirmation and prompt service.",
+      "api": "runtime/api/el-message-box.md",
+      "sourceComponents": [
+        "message-box"
+      ]
+    },
+    {
+      "name": "ElNotification",
+      "slug": "el-notification",
+      "kind": "service",
+      "summary": "Imperative notification service with explicit close handler.",
+      "api": "runtime/api/el-notification.md",
+      "sourceComponents": [
+        "notification"
+      ]
+    },
+    {
+      "name": "ElOption",
+      "slug": "el-option",
+      "kind": "component",
+      "summary": "ElOption: native Element Plus component.",
+      "api": "runtime/api/el-option.md",
+      "sourceComponents": [
+        "select"
+      ]
+    },
+    {
+      "name": "ElOptionGroup",
+      "slug": "el-option-group",
+      "kind": "component",
+      "summary": "ElOptionGroup: native Element Plus component.",
+      "api": "runtime/api/el-option-group.md",
+      "sourceComponents": [
+        "select"
+      ]
+    },
+    {
+      "name": "ElPageHeader",
+      "slug": "el-page-header",
+      "kind": "component",
+      "summary": "If path of the page is simple, it is recommended to use PageHeader instead of the Breadcrumb.",
+      "api": "runtime/api/el-page-header.md",
+      "sourceComponents": [
+        "page-header"
+      ]
+    },
+    {
+      "name": "ElPagination",
+      "slug": "el-pagination",
+      "kind": "component",
+      "summary": "If you have too much data to display in one page, use pagination.",
+      "api": "runtime/api/el-pagination.md",
+      "sourceComponents": [
+        "pagination"
+      ]
+    },
+    {
+      "name": "ElPopconfirm",
+      "slug": "el-popconfirm",
+      "kind": "component",
+      "summary": "A simple confirmation dialog of an element click action.",
+      "api": "runtime/api/el-popconfirm.md",
+      "sourceComponents": [
+        "popconfirm"
+      ]
+    },
+    {
+      "name": "ElPopover",
+      "slug": "el-popover",
+      "kind": "component",
+      "summary": "ElPopover: native Element Plus component.",
+      "api": "runtime/api/el-popover.md",
+      "sourceComponents": [
+        "popover"
+      ]
+    },
+    {
+      "name": "ElProgress",
+      "slug": "el-progress",
+      "kind": "component",
+      "summary": "Progress is used to show the progress of current operation, and inform the user the current status.",
+      "api": "runtime/api/el-progress.md",
+      "sourceComponents": [
+        "progress"
+      ]
+    },
+    {
+      "name": "ElRadio",
+      "slug": "el-radio",
+      "kind": "component",
+      "summary": "Single selection among multiple options.",
+      "api": "runtime/api/el-radio.md",
+      "sourceComponents": [
+        "radio"
+      ]
+    },
+    {
+      "name": "ElRadioButton",
+      "slug": "el-radio-button",
+      "kind": "component",
+      "summary": "ElRadioButton: native Element Plus component.",
+      "api": "runtime/api/el-radio-button.md",
+      "sourceComponents": [
+        "radio"
+      ]
+    },
+    {
+      "name": "ElRadioGroup",
+      "slug": "el-radio-group",
+      "kind": "component",
+      "summary": "ElRadioGroup: native Element Plus component.",
+      "api": "runtime/api/el-radio-group.md",
+      "sourceComponents": [
+        "radio"
+      ]
+    },
+    {
+      "name": "ElRate",
+      "slug": "el-rate",
+      "kind": "component",
+      "summary": "Used for rating",
+      "api": "runtime/api/el-rate.md",
+      "sourceComponents": [
+        "rate"
+      ]
+    },
+    {
+      "name": "ElResult",
+      "slug": "el-result",
+      "kind": "component",
+      "summary": "Used to give feedback on the result of user's operation or access exception.",
+      "api": "runtime/api/el-result.md",
+      "sourceComponents": [
+        "result"
+      ]
+    },
+    {
+      "name": "ElRow",
+      "slug": "el-row",
+      "kind": "component",
+      "summary": "ElRow: native Element Plus component.",
+      "api": "runtime/api/el-row.md",
+      "sourceComponents": [
+        "row"
+      ]
+    },
+    {
+      "name": "ElScrollbar",
+      "slug": "el-scrollbar",
+      "kind": "component",
+      "summary": "Used to replace the browser's native scrollbar.",
+      "api": "runtime/api/el-scrollbar.md",
+      "sourceComponents": [
+        "scrollbar"
+      ]
+    },
+    {
+      "name": "ElSegmented",
+      "slug": "el-segmented",
+      "kind": "component",
+      "summary": "Display multiple options and allow users to select a single option.",
+      "api": "runtime/api/el-segmented.md",
+      "sourceComponents": [
+        "segmented"
+      ]
+    },
+    {
+      "name": "ElSelect",
+      "slug": "el-select",
+      "kind": "component",
+      "summary": "When there are plenty of options, use a drop-down menu to display and select desired ones.",
+      "api": "runtime/api/el-select.md",
+      "sourceComponents": [
+        "select"
+      ]
+    },
+    {
+      "name": "ElSelectV2",
+      "slug": "el-select-v2",
+      "kind": "component",
+      "summary": ":::tip",
+      "api": "runtime/api/el-select-v2.md",
+      "sourceComponents": [
+        "select-v2"
+      ]
+    },
+    {
+      "name": "ElSkeleton",
+      "slug": "el-skeleton",
+      "kind": "component",
+      "summary": "When loading data, and you need a rich experience for visual and interactions for your end users, you can choose `skeleton`.",
+      "api": "runtime/api/el-skeleton.md",
+      "sourceComponents": [
+        "skeleton"
+      ]
+    },
+    {
+      "name": "ElSkeletonItem",
+      "slug": "el-skeleton-item",
+      "kind": "component",
+      "summary": "ElSkeletonItem: native Element Plus component.",
+      "api": "runtime/api/el-skeleton-item.md",
+      "sourceComponents": [
+        "skeleton"
+      ]
+    },
+    {
+      "name": "ElSlider",
+      "slug": "el-slider",
+      "kind": "component",
+      "summary": "Drag the slider within a fixed range.",
+      "api": "runtime/api/el-slider.md",
+      "sourceComponents": [
+        "slider"
+      ]
+    },
+    {
+      "name": "ElSpace",
+      "slug": "el-space",
+      "kind": "component",
+      "summary": "Even though we have [Divider]",
+      "api": "runtime/api/el-space.md",
+      "sourceComponents": [
+        "space"
+      ]
+    },
+    {
+      "name": "ElSplitter",
+      "slug": "el-splitter",
+      "kind": "component",
+      "summary": "ElSplitter: native Element Plus component.",
+      "api": "runtime/api/el-splitter.md",
+      "sourceComponents": [
+        "splitter"
+      ]
+    },
+    {
+      "name": "ElSplitterPanel",
+      "slug": "el-splitter-panel",
+      "kind": "component",
+      "summary": "ElSplitterPanel: native Element Plus component.",
+      "api": "runtime/api/el-splitter-panel.md",
+      "sourceComponents": [
+        "splitter"
+      ]
+    },
+    {
+      "name": "ElStatistic",
+      "slug": "el-statistic",
+      "kind": "component",
+      "summary": "Display statistics.",
+      "api": "runtime/api/el-statistic.md",
+      "sourceComponents": [
+        "statistic"
+      ]
+    },
+    {
+      "name": "ElStep",
+      "slug": "el-step",
+      "kind": "component",
+      "summary": "ElStep: native Element Plus component.",
+      "api": "runtime/api/el-step.md",
+      "sourceComponents": [
+        "steps"
+      ]
+    },
+    {
+      "name": "ElSteps",
+      "slug": "el-steps",
+      "kind": "component",
+      "summary": "Guide the user to complete tasks in accordance with the process. Its steps can be set according to the actual application scenario and the number of the steps can't be less than 2.",
+      "api": "runtime/api/el-steps.md",
+      "sourceComponents": [
+        "steps"
+      ]
+    },
+    {
+      "name": "ElSubMenu",
+      "slug": "el-sub-menu",
+      "kind": "component",
+      "summary": "ElSubMenu: native Element Plus component.",
+      "api": "runtime/api/el-sub-menu.md",
+      "sourceComponents": [
+        "menu"
+      ]
+    },
+    {
+      "name": "ElSwitch",
+      "slug": "el-switch",
+      "kind": "component",
+      "summary": "Switch is used for switching between two opposing states.",
+      "api": "runtime/api/el-switch.md",
+      "sourceComponents": [
+        "switch"
+      ]
+    },
+    {
+      "name": "ElTable",
+      "slug": "el-table",
+      "kind": "component",
+      "summary": "Display multiple data with similar format. You can sort, filter, compare your data in a table.",
+      "api": "runtime/api/el-table.md",
+      "sourceComponents": [
+        "table"
+      ]
+    },
+    {
+      "name": "ElTableColumn",
+      "slug": "el-table-column",
+      "kind": "component",
+      "summary": "ElTableColumn: native Element Plus component.",
+      "api": "runtime/api/el-table-column.md",
+      "sourceComponents": [
+        "table"
+      ]
+    },
+    {
+      "name": "ElTableV2",
+      "slug": "el-table-v2",
+      "kind": "component",
+      "summary": "ElTableV2: native Element Plus component.",
+      "api": "runtime/api/el-table-v2.md",
+      "sourceComponents": [
+        "table-v2"
+      ]
+    },
+    {
+      "name": "ElTabPane",
+      "slug": "el-tab-pane",
+      "kind": "component",
+      "summary": "ElTabPane: native Element Plus component.",
+      "api": "runtime/api/el-tab-pane.md",
+      "sourceComponents": [
+        "tabs"
+      ]
+    },
+    {
+      "name": "ElTabs",
+      "slug": "el-tabs",
+      "kind": "component",
+      "summary": "Divide data collections which are related yet belong to different types.",
+      "api": "runtime/api/el-tabs.md",
+      "sourceComponents": [
+        "tabs"
+      ]
+    },
+    {
+      "name": "ElTag",
+      "slug": "el-tag",
+      "kind": "component",
+      "summary": "Used for marking and selection.",
+      "api": "runtime/api/el-tag.md",
+      "sourceComponents": [
+        "tag"
+      ]
+    },
+    {
+      "name": "ElText",
+      "slug": "el-text",
+      "kind": "component",
+      "summary": "Used for text.",
+      "api": "runtime/api/el-text.md",
+      "sourceComponents": [
+        "text"
+      ]
+    },
+    {
+      "name": "ElTimeline",
+      "slug": "el-timeline",
+      "kind": "component",
+      "summary": "Visually display timeline.",
+      "api": "runtime/api/el-timeline.md",
+      "sourceComponents": [
+        "timeline"
+      ]
+    },
+    {
+      "name": "ElTimelineItem",
+      "slug": "el-timeline-item",
+      "kind": "component",
+      "summary": "ElTimelineItem: native Element Plus component.",
+      "api": "runtime/api/el-timeline-item.md",
+      "sourceComponents": [
+        "timeline"
+      ]
+    },
+    {
+      "name": "ElTimePicker",
+      "slug": "el-time-picker",
+      "kind": "component",
+      "summary": "Use Time Picker for time input.",
+      "api": "runtime/api/el-time-picker.md",
+      "sourceComponents": [
+        "time-picker"
+      ]
+    },
+    {
+      "name": "ElTimeSelect",
+      "slug": "el-time-select",
+      "kind": "component",
+      "summary": "Use Time Select for time input.",
+      "api": "runtime/api/el-time-select.md",
+      "sourceComponents": [
+        "time-select"
+      ]
+    },
+    {
+      "name": "ElTooltip",
+      "slug": "el-tooltip",
+      "kind": "component",
+      "summary": "Display prompt information for mouse hover.",
+      "api": "runtime/api/el-tooltip.md",
+      "sourceComponents": [
+        "tooltip"
+      ]
+    },
+    {
+      "name": "ElTour",
+      "slug": "el-tour",
+      "kind": "component",
+      "summary": "A popup component for guiding users through a product. Use when you want to guide users through a product.",
+      "api": "runtime/api/el-tour.md",
+      "sourceComponents": [
+        "tour"
+      ]
+    },
+    {
+      "name": "ElTourStep",
+      "slug": "el-tour-step",
+      "kind": "component",
+      "summary": "ElTourStep: native Element Plus component.",
+      "api": "runtime/api/el-tour-step.md",
+      "sourceComponents": [
+        "tour"
+      ]
+    },
+    {
+      "name": "ElTransfer",
+      "slug": "el-transfer",
+      "kind": "component",
+      "summary": "ElTransfer: native Element Plus component.",
+      "api": "runtime/api/el-transfer.md",
+      "sourceComponents": [
+        "transfer"
+      ]
+    },
+    {
+      "name": "ElTree",
+      "slug": "el-tree",
+      "kind": "component",
+      "summary": "Display a set of data with hierarchies.",
+      "api": "runtime/api/el-tree.md",
+      "sourceComponents": [
+        "tree"
+      ]
+    },
+    {
+      "name": "ElTreeSelect",
+      "slug": "el-tree-select",
+      "kind": "component",
+      "summary": "ElTreeSelect: native Element Plus component.",
+      "api": "runtime/api/el-tree-select.md",
+      "sourceComponents": [
+        "tree-select"
+      ]
+    },
+    {
+      "name": "ElTreeV2",
+      "slug": "el-tree-v2",
+      "kind": "component",
+      "summary": "ElTreeV2: native Element Plus component.",
+      "api": "runtime/api/el-tree-v2.md",
+      "sourceComponents": [
+        "tree-v2"
+      ]
+    },
+    {
+      "name": "ElUpload",
+      "slug": "el-upload",
+      "kind": "component",
+      "summary": "Upload files by clicking or drag-and-drop.",
+      "api": "runtime/api/el-upload.md",
+      "sourceComponents": [
+        "upload"
+      ]
+    },
+    {
+      "name": "ElWatermark",
+      "slug": "el-watermark",
+      "kind": "component",
+      "summary": "Add specific text or patterns to the page.",
+      "api": "runtime/api/el-watermark.md",
+      "sourceComponents": [
+        "watermark"
+      ]
+    },
+    {
+      "name": "epEn",
+      "slug": "ep-en",
+      "kind": "locale",
+      "summary": "English locale object for ElConfigProvider.",
+      "api": "runtime/api/ep-en.md",
+      "sourceComponents": [
+        "locale"
+      ]
+    },
+    {
+      "name": "epZhCn",
+      "slug": "ep-zh-cn",
+      "kind": "locale",
+      "summary": "Chinese locale object for ElConfigProvider.",
+      "api": "runtime/api/ep-zh-cn.md",
+      "sourceComponents": [
+        "locale"
+      ]
+    },
+    {
+      "name": "KbElementShell",
+      "slug": "kb-element-shell",
+      "kind": "component",
+      "summary": "Optional Kooboo workspace preset built with native Element Plus navigation and drawer.",
+      "api": "runtime/api/kb-element-shell.md",
+      "sourceComponents": [
+        "kooboo-shell"
+      ]
+    },
+    {
+      "name": "KbLucideIcon",
+      "slug": "kb-lucide-icon",
+      "kind": "component",
+      "summary": "Vue-rendered SVG using the pinned App Base Lucide loader.",
+      "api": "runtime/api/kb-lucide-icon.md",
+      "sourceComponents": [
+        "kooboo-icon"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "slug": "affix",
+      "name": "affix",
+      "status": "complete",
+      "exports": [
+        "ElAffix"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "alert",
+      "name": "alert",
+      "status": "complete",
+      "exports": [
+        "ElAlert"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "anchor",
+      "name": "anchor",
+      "status": "complete",
+      "exports": [
+        "ElAnchor",
+        "ElAnchorLink"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "autocomplete",
+      "name": "autocomplete",
+      "status": "complete",
+      "exports": [
+        "ElAutocomplete"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "avatar",
+      "name": "avatar",
+      "status": "complete",
+      "exports": [
+        "ElAvatar",
+        "ElAvatarGroup"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "backtop",
+      "name": "backtop",
+      "status": "complete",
+      "exports": [
+        "ElBacktop"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "badge",
+      "name": "badge",
+      "status": "complete",
+      "exports": [
+        "ElBadge"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "breadcrumb",
+      "name": "breadcrumb",
+      "status": "complete",
+      "exports": [
+        "ElBreadcrumb",
+        "ElBreadcrumbItem"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "button",
+      "name": "button",
+      "status": "complete",
+      "exports": [
+        "ElButton",
+        "ElButtonGroup"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "calendar",
+      "name": "calendar",
+      "status": "complete",
+      "exports": [
+        "ElCalendar"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "card",
+      "name": "card",
+      "status": "complete",
+      "exports": [
+        "ElCard"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "carousel",
+      "name": "carousel",
+      "status": "complete",
+      "exports": [
+        "ElCarousel",
+        "ElCarouselItem"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "cascader",
+      "name": "cascader",
+      "status": "complete",
+      "exports": [
+        "ElCascader"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "cascader-panel",
+      "name": "cascader-panel",
+      "status": "complete",
+      "exports": [
+        "ElCascaderPanel"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "check-tag",
+      "name": "check-tag",
+      "status": "complete",
+      "exports": [
+        "ElCheckTag"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "checkbox",
+      "name": "checkbox",
+      "status": "complete",
+      "exports": [
+        "ElCheckbox",
+        "ElCheckboxButton",
+        "ElCheckboxGroup"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "col",
+      "name": "col",
+      "status": "complete",
+      "exports": [
+        "ElCol"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "collapse",
+      "name": "collapse",
+      "status": "complete",
+      "exports": [
+        "ElCollapse",
+        "ElCollapseItem"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "collapse-transition",
+      "name": "collapse-transition",
+      "status": "complete",
+      "exports": [
+        "ElCollapseTransition"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "color-picker",
+      "name": "color-picker",
+      "status": "complete",
+      "exports": [
+        "ElColorPicker"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "color-picker-panel",
+      "name": "color-picker-panel",
+      "status": "complete",
+      "exports": [
+        "ElColorPickerPanel"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "config-provider",
+      "name": "config-provider",
+      "status": "complete",
+      "exports": [
+        "ElConfigProvider"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "container",
+      "name": "container",
+      "status": "complete",
+      "exports": [
+        "ElAside",
+        "ElContainer",
+        "ElFooter",
+        "ElHeader",
+        "ElMain"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "countdown",
+      "name": "countdown",
+      "status": "complete",
+      "exports": [
+        "ElCountdown"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "date-picker",
+      "name": "date-picker",
+      "status": "complete",
+      "exports": [
+        "ElDatePicker"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "date-picker-panel",
+      "name": "date-picker-panel",
+      "status": "complete",
+      "exports": [
+        "ElDatePickerPanel"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "descriptions",
+      "name": "descriptions",
+      "status": "complete",
+      "exports": [
+        "ElDescriptions",
+        "ElDescriptionsItem"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "dialog",
+      "name": "dialog",
+      "status": "complete",
+      "exports": [
+        "ElDialog"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "divider",
+      "name": "divider",
+      "status": "complete",
+      "exports": [
+        "ElDivider"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "drawer",
+      "name": "drawer",
+      "status": "complete",
+      "exports": [
+        "ElDrawer"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "dropdown",
+      "name": "dropdown",
+      "status": "complete",
+      "exports": [
+        "ElDropdown",
+        "ElDropdownItem",
+        "ElDropdownMenu"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "empty",
+      "name": "empty",
+      "status": "complete",
+      "exports": [
+        "ElEmpty"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "form",
+      "name": "form",
+      "status": "complete",
+      "exports": [
+        "ElForm",
+        "ElFormItem"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "icon",
+      "name": "icon",
+      "status": "complete",
+      "exports": [
+        "ElIcon"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "image",
+      "name": "image",
+      "status": "complete",
+      "exports": [
+        "ElImage"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "image-viewer",
+      "name": "image-viewer",
+      "status": "complete",
+      "exports": [
+        "ElImageViewer"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "input",
+      "name": "input",
+      "status": "complete",
+      "exports": [
+        "ElInput"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "input-number",
+      "name": "input-number",
+      "status": "complete",
+      "exports": [
+        "ElInputNumber"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "input-otp",
+      "name": "input-otp",
+      "status": "complete",
+      "exports": [
+        "ElInputOtp"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "input-tag",
+      "name": "input-tag",
+      "status": "complete",
+      "exports": [
+        "ElInputTag"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "kooboo-icon",
+      "name": "kooboo-icon",
+      "status": "complete",
+      "exports": [
+        "KbLucideIcon"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "kooboo-shell",
+      "name": "kooboo-shell",
+      "status": "complete",
+      "exports": [
+        "KbElementShell"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "link",
+      "name": "link",
+      "status": "complete",
+      "exports": [
+        "ElLink"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "loading",
+      "name": "loading",
+      "status": "complete",
+      "exports": [
+        "ElLoadingDirective",
+        "ElLoadingService"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "locale",
+      "name": "locale",
+      "status": "complete",
+      "exports": [
+        "epEn",
+        "epZhCn"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "mention",
+      "name": "mention",
+      "status": "complete",
+      "exports": [
+        "ElMention"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "menu",
+      "name": "menu",
+      "status": "complete",
+      "exports": [
+        "ElMenu",
+        "ElMenuItem",
+        "ElMenuItemGroup",
+        "ElSubMenu"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "message",
+      "name": "message",
+      "status": "complete",
+      "exports": [
+        "ElMessage"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "message-box",
+      "name": "message-box",
+      "status": "complete",
+      "exports": [
+        "ElMessageBox"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "notification",
+      "name": "notification",
+      "status": "complete",
+      "exports": [
+        "ElNotification"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "page-header",
+      "name": "page-header",
+      "status": "complete",
+      "exports": [
+        "ElPageHeader"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "pagination",
+      "name": "pagination",
+      "status": "complete",
+      "exports": [
+        "ElPagination"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "popconfirm",
+      "name": "popconfirm",
+      "status": "complete",
+      "exports": [
+        "ElPopconfirm"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "popover",
+      "name": "popover",
+      "status": "complete",
+      "exports": [
+        "ElPopover"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "progress",
+      "name": "progress",
+      "status": "complete",
+      "exports": [
+        "ElProgress"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "radio",
+      "name": "radio",
+      "status": "complete",
+      "exports": [
+        "ElRadio",
+        "ElRadioButton",
+        "ElRadioGroup"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "rate",
+      "name": "rate",
+      "status": "complete",
+      "exports": [
+        "ElRate"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "result",
+      "name": "result",
+      "status": "complete",
+      "exports": [
+        "ElResult"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "row",
+      "name": "row",
+      "status": "complete",
+      "exports": [
+        "ElRow"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "scrollbar",
+      "name": "scrollbar",
+      "status": "complete",
+      "exports": [
+        "ElScrollbar"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "segmented",
+      "name": "segmented",
+      "status": "complete",
+      "exports": [
+        "ElSegmented"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "select",
+      "name": "select",
+      "status": "complete",
+      "exports": [
+        "ElOption",
+        "ElOptionGroup",
+        "ElSelect"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "select-v2",
+      "name": "select-v2",
+      "status": "complete",
+      "exports": [
+        "ElSelectV2"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "skeleton",
+      "name": "skeleton",
+      "status": "complete",
+      "exports": [
+        "ElSkeleton",
+        "ElSkeletonItem"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "slider",
+      "name": "slider",
+      "status": "complete",
+      "exports": [
+        "ElSlider"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "space",
+      "name": "space",
+      "status": "complete",
+      "exports": [
+        "ElSpace"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "splitter",
+      "name": "splitter",
+      "status": "complete",
+      "exports": [
+        "ElSplitter",
+        "ElSplitterPanel"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "statistic",
+      "name": "statistic",
+      "status": "complete",
+      "exports": [
+        "ElStatistic"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "steps",
+      "name": "steps",
+      "status": "complete",
+      "exports": [
+        "ElStep",
+        "ElSteps"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "switch",
+      "name": "switch",
+      "status": "complete",
+      "exports": [
+        "ElSwitch"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "table",
+      "name": "table",
+      "status": "complete",
+      "exports": [
+        "ElTable",
+        "ElTableColumn"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "table-v2",
+      "name": "table-v2",
+      "status": "complete",
+      "exports": [
+        "ElAutoResizer",
+        "ElTableV2"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "tabs",
+      "name": "tabs",
+      "status": "complete",
+      "exports": [
+        "ElTabPane",
+        "ElTabs"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "tag",
+      "name": "tag",
+      "status": "complete",
+      "exports": [
+        "ElTag"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "text",
+      "name": "text",
+      "status": "complete",
+      "exports": [
+        "ElText"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "time-picker",
+      "name": "time-picker",
+      "status": "complete",
+      "exports": [
+        "ElTimePicker"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "time-select",
+      "name": "time-select",
+      "status": "complete",
+      "exports": [
+        "ElTimeSelect"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "timeline",
+      "name": "timeline",
+      "status": "complete",
+      "exports": [
+        "ElTimeline",
+        "ElTimelineItem"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "tooltip",
+      "name": "tooltip",
+      "status": "complete",
+      "exports": [
+        "ElTooltip"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "tour",
+      "name": "tour",
+      "status": "complete",
+      "exports": [
+        "ElTour",
+        "ElTourStep"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "transfer",
+      "name": "transfer",
+      "status": "complete",
+      "exports": [
+        "ElTransfer"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "tree",
+      "name": "tree",
+      "status": "complete",
+      "exports": [
+        "ElTree"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "tree-select",
+      "name": "tree-select",
+      "status": "complete",
+      "exports": [
+        "ElTreeSelect"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "tree-v2",
+      "name": "tree-v2",
+      "status": "complete",
+      "exports": [
+        "ElTreeV2"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "upload",
+      "name": "upload",
+      "status": "complete",
+      "exports": [
+        "ElUpload"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    },
+    {
+      "slug": "watermark",
+      "name": "watermark",
+      "status": "complete",
+      "exports": [
+        "ElWatermark"
+      ],
+      "coverage": "Bundled upstream public exports listed here (or explicit Kooboo adapter). Implementation coverage only; browser and real AI App acceptance are separate."
+    }
+  ]
+}

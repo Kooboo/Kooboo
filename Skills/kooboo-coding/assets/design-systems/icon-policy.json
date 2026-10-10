@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 2,
+  "mode": "open-source-library-only",
+  "purpose": "Select one verified open-source icon library for production App glyphs while letting the chosen design system control icon styling.",
+  "selectionOrder": [
+    "Reuse the current App's already verified open-source icon library.",
+    "Use the selected UI framework's official open-source icon package when compatible.",
+    "Otherwise select one exact-version open-source icon library and record its name, version, loading method, and license before implementation."
+  ],
+  "preferredLibraries": [
+    { "name": "Lucide", "license": "ISC", "bestFor": ["general App UI", "enterprise controls", "navigation", "actions"] },
+    { "name": "Tabler Icons", "license": "MIT", "bestFor": ["large semantic coverage", "technical and operational UI"] },
+    { "name": "Material Symbols", "license": "Apache-2.0", "bestFor": ["filled and outlined variants", "Google-like product language"] }
+  ],
+  "styleAdaptation": [
+    "Let the selected design system control icon size, stroke weight, fill mode, color, container, spacing, active state, and disabled state.",
+    "Let the open-source library supply only the semantic glyph geometry.",
+    "Keep one primary icon library per App and do not mix libraries for isolated icons.",
+    "Do not hand-draw replacement product icons and do not use Emoji or Unicode text symbols for actions, navigation, or status."
+  ],
+  "requiredCoverage": [
+    "Before writing UI, make a semantic icon inventory from the selected package evidence and the current Screen's navigation, Actions, controls, and states.",
+    "Preserve an icon slot when the selected package's component anatomy or closest UI kit uses one for primary navigation, compact toolbars, search, filtering, sorting, settings, disclosure, pagination, row actions, status, feedback, upload, or destructive actions.",
+    "Use an icon with visible text when it improves scanning or matches the selected component anatomy. Use icon-only controls only for universally understood compact actions and provide an accessible name.",
+    "Do not add decorative icon grids or place an icon on every text button. Coverage follows semantic function and package evidence, not ornament."
+  ],
+  "implementationContract": [
+    "A prohibition on Emoji, Unicode symbols, hand-drawn SVG, or mixed icon sources never authorizes removing a required icon slot.",
+    "Render glyphs through the chosen library's documented component, sprite, font, or exact-version asset path. A text character that resembles an icon is not a compliant glyph.",
+    "If the first library choice cannot supply or load a required glyph, choose a semantically equivalent glyph from the same library or replace the library before implementing the Screen. Do not silently fall back to text-only UI when package evidence calls for icons.",
+    "When a control combines an icon and label, mark the repeated decorative glyph aria-hidden. For icon-only controls, provide aria-label or equivalent accessible text and preserve a visible focus state."
+  ],
+  "qualityGate": [
+    "Fail when a required semantic icon slot is empty, replaced by Emoji or a Unicode symbol, represented by a placeholder box, or omitted only because no icon dependency was selected.",
+    "Fail when navigation and common compact actions become text-only even though the selected design package shows a stable icon-bearing anatomy.",
+    "Fail when multiple icon families are mixed, glyphs do not render, accessible names are missing from icon-only controls, or icon size and state styling ignore the selected design system.",
+    "Pass does not require decorative icons or icons on ordinary prose and explicit text actions."
+  ]
+}

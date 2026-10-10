@@ -1,0 +1,301 @@
+{
+  "type": "function",
+  "function": {
+    "name": "save_business_rule",
+    "description": "Save one reviewed Business Rule in the existing Blueprint. Dependencies must already be saved. Provide exactly one specification matching type and reviewStatus=confirmed. scenarioIds are stored Scenario GUIDs; the server creates rule links. Reuse its id for updates. Only call after user approval.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "businessRule": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "type": {
+              "enum": [
+                "validation",
+                "calculation",
+                "authorization",
+                "transition",
+                "derivation",
+                "policy"
+              ]
+            },
+            "statement": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strength": {
+              "enum": [
+                "mandatory",
+                "advisory"
+              ]
+            },
+            "factIds": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "conditionLogic": {
+              "enum": [
+                "all",
+                "any"
+              ]
+            },
+            "conditions": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "statement": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "effects": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "$ref": "#/properties/businessRule/properties/conditions/items",
+                "additionalProperties": false
+              }
+            },
+            "specification": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "validation": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "validationKind": {
+                      "enum": [
+                        "required",
+                        "prohibited",
+                        "immutable",
+                        "unique",
+                        "range",
+                        "format",
+                        "cross-field"
+                      ]
+                    },
+                    "expectation": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "calculation": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "formula": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "authorization": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "actorIds": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "items": {
+                        "type": "string",
+                        "format": "uuid"
+                      }
+                    },
+                    "action": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "allow": {
+                      "type": "boolean"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "transition": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "businessObjectId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "stateDimensionId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "fromStateIds": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "items": {
+                        "type": "string",
+                        "format": "uuid"
+                      }
+                    },
+                    "toStateId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "actorIds": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "items": {
+                        "type": "string",
+                        "format": "uuid"
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "derivation": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "logic": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "policy": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "requirements": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "source": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "type": {
+                  "enum": [
+                    "user-stated",
+                    "provided-material",
+                    "existing-system",
+                    "ai-inferred",
+                    "domain-default"
+                  ]
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            "reviewStatus": {
+              "enum": [
+                "proposed",
+                "confirmed"
+              ]
+            },
+            "impact": {
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "scenarioIds": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Stored Scenario GUIDs to link to this rule. The server creates Scenario-to-BusinessRule relations."
+        }
+      },
+      "required": [
+        "businessRule"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

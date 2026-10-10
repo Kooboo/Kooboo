@@ -1,0 +1,40 @@
+{
+  "type": "function",
+  "function": {
+    "name": "create_script",
+    "description": "Create or replace the named site object. Existing content may be overwritten; read it first before preparing a replacement. Use update_text_object for exact local text edits. Also creates or updates the supplied URL route for the object. Required top-level arguments: name (e.g. app.js), url (e.g. /app.js), content (complete JavaScript source). Send one JSON object containing all three; never send null, an empty object, or an arguments wrapper.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "description": "Required complete JavaScript source as a JSON string. Put content alongside name and url at the top level; do not send null or omit it."
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Object route, e.g. \u0060/about\u0060 or a dynamic Page route such as \u0060/blog/{slug}\u0060"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_\\-\\.]{1,64}$",
+          "description": "Unique object name: 1 to 64 ASCII letters, digits, underscores, hyphens or periods. Existing names are upserted."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "content",
+        "url",
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

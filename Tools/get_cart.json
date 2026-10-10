@@ -1,0 +1,27 @@
+{
+  "type": "function",
+  "function": {
+    "name": "get_cart",
+    "description": "Get detailed information for a cart by cart id.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "cartId": {
+          "type": "string",
+          "description": "Cart id."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "cartId"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

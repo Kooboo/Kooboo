@@ -1,0 +1,39 @@
+{
+  "type": "function",
+  "function": {
+    "name": "function_discover",
+    "description": "Discover callable functions. MANDATORY WORKFLOW: after choosing any function from this list, you must call use_function with that function name first, read its InputSchema and ReturnSchema, then invoke the target function with schema-valid arguments. Do not guess parameters.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "tags": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "Core",
+              "Frontend",
+              "Development",
+              "Storage",
+              "Commerce",
+              "Account",
+              "Settings",
+              "Multilingual",
+              "Analytics"
+            ]
+          }
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "tags"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

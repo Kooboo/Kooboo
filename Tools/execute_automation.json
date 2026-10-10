@@ -1,0 +1,26 @@
+{
+  "type": "function",
+  "function": {
+    "name": "execute_automation",
+    "description": "Execute an automation task synchronously and return its response lines.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "The automation task id returned by list_automation"
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

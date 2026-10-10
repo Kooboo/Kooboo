@@ -1,0 +1,18 @@
+{
+  "tables": [
+    {
+      "name": "AppUsers",
+      "columns": [
+        { "name": "Id", "type": "TEXT", "primaryKey": true },
+        { "name": "KoobooUserId", "type": "TEXT", "notNull": true, "unique": true },
+        { "name": "KoobooUserName", "type": "TEXT", "notNull": true },
+        { "name": "Email", "type": "TEXT" },
+        { "name": "DisplayName", "type": "TEXT" },
+        { "name": "AvatarUrl", "type": "TEXT" },
+        { "name": "CreatedAt", "type": "TEXT", "notNull": true },
+        { "name": "UpdatedAt", "type": "TEXT", "notNull": true },
+        { "name": "LastSeenAt", "type": "TEXT", "notNull": true }
+      ]
+    }
+  ]
+}

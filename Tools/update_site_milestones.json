@@ -1,0 +1,34 @@
+{
+  "type": "function",
+  "function": {
+    "name": "update_site_milestones",
+    "description": "Update site milestones. Save the complete checklist of site delivery items as a progress record; it does not gate any other tool or step.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "milestones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "completed": {
+                "type": "boolean"
+              },
+              "content": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "milestones"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

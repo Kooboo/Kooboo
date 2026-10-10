@@ -1,0 +1,101 @@
+{
+  "type": "function",
+  "function": {
+    "name": "save_user_story",
+    "description": "Save one reviewed User Story in the existing Blueprint. actorId references a saved beneficiary; goalId identifies its single primary saved Goal and is required for creation. scenarioIds reference saved Scenarios. Include Given/When/Then acceptanceCriteria. Reuse its id for updates; omitted links are retained. Only call after user approval.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "userStory": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "actorId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "need": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "businessValue": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "acceptanceCriteria": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "given": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "when": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "then": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "goalId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Primary stored Goal GUID. Required for a new story; omit on update to retain the existing Goal."
+        },
+        "scenarioIds": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Stored Scenario GUIDs satisfied by this story. Existing links are retained."
+        }
+      },
+      "required": [
+        "userStory"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "type": "function",
+  "function": {
+    "name": "read_object_text",
+    "description": "Retrieve the text content of a site object (page, layout, view, script, style, api, codeblock).\nBoth nameOrId and objectType are required; a name alone is insufficient. Use the object\u0027s name or ID and its objectType from list_site_object or an installation receipt such as create_app_base.objects (map name to nameOrId). For example: {\u0022nameOrId\u0022:\u0022Services.user\u0022,\u0022objectType\u0022:\u0022CodeBlock\u0022}.\nOmit lineNumber to read the full text, or supply a 1-based center line and a nonnegative range. Before update_text_object, use showLineNumber=false to obtain exact source text. Numbered output adds display prefixes only; remove those prefixes before matching. Original line endings are preserved and no final newline is added.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "nameOrId": {
+          "type": "string"
+        },
+        "objectType": {
+          "enum": [
+            "Page",
+            "View",
+            "Layout",
+            "Script",
+            "Style",
+            "Api",
+            "CodeBlock"
+          ]
+        },
+        "lineNumber": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 2147483647,
+          "description": "Optional 1-based center line number, 1 to 2147483647. Omit or null returns the full text."
+        },
+        "range": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 2147483647,
+          "default": 20,
+          "description": "Number of lines before and after LineNumber, 0 to 2147483647. Defaults to 20; 0 reads only the selected line. Ignored when lineNumber is omitted, but must still be nonnegative."
+        },
+        "showLineNumber": {
+          "type": "boolean",
+          "default": false,
+          "description": "Default false: return exact source text for oldContent matching. True: prefix each source line with its 1-based number and | for display. Prefixes are not source code. Original LF/CRLF and final-newline presence are preserved; no synthetic empty EOF line is shown."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "nameOrId",
+        "objectType"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

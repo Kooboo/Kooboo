@@ -1,0 +1,51 @@
+{
+  "type": "function",
+  "function": {
+    "name": "set_label",
+    "description": "Set one or more labels in batch. Create if not exists, update if exists.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "culture": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional culture code. If empty, the website default culture is used."
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_\\-\\.]{1,64}$",
+                "description": "The unique Name of the object to be upsert."
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "value"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "labels"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

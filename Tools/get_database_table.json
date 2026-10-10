@@ -1,0 +1,29 @@
+{
+  "type": "function",
+  "function": {
+    "name": "get_database_table",
+    "description": "Get a table\u0027s columns and CREATE TABLE SQL from internal SQLite. Does not read rows.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

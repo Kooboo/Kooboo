@@ -1,0 +1,26 @@
+{
+  "type": "function",
+  "function": {
+    "name": "run_kscript",
+    "description": "Runs KScript code and returns the execution result. RESTRICTION: Before using this function, you MUST first read the relevant KScript reference documentation (references/K-Script/index.md and any module-specific docs like k.commerce, k.content, k.file, etc.) to confirm the correct API signatures. Do NOT guess or fabricate method names \u2014 verify against the docs first. If you cannot cite the specific reference and section, re-read the docs before executing.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

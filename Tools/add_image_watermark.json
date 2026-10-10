@@ -1,0 +1,68 @@
+{
+  "type": "function",
+  "function": {
+    "name": "add_image_watermark",
+    "description": "Add an image watermark to an image stored as a site Image, CmsFile, or FileIO file. The watermark can also come from any of those storage types. The result overwrites the source unless SaveAs is provided, and the saved path is returned.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "watermarkPath": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "align": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Vertical alignment: top, center, or bottom."
+        },
+        "justify": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Horizontal alignment: left, center, or right."
+        },
+        "opacity": {
+          "type": "number",
+          "description": "Watermark opacity from 0 to 1."
+        },
+        "offsetX": {
+          "type": "number",
+          "description": "Horizontal offset as a fraction of the source image width."
+        },
+        "offsetY": {
+          "type": "number",
+          "description": "Vertical offset as a fraction of the source image height."
+        },
+        "repeat": {
+          "type": "boolean"
+        },
+        "saveAs": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional output path. When omitted, the source image is overwritten."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

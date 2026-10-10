@@ -1,0 +1,20 @@
+{
+  "type": "function",
+  "function": {
+    "name": "list_product",
+    "description": "List all products. Returns a flat list of products with basic information.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "type": "function",
+  "function": {
+    "name": "sync_design_runtime",
+    "description": "Preview or synchronize the installed Yuanli, Element Plus or Ant Design Vue UI framework. Element Plus and Ant Design Vue always install the full fixed distribution and only need mode=upgrade for version updates. For Yuanli, mode=add unions requested components; replace supplies the desired component set and refuses removal of referenced exports; upgrade keeps the installed selection. Dependencies and installed Shell requirements are automatic. dryRun defaults true and returns expectedRevision, installed components, compact APIs, asset sizes and conflicts. Apply with dryRun=false and the exact expectedRevision from that preview. Updates managed library resources only, never business Scripts or app.css. Modified/legacy assets without receipts require explicit named overwriteModifiedAssets after the user authorizes replacement; do not automatically bypass conflicts. Existing App Page stylesheet links must already match the installed runtime; no legacy CSS migration is performed. No browser operation.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "add, replace, or upgrade. replace may remove only components proven unused."
+        },
+        "components": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "dryRun": {
+          "type": "boolean"
+        },
+        "expectedRevision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "overwriteModifiedAssets": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Exact managed asset names the user explicitly authorized replacing despite local modifications or legacy missing checksums. Do not auto-fill to bypass a conflict."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "type": "function",
+  "function": {
+    "name": "delete_site_object",
+    "description": "Deletes a specific Kooboo object. Note: Kooboo maintains version history, so this action can be rolled back or recovered from the action log if needed.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "objectType": {
+          "enum": [
+            "Page",
+            "View",
+            "Layout",
+            "Label",
+            "HtmlBlock",
+            "Image",
+            "CmsFile",
+            "Script",
+            "Style",
+            "Api",
+            "CodeBlock",
+            "ContentFolder",
+            "ContentType",
+            "TextContent"
+          ]
+        },
+        "nameOrId": {
+          "type": "string",
+          "description": "The unique Identifier (GUID) or Name of the object to be removed."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "objectType",
+        "nameOrId"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

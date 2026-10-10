@@ -1,0 +1,37 @@
+{
+  "type": "function",
+  "function": {
+    "name": "get_error_monitoring_overview",
+    "description": "Get the current site\u0027s complete error analytics summary, including trends, affected users, error types, and high-frequency errors. The inclusive date range defaults to the current analytics week.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "top": {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Maximum number of entries returned for each ranking or distribution. Default 20, maximum 200."
+        },
+        "includeDimensions": {
+          "type": "boolean",
+          "description": "Include the native aggregated dimensions in addition to the named report fields."
+        },
+        "startDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Inclusive analytics date in yyyy-MM-dd format. Defaults to Monday of the current analytics week."
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Inclusive analytics date in yyyy-MM-dd format. Defaults to the current analytics day."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

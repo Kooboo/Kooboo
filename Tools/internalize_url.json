@@ -1,0 +1,30 @@
+{
+  "type": "function",
+  "function": {
+    "name": "internalize_url",
+    "description": "Internalize external URLs that saved site objects already reference (recorded as site external resources) into local site resources, rewriting those references. It does not download arbitrary URLs: save the Page, Layout, View, Script, or Style that references the URL first, then call this function.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "urls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "External URL list to internalize"
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "urls"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

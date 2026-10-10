@@ -1,0 +1,74 @@
+{
+  "type": "function",
+  "function": {
+    "name": "list_history",
+    "description": "List CMS history using paging and optional filters.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "pageNr": {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Positive integer page number, default 1. Increment by 1 to continue."
+        },
+        "pageSize": {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Positive integer number of logs per page, default 50, maximum 200. Larger values are capped at 200."
+        },
+        "actionType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional CMS action type, such as Add, Update, or Delete."
+        },
+        "storeName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional CMS store name. Use Table to select all dynamic-table logs."
+        },
+        "tableName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional dynamic table name."
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional object display-name filter."
+        },
+        "userId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid",
+          "description": "Optional ID of the user who made the change."
+        },
+        "startDate": {
+          "description": "Optional inclusive start date/time."
+        },
+        "endDate": {
+          "description": "Optional inclusive end date/time."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

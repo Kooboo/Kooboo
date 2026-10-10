@@ -1,0 +1,288 @@
+{
+  "type": "function",
+  "function": {
+    "name": "save_fact",
+    "description": "Save one complete reviewed FCO-IM Fact and optional Scenario link through the shared Blueprint save contract. Requires an existing reviewed Blueprint graph. Dependencies must already be saved. Include object types, roles, fields, constraints and examples; reuse the Fact id for updates. Only call after user approval.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "scenarioId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "fact": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "kind": {
+              "enum": [
+                "property",
+                "relationship",
+                "behavior",
+                "event"
+              ]
+            },
+            "fcoim": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "preferredReading": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "objectTypes": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "englishName": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "kind": {
+                        "enum": [
+                          "entity",
+                          "value"
+                        ]
+                      },
+                      "dbName": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "businessObjectId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "format": "uuid"
+                      },
+                      "valueType": {
+                        "enum": [
+                          "text",
+                          "integer",
+                          "decimal",
+                          "boolean",
+                          "date",
+                          "datetime",
+                          "money",
+                          "enum",
+                          null
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "fields": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "entityObjectTypeId": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "valueObjectTypeId": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "roleId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "dbName": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "identifier": {
+                        "type": "boolean"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "roles": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "objectTypeId": {
+                        "type": "string",
+                        "format": "uuid"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "constraints": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "type": {
+                        "enum": [
+                          "mandatory",
+                          "uniqueness",
+                          "frequency",
+                          "subset",
+                          "exclusion",
+                          "equality"
+                        ]
+                      },
+                      "roleIds": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "minFrequency": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                      },
+                      "maxFrequency": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "examples": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "sentence": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "roleValues": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "roleId": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "value": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "fact"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "type": "function",
+  "function": {
+    "name": "delete_app_plan_objects",
+    "description": "Delete exact current App Plan objects by type and ID. No cascade or implicit reference repair: first save affected objects to remove references. Same-batch deletions are checked against the remaining graph; any dangling reference rejects the entire batch. Deleting a Service also removes its nested Operations. Does not delete the root/settings or runtime resources. Empty targets is a no-op.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "targets": {
+          "type": [
+            "array"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "enum": [
+                  "screen",
+                  "service",
+                  "dataContract",
+                  "sourceFile",
+                  "deliverySlice"
+                ]
+              },
+              "id": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "targets"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

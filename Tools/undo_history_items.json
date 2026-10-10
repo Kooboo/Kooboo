@@ -1,0 +1,33 @@
+{
+  "type": "function",
+  "function": {
+    "name": "undo_history_items",
+    "description": "Undo multiple CMS history changes after validating every log ID. This action creates new history items.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "logIds": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "integer"
+          },
+          "description": "Log IDs to undo. At most 1000 IDs are accepted."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "logIds"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

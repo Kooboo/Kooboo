@@ -1,0 +1,29 @@
+{
+  "type": "function",
+  "function": {
+    "name": "delete_product",
+    "description": "Delete a product by its id. This also removes all associated variants and category links.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

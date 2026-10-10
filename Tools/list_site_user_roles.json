@@ -1,0 +1,11 @@
+{
+  "type": "function",
+  "function": {
+    "name": "list_site_user_roles",
+    "description": "List available site user roles. Includes built-in roles and custom roles.",
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false
+    }
+  }
+}

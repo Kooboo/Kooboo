@@ -1,0 +1,42 @@
+{
+  "type": "function",
+  "function": {
+    "name": "update_site_memory",
+    "description": "Save a small site memory note and return a verified readback receipt. Read before updating; use oldContent for one exact local replacement, otherwise content replaces the file and existing notes require expectedSha256 from the latest read. Keep a short index.md with pointers, durable context and resource locations. Update original notes instead of appending chat summaries. Store decisions in their existing Topics/Blueprint/Plan and progress in Milestones, not duplicated memory. Saving memory does not authorize implementation.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "default": "index.md",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}\\.md$",
+          "minLength": 4,
+          "maxLength": 83,
+          "description": "ASCII Markdown filename, default index.md. Basename: 1-80 English letters/digits/underscores/hyphens, starting with a letter or digit; followed by lowercase .md. No Chinese, spaces, directories or extra dots. Use index.md exactly in lowercase; other names must match ^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}\\.md$. A site can contain at most 32 memory files."
+        },
+        "content": {
+          "type": "string",
+          "description": "Required text, never null. Complete note when oldContent is omitted, otherwise replacement text for oldContent. The final file must be at most 4000 characters for index.md or 24000 for other notes. Existing full-note replacements require expectedSha256 from the latest read."
+        },
+        "oldContent": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional exact, unique existing text to replace. Omit for a complete note write."
+        },
+        "expectedSha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Content hash from the latest read. Supply it to reject updates when another conversation changed the note."
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

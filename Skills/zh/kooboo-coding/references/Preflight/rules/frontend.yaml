@@ -1,0 +1,118 @@
+# Kooboo Preflight frontend capability rules
+
+rules:
+  - id: PF-FRONTEND-002
+    advisory: true
+    customCheck: viewportHeight
+    capability: frontend
+    profiles: [site, app]
+    title: Above-the-fold and full-screen sections must not use h-screen / 100vh
+    severity: BLOCKER
+    appliesTo: [Page, Layout, View]
+    tags: [responsive, mobile]
+    fix: "Verify the affected viewport and overflow behavior. Use height:100dvh for a bounded application shell or min-height:100dvh for expanding content as appropriate; desktop-only rules do not establish a mobile defect."
+
+  - id: PF-FRONTEND-003
+    advisory: true
+    customCheck: overflowRisk
+    capability: frontend
+    profiles: [site, app]
+    title: Avoid mobile horizontal-overflow hazards
+    severity: HIGH
+    appliesTo: [Page, Layout, View, Style]
+    tags: [responsive, mobile]
+    fix: "Check actual mobile overflow and intentional positioning. Constrain the affected element only when needed; do not hide legitimate scrolling or clipped controls globally."
+
+  - id: PF-FRONTEND-004
+    advisory: true
+    capability: frontend
+    profiles: [site, app]
+    title: Do not animate layout properties
+    severity: HIGH
+    appliesTo: [Page, Layout, View, Style, Script]
+    tags: [motion, performance]
+    patterns:
+      - "transition-[^\"'\\n]*(top|left|right|bottom|width|height)"
+      - "transition\\s*:\\s*[^;]*(top|left|right|bottom|width|height)"
+      - "\\.animate\\([^)]*(top|left|right|bottom|width|height)"
+    fix: "Review animation cost on the affected element. Prefer transform/opacity where suitable; an intentional bounded collapse transition is not automatically a defect."
+
+  - id: PF-FRONTEND-005
+    capability: frontend
+    profiles: [site, app]
+    title: Focusable controls must retain a visible focus state
+    severity: BLOCKER
+    appliesTo: [Page, Layout, View, Style]
+    tags: [a11y, keyboard]
+    customCheck: visibleFocusIndicator
+    fix: "Retain the browser's default focus indicator, or provide a clear, non-zero, non-transparent ring, outline, shadow, or border change on the focus/focus-visible state of the focusable control itself; compensating styles must cover every responsive and state scope that removes outline. A composite control may have its actual wrapping ancestor draw one shared focus state through focus-within or :has(:focus-visible); in a standalone Style, qualify the inner outline-removal selector with that same wrapper identity (for example, .search-box .search-input:focus-visible) so Preflight can verify the relationship. Do not restore a second inner outline when the wrapper already provides the visible focus state, and do not use ring-0, transparent styles, or focus styling on an unrelated container as a substitute."
+
+  - id: PF-FRONTEND-006
+    capability: frontend
+    profiles: [site, app]
+    title: Kooboo CSS does not support Tailwind @apply
+    severity: BLOCKER
+    appliesTo: [Page, Layout, View, Style]
+    tags: [css, tailwind, compatibility]
+    patterns:
+      - "@apply\\s+[^;]+;"
+    fix: "Kooboo CSS does not support Tailwind `@apply` syntax. Write utility classes directly back into HTML, or expand the styles into ordinary CSS declarations; in <style>, inline style fragments, or Style objects, do not output `@apply`."
+
+  - id: PF-FRONTEND-007
+    capability: frontend
+    profiles: [site, app]
+    title: Custom-styled native selects must reserve safe space for the arrow
+    severity: MEDIUM
+    appliesTo: [Page, Layout, View, Style]
+    tags: [form, select, spacing, visual-quality]
+    customCheck: selectArrowInset
+    fix: "Do not let select share compact right-side padding directly with input/textarea. If the native appearance is retained, give select sufficient padding-inline-end; if appearance:none is used for a custom arrow, also provide a clear end inset and text safe area, and use background-color so a later background shorthand does not clear the arrow. Preserve the existing contracts of external UI frameworks, wrapper components, and CSS-variable schemes; do not force a unified arrow."
+
+  - id: PF-FRONTEND-008
+    customCheck: fakeUnicodeIcons
+    capability: frontend
+    profiles: [app]
+    title: App functional icons must use the built-in Lucide library
+    severity: BLOCKER
+    appliesTo: [Page, Layout, View, Script]
+    tags: [icons, lucide, consistency, accessibility]
+    fix: "Replace Emoji, Unicode shapes, arrows, and hand-typed symbol glyphs used as functional icons with the App Base Lucide contract. Use `<i data-lucide=\"icon-name\" aria-hidden=\"true\"></i>` for decorative icons, an accessible `aria-label` on icon-only controls, and Lucide icon names in route/navigation metadata. Do not add another icon library or leave the required icon slot as text only."
+
+  - id: PF-DESIGN-001
+    advisory: true
+    capability: frontend
+    profiles: [site, app]
+    title: Avoid the default AI purple-blue gradient
+    severity: HIGH
+    appliesTo: [Page, Layout, View, Style]
+    tags: [anti-slop, color]
+    patterns:
+      - "from-(violet|purple|indigo)-"
+      - "via-(violet|purple|indigo)-"
+      - "to-(violet|purple|fuchsia)-"
+      - "linear-gradient\\([^)]*(violet|purple|fuchsia|indigo)"
+    fix: "Review whether these colors follow the approved brand or user request. Keep explicitly chosen gradients; this is design advice, not a delivery violation."
+
+  - id: PF-INTEGRATION-001
+    capability: frontend
+    profiles: [site, app]
+    title: Frontend fetch calls must handle errors
+    severity: HIGH
+    appliesTo: [Page, View, Script]
+    tags: [api, error-state]
+    customCheck: fetchErrorHandling
+    fix: "Handle non-2xx responses and network failures, and provide visible feedback to the user."
+
+  - id: PF-PERFORMANCE-001
+    advisory: true
+    capability: frontend
+    profiles: [site, app]
+    title: Noise and large-area blur should not be placed on scrolling containers
+    severity: MEDIUM
+    appliesTo: [Page, Layout, View, Style]
+    tags: [performance, motion]
+    patterns:
+      - "<main[^>]*(backdrop-blur|blur-)"
+      - "<section[^>]*(backdrop-blur|blur-)"
+      - "filter\\s*:\\s*blur"
+    fix: "Measure blur/noise cost in its actual area and scroll context before changing it; small isolated effects are allowed."

@@ -1,0 +1,44 @@
+{
+  "type": "function",
+  "function": {
+    "name": "search_site_object",
+    "description": "Search the current site search index by keyword with skip/take pagination.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string"
+        },
+        "skip": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Nonnegative integer number of matches to skip, default 0."
+        },
+        "take": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Nonnegative integer maximum matches to return, default 20. Use an explicit small page size and increment skip to continue."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "keyword"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

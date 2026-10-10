@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "designSystemId": "volcengine",
+  "purpose": "Source component identities used to validate runtime coverage. Use runtime/component-selection.json and runtime/api/ for implementation.",
+  "components": [
+    {
+      "slug": "alert",
+      "name": "Alert"
+    },
+    {
+      "slug": "anchor",
+      "name": "Anchor"
+    },
+    {
+      "slug": "avatar",
+      "name": "Avatar"
+    },
+    {
+      "slug": "badge",
+      "name": "Badge"
+    },
+    {
+      "slug": "breadcrumb",
+      "name": "Breadcrumb"
+    },
+    {
+      "slug": "button",
+      "name": "Button"
+    },
+    {
+      "slug": "cascader",
+      "name": "Cascader"
+    },
+    {
+      "slug": "checkbox",
+      "name": "Checkbox"
+    },
+    {
+      "slug": "descriptions",
+      "name": "Descriptions"
+    },
+    {
+      "slug": "drawer",
+      "name": "Drawer"
+    },
+    {
+      "slug": "dropdown",
+      "name": "Dropdown"
+    },
+    {
+      "slug": "form",
+      "name": "Form"
+    },
+    {
+      "slug": "input",
+      "name": "Input"
+    },
+    {
+      "slug": "message",
+      "name": "Message"
+    },
+    {
+      "slug": "modal",
+      "name": "Modal"
+    },
+    {
+      "slug": "page-header",
+      "name": "PageHeader"
+    },
+    {
+      "slug": "pagination",
+      "name": "Pagination"
+    },
+    {
+      "slug": "popconfirm",
+      "name": "Popconfirm"
+    },
+    {
+      "slug": "progress",
+      "name": "Progress"
+    },
+    {
+      "slug": "segmented-picker",
+      "name": "SegmentedPicker"
+    },
+    {
+      "slug": "select",
+      "name": "Select"
+    },
+    {
+      "slug": "sidenav",
+      "name": "Sidenav"
+    },
+    {
+      "slug": "slider",
+      "name": "Slider"
+    },
+    {
+      "slug": "status-tag",
+      "name": "StatusTag"
+    },
+    {
+      "slug": "steps",
+      "name": "Steps"
+    },
+    {
+      "slug": "switch",
+      "name": "Switch"
+    },
+    {
+      "slug": "table",
+      "name": "Table"
+    },
+    {
+      "slug": "tabs",
+      "name": "Tabs"
+    },
+    {
+      "slug": "timepicker",
+      "name": "TimePicker"
+    },
+    {
+      "slug": "tooltip",
+      "name": "Tooltip"
+    },
+    {
+      "slug": "topnav",
+      "name": "TopNav"
+    }
+  ]
+}

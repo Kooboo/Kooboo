@@ -1,0 +1,641 @@
+{
+  "schemaVersion": 1,
+  "source": "element-plus@2.14.5",
+  "components": [
+    {
+      "slug": "affix",
+      "name": "affix",
+      "exports": [
+        "ElAffix"
+      ]
+    },
+    {
+      "slug": "alert",
+      "name": "alert",
+      "exports": [
+        "ElAlert"
+      ]
+    },
+    {
+      "slug": "anchor",
+      "name": "anchor",
+      "exports": [
+        "ElAnchor",
+        "ElAnchorLink"
+      ]
+    },
+    {
+      "slug": "autocomplete",
+      "name": "autocomplete",
+      "exports": [
+        "ElAutocomplete"
+      ]
+    },
+    {
+      "slug": "avatar",
+      "name": "avatar",
+      "exports": [
+        "ElAvatar",
+        "ElAvatarGroup"
+      ]
+    },
+    {
+      "slug": "backtop",
+      "name": "backtop",
+      "exports": [
+        "ElBacktop"
+      ]
+    },
+    {
+      "slug": "badge",
+      "name": "badge",
+      "exports": [
+        "ElBadge"
+      ]
+    },
+    {
+      "slug": "breadcrumb",
+      "name": "breadcrumb",
+      "exports": [
+        "ElBreadcrumb",
+        "ElBreadcrumbItem"
+      ]
+    },
+    {
+      "slug": "button",
+      "name": "button",
+      "exports": [
+        "ElButton",
+        "ElButtonGroup"
+      ]
+    },
+    {
+      "slug": "calendar",
+      "name": "calendar",
+      "exports": [
+        "ElCalendar"
+      ]
+    },
+    {
+      "slug": "card",
+      "name": "card",
+      "exports": [
+        "ElCard"
+      ]
+    },
+    {
+      "slug": "carousel",
+      "name": "carousel",
+      "exports": [
+        "ElCarousel",
+        "ElCarouselItem"
+      ]
+    },
+    {
+      "slug": "cascader",
+      "name": "cascader",
+      "exports": [
+        "ElCascader"
+      ]
+    },
+    {
+      "slug": "cascader-panel",
+      "name": "cascader-panel",
+      "exports": [
+        "ElCascaderPanel"
+      ]
+    },
+    {
+      "slug": "check-tag",
+      "name": "check-tag",
+      "exports": [
+        "ElCheckTag"
+      ]
+    },
+    {
+      "slug": "checkbox",
+      "name": "checkbox",
+      "exports": [
+        "ElCheckbox",
+        "ElCheckboxButton",
+        "ElCheckboxGroup"
+      ]
+    },
+    {
+      "slug": "col",
+      "name": "col",
+      "exports": [
+        "ElCol"
+      ]
+    },
+    {
+      "slug": "collapse",
+      "name": "collapse",
+      "exports": [
+        "ElCollapse",
+        "ElCollapseItem"
+      ]
+    },
+    {
+      "slug": "collapse-transition",
+      "name": "collapse-transition",
+      "exports": [
+        "ElCollapseTransition"
+      ]
+    },
+    {
+      "slug": "color-picker",
+      "name": "color-picker",
+      "exports": [
+        "ElColorPicker"
+      ]
+    },
+    {
+      "slug": "color-picker-panel",
+      "name": "color-picker-panel",
+      "exports": [
+        "ElColorPickerPanel"
+      ]
+    },
+    {
+      "slug": "config-provider",
+      "name": "config-provider",
+      "exports": [
+        "ElConfigProvider"
+      ]
+    },
+    {
+      "slug": "container",
+      "name": "container",
+      "exports": [
+        "ElAside",
+        "ElContainer",
+        "ElFooter",
+        "ElHeader",
+        "ElMain"
+      ]
+    },
+    {
+      "slug": "countdown",
+      "name": "countdown",
+      "exports": [
+        "ElCountdown"
+      ]
+    },
+    {
+      "slug": "date-picker",
+      "name": "date-picker",
+      "exports": [
+        "ElDatePicker"
+      ]
+    },
+    {
+      "slug": "date-picker-panel",
+      "name": "date-picker-panel",
+      "exports": [
+        "ElDatePickerPanel"
+      ]
+    },
+    {
+      "slug": "descriptions",
+      "name": "descriptions",
+      "exports": [
+        "ElDescriptions",
+        "ElDescriptionsItem"
+      ]
+    },
+    {
+      "slug": "dialog",
+      "name": "dialog",
+      "exports": [
+        "ElDialog"
+      ]
+    },
+    {
+      "slug": "divider",
+      "name": "divider",
+      "exports": [
+        "ElDivider"
+      ]
+    },
+    {
+      "slug": "drawer",
+      "name": "drawer",
+      "exports": [
+        "ElDrawer"
+      ]
+    },
+    {
+      "slug": "dropdown",
+      "name": "dropdown",
+      "exports": [
+        "ElDropdown",
+        "ElDropdownItem",
+        "ElDropdownMenu"
+      ]
+    },
+    {
+      "slug": "empty",
+      "name": "empty",
+      "exports": [
+        "ElEmpty"
+      ]
+    },
+    {
+      "slug": "form",
+      "name": "form",
+      "exports": [
+        "ElForm",
+        "ElFormItem"
+      ]
+    },
+    {
+      "slug": "icon",
+      "name": "icon",
+      "exports": [
+        "ElIcon"
+      ]
+    },
+    {
+      "slug": "image",
+      "name": "image",
+      "exports": [
+        "ElImage"
+      ]
+    },
+    {
+      "slug": "image-viewer",
+      "name": "image-viewer",
+      "exports": [
+        "ElImageViewer"
+      ]
+    },
+    {
+      "slug": "input",
+      "name": "input",
+      "exports": [
+        "ElInput"
+      ]
+    },
+    {
+      "slug": "input-number",
+      "name": "input-number",
+      "exports": [
+        "ElInputNumber"
+      ]
+    },
+    {
+      "slug": "input-otp",
+      "name": "input-otp",
+      "exports": [
+        "ElInputOtp"
+      ]
+    },
+    {
+      "slug": "input-tag",
+      "name": "input-tag",
+      "exports": [
+        "ElInputTag"
+      ]
+    },
+    {
+      "slug": "kooboo-icon",
+      "name": "kooboo-icon",
+      "exports": [
+        "KbLucideIcon"
+      ]
+    },
+    {
+      "slug": "kooboo-shell",
+      "name": "kooboo-shell",
+      "exports": [
+        "KbElementShell"
+      ]
+    },
+    {
+      "slug": "link",
+      "name": "link",
+      "exports": [
+        "ElLink"
+      ]
+    },
+    {
+      "slug": "loading",
+      "name": "loading",
+      "exports": [
+        "ElLoadingDirective",
+        "ElLoadingService"
+      ]
+    },
+    {
+      "slug": "locale",
+      "name": "locale",
+      "exports": [
+        "epEn",
+        "epZhCn"
+      ]
+    },
+    {
+      "slug": "mention",
+      "name": "mention",
+      "exports": [
+        "ElMention"
+      ]
+    },
+    {
+      "slug": "menu",
+      "name": "menu",
+      "exports": [
+        "ElMenu",
+        "ElMenuItem",
+        "ElMenuItemGroup",
+        "ElSubMenu"
+      ]
+    },
+    {
+      "slug": "message",
+      "name": "message",
+      "exports": [
+        "ElMessage"
+      ]
+    },
+    {
+      "slug": "message-box",
+      "name": "message-box",
+      "exports": [
+        "ElMessageBox"
+      ]
+    },
+    {
+      "slug": "notification",
+      "name": "notification",
+      "exports": [
+        "ElNotification"
+      ]
+    },
+    {
+      "slug": "page-header",
+      "name": "page-header",
+      "exports": [
+        "ElPageHeader"
+      ]
+    },
+    {
+      "slug": "pagination",
+      "name": "pagination",
+      "exports": [
+        "ElPagination"
+      ]
+    },
+    {
+      "slug": "popconfirm",
+      "name": "popconfirm",
+      "exports": [
+        "ElPopconfirm"
+      ]
+    },
+    {
+      "slug": "popover",
+      "name": "popover",
+      "exports": [
+        "ElPopover"
+      ]
+    },
+    {
+      "slug": "progress",
+      "name": "progress",
+      "exports": [
+        "ElProgress"
+      ]
+    },
+    {
+      "slug": "radio",
+      "name": "radio",
+      "exports": [
+        "ElRadio",
+        "ElRadioButton",
+        "ElRadioGroup"
+      ]
+    },
+    {
+      "slug": "rate",
+      "name": "rate",
+      "exports": [
+        "ElRate"
+      ]
+    },
+    {
+      "slug": "result",
+      "name": "result",
+      "exports": [
+        "ElResult"
+      ]
+    },
+    {
+      "slug": "row",
+      "name": "row",
+      "exports": [
+        "ElRow"
+      ]
+    },
+    {
+      "slug": "scrollbar",
+      "name": "scrollbar",
+      "exports": [
+        "ElScrollbar"
+      ]
+    },
+    {
+      "slug": "segmented",
+      "name": "segmented",
+      "exports": [
+        "ElSegmented"
+      ]
+    },
+    {
+      "slug": "select",
+      "name": "select",
+      "exports": [
+        "ElOption",
+        "ElOptionGroup",
+        "ElSelect"
+      ]
+    },
+    {
+      "slug": "select-v2",
+      "name": "select-v2",
+      "exports": [
+        "ElSelectV2"
+      ]
+    },
+    {
+      "slug": "skeleton",
+      "name": "skeleton",
+      "exports": [
+        "ElSkeleton",
+        "ElSkeletonItem"
+      ]
+    },
+    {
+      "slug": "slider",
+      "name": "slider",
+      "exports": [
+        "ElSlider"
+      ]
+    },
+    {
+      "slug": "space",
+      "name": "space",
+      "exports": [
+        "ElSpace"
+      ]
+    },
+    {
+      "slug": "splitter",
+      "name": "splitter",
+      "exports": [
+        "ElSplitter",
+        "ElSplitterPanel"
+      ]
+    },
+    {
+      "slug": "statistic",
+      "name": "statistic",
+      "exports": [
+        "ElStatistic"
+      ]
+    },
+    {
+      "slug": "steps",
+      "name": "steps",
+      "exports": [
+        "ElStep",
+        "ElSteps"
+      ]
+    },
+    {
+      "slug": "switch",
+      "name": "switch",
+      "exports": [
+        "ElSwitch"
+      ]
+    },
+    {
+      "slug": "table",
+      "name": "table",
+      "exports": [
+        "ElTable",
+        "ElTableColumn"
+      ]
+    },
+    {
+      "slug": "table-v2",
+      "name": "table-v2",
+      "exports": [
+        "ElAutoResizer",
+        "ElTableV2"
+      ]
+    },
+    {
+      "slug": "tabs",
+      "name": "tabs",
+      "exports": [
+        "ElTabPane",
+        "ElTabs"
+      ]
+    },
+    {
+      "slug": "tag",
+      "name": "tag",
+      "exports": [
+        "ElTag"
+      ]
+    },
+    {
+      "slug": "text",
+      "name": "text",
+      "exports": [
+        "ElText"
+      ]
+    },
+    {
+      "slug": "time-picker",
+      "name": "time-picker",
+      "exports": [
+        "ElTimePicker"
+      ]
+    },
+    {
+      "slug": "time-select",
+      "name": "time-select",
+      "exports": [
+        "ElTimeSelect"
+      ]
+    },
+    {
+      "slug": "timeline",
+      "name": "timeline",
+      "exports": [
+        "ElTimeline",
+        "ElTimelineItem"
+      ]
+    },
+    {
+      "slug": "tooltip",
+      "name": "tooltip",
+      "exports": [
+        "ElTooltip"
+      ]
+    },
+    {
+      "slug": "tour",
+      "name": "tour",
+      "exports": [
+        "ElTour",
+        "ElTourStep"
+      ]
+    },
+    {
+      "slug": "transfer",
+      "name": "transfer",
+      "exports": [
+        "ElTransfer"
+      ]
+    },
+    {
+      "slug": "tree",
+      "name": "tree",
+      "exports": [
+        "ElTree"
+      ]
+    },
+    {
+      "slug": "tree-select",
+      "name": "tree-select",
+      "exports": [
+        "ElTreeSelect"
+      ]
+    },
+    {
+      "slug": "tree-v2",
+      "name": "tree-v2",
+      "exports": [
+        "ElTreeV2"
+      ]
+    },
+    {
+      "slug": "upload",
+      "name": "upload",
+      "exports": [
+        "ElUpload"
+      ]
+    },
+    {
+      "slug": "watermark",
+      "name": "watermark",
+      "exports": [
+        "ElWatermark"
+      ]
+    }
+  ]
+}

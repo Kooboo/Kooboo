@@ -1,0 +1,52 @@
+{
+  "type": "function",
+  "function": {
+    "name": "list_external_url",
+    "description": "List external URLs from current site. Supports optional keyword, resource type, skip, and take filters.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional keyword used to match external URL text"
+        },
+        "resourceType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional resource type. Accepts numeric type id or type name like Image, Script, Style"
+        },
+        "skip": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Optional number of items to skip from the beginning"
+        },
+        "take": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Optional maximum number of items to return. Default is 50"
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

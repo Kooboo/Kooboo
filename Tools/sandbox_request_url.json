@@ -1,0 +1,32 @@
+{
+  "type": "function",
+  "function": {
+    "name": "sandbox_request_url",
+    "description": "Render a relative URL inside a sandbox site and return its status, body, and execution time.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "relativeUrl": {
+          "type": "string",
+          "description": "Site-relative URL to render, for example /products."
+        },
+        "httpMethod": {
+          "type": "string",
+          "description": "HTTP method used by the render context."
+        },
+        "queryString": {
+          "description": "Optional query-string values."
+        },
+        "sandbox": {
+          "type": "string",
+          "description": "Sandbox name returned by list_sandbox or create_sandbox."
+        }
+      },
+      "required": [
+        "relativeUrl",
+        "sandbox"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

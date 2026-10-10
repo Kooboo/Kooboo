@@ -1,0 +1,36 @@
+{
+  "type": "function",
+  "function": {
+    "name": "get_label",
+    "description": "Retrieve label values by key array. If keys array is empty, return all labels.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "keys": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of label names If empty or null, returns all labels"
+        },
+        "culture": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

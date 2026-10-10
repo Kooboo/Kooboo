@@ -1,0 +1,8 @@
+/* kooboo-app-base:v2; role: app-composition */
+/* The installed design runtime owns component visuals and interaction.
+   Use create_app_base's DesignRuntime.UsageGuides; read only missing guides needed now.
+   Add business-specific outer layout and responsive composition here using the guide's public tokens.
+   Preserve an installed Shell's navigation, content sizing, RouterView and account/notification behavior.
+   For a custom Shell, keep app-root and data-app-region="content" on the main work area.
+   Read existing infrastructure source when modifying it or diagnosing a concrete fault.
+   Read back business objects before editing them. Component internals belong to the managed runtime. */

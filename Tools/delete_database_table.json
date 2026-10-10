@@ -1,0 +1,29 @@
+{
+  "type": "function",
+  "function": {
+    "name": "delete_database_table",
+    "description": "Delete an internal SQLite table and all its rows permanently.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,288 @@
+{
+  "components": [
+    {
+      "slug": "affix",
+      "name": "Affix"
+    },
+    {
+      "slug": "anchor",
+      "name": "Anchor"
+    },
+    {
+      "slug": "auto-complete",
+      "name": "AutoComplete"
+    },
+    {
+      "slug": "alert",
+      "name": "Alert"
+    },
+    {
+      "slug": "avatar",
+      "name": "Avatar"
+    },
+    {
+      "slug": "badge",
+      "name": "Badge"
+    },
+    {
+      "slug": "breadcrumb",
+      "name": "Breadcrumb"
+    },
+    {
+      "slug": "button",
+      "name": "Button"
+    },
+    {
+      "slug": "calendar",
+      "name": "Calendar"
+    },
+    {
+      "slug": "card",
+      "name": "Card"
+    },
+    {
+      "slug": "collapse",
+      "name": "Collapse"
+    },
+    {
+      "slug": "carousel",
+      "name": "Carousel"
+    },
+    {
+      "slug": "cascader",
+      "name": "Cascader"
+    },
+    {
+      "slug": "checkbox",
+      "name": "Checkbox"
+    },
+    {
+      "slug": "col",
+      "name": "Col"
+    },
+    {
+      "slug": "comment",
+      "name": "Comment"
+    },
+    {
+      "slug": "config-provider",
+      "name": "ConfigProvider"
+    },
+    {
+      "slug": "date-picker",
+      "name": "DatePicker"
+    },
+    {
+      "slug": "descriptions",
+      "name": "Descriptions"
+    },
+    {
+      "slug": "divider",
+      "name": "Divider"
+    },
+    {
+      "slug": "dropdown",
+      "name": "Dropdown"
+    },
+    {
+      "slug": "drawer",
+      "name": "Drawer"
+    },
+    {
+      "slug": "empty",
+      "name": "Empty"
+    },
+    {
+      "slug": "float-button",
+      "name": "FloatButton"
+    },
+    {
+      "slug": "form",
+      "name": "Form"
+    },
+    {
+      "slug": "grid",
+      "name": "Grid"
+    },
+    {
+      "slug": "input",
+      "name": "Input"
+    },
+    {
+      "slug": "image",
+      "name": "Image"
+    },
+    {
+      "slug": "input-number",
+      "name": "InputNumber"
+    },
+    {
+      "slug": "layout",
+      "name": "Layout"
+    },
+    {
+      "slug": "list",
+      "name": "List"
+    },
+    {
+      "slug": "message",
+      "name": "message"
+    },
+    {
+      "slug": "menu",
+      "name": "Menu"
+    },
+    {
+      "slug": "mentions",
+      "name": "Mentions"
+    },
+    {
+      "slug": "modal",
+      "name": "Modal"
+    },
+    {
+      "slug": "statistic",
+      "name": "Statistic"
+    },
+    {
+      "slug": "notification",
+      "name": "notification"
+    },
+    {
+      "slug": "page-header",
+      "name": "PageHeader"
+    },
+    {
+      "slug": "pagination",
+      "name": "Pagination"
+    },
+    {
+      "slug": "popconfirm",
+      "name": "Popconfirm"
+    },
+    {
+      "slug": "popover",
+      "name": "Popover"
+    },
+    {
+      "slug": "progress",
+      "name": "Progress"
+    },
+    {
+      "slug": "radio",
+      "name": "Radio"
+    },
+    {
+      "slug": "rate",
+      "name": "Rate"
+    },
+    {
+      "slug": "result",
+      "name": "Result"
+    },
+    {
+      "slug": "row",
+      "name": "Row"
+    },
+    {
+      "slug": "select",
+      "name": "Select"
+    },
+    {
+      "slug": "skeleton",
+      "name": "Skeleton"
+    },
+    {
+      "slug": "slider",
+      "name": "Slider"
+    },
+    {
+      "slug": "space",
+      "name": "Space"
+    },
+    {
+      "slug": "spin",
+      "name": "Spin"
+    },
+    {
+      "slug": "steps",
+      "name": "Steps"
+    },
+    {
+      "slug": "switch",
+      "name": "Switch"
+    },
+    {
+      "slug": "table",
+      "name": "Table"
+    },
+    {
+      "slug": "transfer",
+      "name": "Transfer"
+    },
+    {
+      "slug": "tree",
+      "name": "Tree"
+    },
+    {
+      "slug": "tree-select",
+      "name": "TreeSelect"
+    },
+    {
+      "slug": "tabs",
+      "name": "Tabs"
+    },
+    {
+      "slug": "tag",
+      "name": "Tag"
+    },
+    {
+      "slug": "time-picker",
+      "name": "TimePicker"
+    },
+    {
+      "slug": "timeline",
+      "name": "Timeline"
+    },
+    {
+      "slug": "tooltip",
+      "name": "Tooltip"
+    },
+    {
+      "slug": "typography",
+      "name": "Typography"
+    },
+    {
+      "slug": "upload",
+      "name": "Upload"
+    },
+    {
+      "slug": "locale-provider",
+      "name": "LocaleProvider"
+    },
+    {
+      "slug": "watermark",
+      "name": "Watermark"
+    },
+    {
+      "slug": "segmented",
+      "name": "Segmented"
+    },
+    {
+      "slug": "qrcode",
+      "name": "QRCode"
+    },
+    {
+      "slug": "tour",
+      "name": "Tour"
+    },
+    {
+      "slug": "app",
+      "name": "App"
+    },
+    {
+      "slug": "flex",
+      "name": "Flex"
+    }
+  ]
+}

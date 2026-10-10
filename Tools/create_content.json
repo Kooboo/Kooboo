@@ -1,0 +1,33 @@
+{
+  "type": "function",
+  "function": {
+    "name": "create_content",
+    "description": "Create content in the specified content folder; data must comply with the content type schema.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "folderNameOrId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dataJson": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Content data as a static JSON string; must be built exactly according to the schema returned by get_content_schema, e.g. { \u0027field1\u0027: \u0027value\u0027, ... }."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,13 @@
+# Kooboo Preflight data-contract capability rules
+
+rules:
+  - id: PF-DATA-001
+    advisory: true
+    customCheck: dataStrategyContract
+    capability: data
+    profiles: [site, app]
+    title: "Verify data implementation against the accepted strategy"
+    severity: BLOCKER
+    appliesTo: [Page, View, Script, Api, CodeBlock]
+    tags: [data, dynamic]
+    fix: "Compare fixture use and persistence with the accepted Data Requirement strategy. App mock-api fixtures are allowed; do not replace them with storage. Verify new-store and production-source requirements through runtime/business evidence."

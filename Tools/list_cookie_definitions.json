@@ -1,0 +1,52 @@
+{
+  "type": "function",
+  "function": {
+    "name": "list_cookie_definitions",
+    "description": "Unavailable: this tool is not implemented and must not be called. List read-only cookie definitions configured in Cookie Management with optional category and keyword filters.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional cookie category filter, such as necessary, preference, statistics, or marketing."
+        },
+        "keyword": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional keyword for cookie name, domain, provider, or purpose search."
+        },
+        "includeJsDetectedCookies": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether to include cookies discovered from JavaScript analysis. Default: false"
+        },
+        "pageIndex": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Page index for pagination. Default: 1"
+        },
+        "pageSize": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Page size for pagination. Default: 50"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

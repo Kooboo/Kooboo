@@ -1,0 +1,28 @@
+{
+  "type": "function",
+  "function": {
+    "name": "copy_sandbox_objects",
+    "description": "Copy selected object types from the current site into an existing sandbox site.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "siteName": {
+          "type": "string",
+          "description": "Name suffix of the target sandbox site."
+        },
+        "objectTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Object types to copy from the current site. Available values: Layout, View, Style, Script, Image, File, Menu, HtmlBlock, Label, Form, ContentFolder, ContentType, ContentCategory, TextContent, Code, OpenApi, Page."
+        }
+      },
+      "required": [
+        "siteName",
+        "objectTypes"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

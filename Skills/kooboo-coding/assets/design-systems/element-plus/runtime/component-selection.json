@@ -1,0 +1,603 @@
+{
+  "designSystemId": "element-plus",
+  "version": "0.3.0",
+  "moduleUrl": "/element-plus.js",
+  "instructions": "The complete official runtime is always installed. Choose names only to request API guides for the current task; adding components later requires no runtime synchronization. Native El* APIs are preserved. Service/directive/locale entries are not template components.",
+  "exports": [
+    {
+      "name": "ElAffix",
+      "kind": "component",
+      "summary": "Fix the element to a specific visible area."
+    },
+    {
+      "name": "ElAlert",
+      "kind": "component",
+      "summary": "Displays important alert messages."
+    },
+    {
+      "name": "ElAnchor",
+      "kind": "component",
+      "summary": "Through the anchor point, you can quickly find the position of the information content on the current page."
+    },
+    {
+      "name": "ElAnchorLink",
+      "kind": "component",
+      "summary": "ElAnchorLink: native Element Plus component."
+    },
+    {
+      "name": "ElAside",
+      "kind": "component",
+      "summary": "ElAside: native Element Plus component."
+    },
+    {
+      "name": "ElAutocomplete",
+      "kind": "component",
+      "summary": "Get some recommended tips based on the current input."
+    },
+    {
+      "name": "ElAutoResizer",
+      "kind": "component",
+      "summary": "Measure available width/height for virtual tables using a scoped default slot."
+    },
+    {
+      "name": "ElAvatar",
+      "kind": "component",
+      "summary": "Avatars can be used to represent people or objects. It supports images, Icons, or characters."
+    },
+    {
+      "name": "ElAvatarGroup",
+      "kind": "component",
+      "summary": "ElAvatarGroup: native Element Plus component."
+    },
+    {
+      "name": "ElBacktop",
+      "kind": "component",
+      "summary": "A button to back to top."
+    },
+    {
+      "name": "ElBadge",
+      "kind": "component",
+      "summary": "A number or status mark on buttons and icons."
+    },
+    {
+      "name": "ElBreadcrumb",
+      "kind": "component",
+      "summary": "Displays the location of the current page, making it easier to browser back."
+    },
+    {
+      "name": "ElBreadcrumbItem",
+      "kind": "component",
+      "summary": "ElBreadcrumbItem: native Element Plus component."
+    },
+    {
+      "name": "ElButton",
+      "kind": "component",
+      "summary": "Commonly used button."
+    },
+    {
+      "name": "ElButtonGroup",
+      "kind": "component",
+      "summary": "ElButtonGroup: native Element Plus component."
+    },
+    {
+      "name": "ElCalendar",
+      "kind": "component",
+      "summary": "Display date."
+    },
+    {
+      "name": "ElCard",
+      "kind": "component",
+      "summary": "Integrate information in a card container."
+    },
+    {
+      "name": "ElCarousel",
+      "kind": "component",
+      "summary": "Loop a series of images or texts in a limited space"
+    },
+    {
+      "name": "ElCarouselItem",
+      "kind": "component",
+      "summary": "ElCarouselItem: native Element Plus component."
+    },
+    {
+      "name": "ElCascader",
+      "kind": "component",
+      "summary": "If the options have a clear hierarchical structure, Cascader can be used to view and select them."
+    },
+    {
+      "name": "ElCascaderPanel",
+      "kind": "component",
+      "summary": "ElCascaderPanel: native Element Plus component."
+    },
+    {
+      "name": "ElCheckbox",
+      "kind": "component",
+      "summary": "A group of options for multiple choices."
+    },
+    {
+      "name": "ElCheckboxButton",
+      "kind": "component",
+      "summary": "ElCheckboxButton: native Element Plus component."
+    },
+    {
+      "name": "ElCheckboxGroup",
+      "kind": "component",
+      "summary": "ElCheckboxGroup: native Element Plus component."
+    },
+    {
+      "name": "ElCheckTag",
+      "kind": "component",
+      "summary": "ElCheckTag: native Element Plus component."
+    },
+    {
+      "name": "ElCol",
+      "kind": "component",
+      "summary": "ElCol: native Element Plus component."
+    },
+    {
+      "name": "ElCollapse",
+      "kind": "component",
+      "summary": "Use Collapse to store contents."
+    },
+    {
+      "name": "ElCollapseItem",
+      "kind": "component",
+      "summary": "ElCollapseItem: native Element Plus component."
+    },
+    {
+      "name": "ElCollapseTransition",
+      "kind": "component",
+      "summary": "Native Element Plus height transition wrapper."
+    },
+    {
+      "name": "ElColorPicker",
+      "kind": "component",
+      "summary": "ColorPicker is a color selector supporting multiple color formats."
+    },
+    {
+      "name": "ElColorPickerPanel",
+      "kind": "component",
+      "summary": "`ColorPickerPanel` is the core component of `ColorPicker`."
+    },
+    {
+      "name": "ElConfigProvider",
+      "kind": "component",
+      "summary": "Config Provider is used for providing global configurations, which enables your entire application to access these configurations everywhere."
+    },
+    {
+      "name": "ElContainer",
+      "kind": "component",
+      "summary": "Container components for scaffolding basic structure of the page:"
+    },
+    {
+      "name": "ElCountdown",
+      "kind": "component",
+      "summary": ":::demo Countdown component, support to add other components control countdown."
+    },
+    {
+      "name": "ElDatePicker",
+      "kind": "component",
+      "summary": "Use Date Picker for date input."
+    },
+    {
+      "name": "ElDatePickerPanel",
+      "kind": "component",
+      "summary": "`DatePickerPanel` is the core component of `DatePicker`."
+    },
+    {
+      "name": "ElDescriptions",
+      "kind": "component",
+      "summary": "Display multiple fields in list form."
+    },
+    {
+      "name": "ElDescriptionsItem",
+      "kind": "component",
+      "summary": "ElDescriptionsItem: native Element Plus component."
+    },
+    {
+      "name": "ElDialog",
+      "kind": "component",
+      "summary": "Informs users while preserving the current page state."
+    },
+    {
+      "name": "ElDivider",
+      "kind": "component",
+      "summary": "The dividing line that separates the content."
+    },
+    {
+      "name": "ElDrawer",
+      "kind": "component",
+      "summary": "Sometimes, `Dialog` does not always satisfy our requirements, let's say you have a massive form, or you need space to display something like `terms & conditions`, `Drawer` has almost identical API with `Dialog`, but it introduces different user experience."
+    },
+    {
+      "name": "ElDropdown",
+      "kind": "component",
+      "summary": "Toggleable menu for displaying lists of links and actions."
+    },
+    {
+      "name": "ElDropdownItem",
+      "kind": "component",
+      "summary": "ElDropdownItem: native Element Plus component."
+    },
+    {
+      "name": "ElDropdownMenu",
+      "kind": "component",
+      "summary": "ElDropdownMenu: native Element Plus component."
+    },
+    {
+      "name": "ElEmpty",
+      "kind": "component",
+      "summary": "Placeholder hints for empty states."
+    },
+    {
+      "name": "ElFooter",
+      "kind": "component",
+      "summary": "ElFooter: native Element Plus component."
+    },
+    {
+      "name": "ElForm",
+      "kind": "component",
+      "summary": "Form consists of `input`, `radio`, `select`, `checkbox` and so on. With form, you can collect, verify and submit data."
+    },
+    {
+      "name": "ElFormItem",
+      "kind": "component",
+      "summary": "ElFormItem: native Element Plus component."
+    },
+    {
+      "name": "ElHeader",
+      "kind": "component",
+      "summary": "ElHeader: native Element Plus component."
+    },
+    {
+      "name": "ElIcon",
+      "kind": "component",
+      "summary": "Element Plus provides a set of common icons."
+    },
+    {
+      "name": "ElImage",
+      "kind": "component",
+      "summary": "Besides the native features of img, support lazy load, custom placeholder and load failure, etc."
+    },
+    {
+      "name": "ElImageViewer",
+      "kind": "component",
+      "summary": "ElImageViewer: native Element Plus component."
+    },
+    {
+      "name": "ElInput",
+      "kind": "component",
+      "summary": "Input data using mouse or keyboard."
+    },
+    {
+      "name": "ElInputNumber",
+      "kind": "component",
+      "summary": "Input numerical values with a customizable range."
+    },
+    {
+      "name": "ElInputOtp",
+      "kind": "component",
+      "summary": "Used to enter a one-time password"
+    },
+    {
+      "name": "ElInputTag",
+      "kind": "component",
+      "summary": "The InputTag component allows users to add content as tags."
+    },
+    {
+      "name": "ElLink",
+      "kind": "component",
+      "summary": "Text hyperlink"
+    },
+    {
+      "name": "ElLoadingDirective",
+      "kind": "directive",
+      "summary": "Vue directive for v-loading; register locally as loading."
+    },
+    {
+      "name": "ElLoadingService",
+      "kind": "service",
+      "summary": "Imperative loading overlay service; close it when the request settles."
+    },
+    {
+      "name": "ElMain",
+      "kind": "component",
+      "summary": "ElMain: native Element Plus component."
+    },
+    {
+      "name": "ElMention",
+      "kind": "component",
+      "summary": "Used to mention someone or something in an input."
+    },
+    {
+      "name": "ElMenu",
+      "kind": "component",
+      "summary": "Menu that provides navigation for your website."
+    },
+    {
+      "name": "ElMenuItem",
+      "kind": "component",
+      "summary": "ElMenuItem: native Element Plus component."
+    },
+    {
+      "name": "ElMenuItemGroup",
+      "kind": "component",
+      "summary": "ElMenuItemGroup: native Element Plus component."
+    },
+    {
+      "name": "ElMessage",
+      "kind": "service",
+      "summary": "Imperative transient message service; call it, do not mount it as a component."
+    },
+    {
+      "name": "ElMessageBox",
+      "kind": "service",
+      "summary": "Promise-based alert, confirmation and prompt service."
+    },
+    {
+      "name": "ElNotification",
+      "kind": "service",
+      "summary": "Imperative notification service with explicit close handler."
+    },
+    {
+      "name": "ElOption",
+      "kind": "component",
+      "summary": "ElOption: native Element Plus component."
+    },
+    {
+      "name": "ElOptionGroup",
+      "kind": "component",
+      "summary": "ElOptionGroup: native Element Plus component."
+    },
+    {
+      "name": "ElPageHeader",
+      "kind": "component",
+      "summary": "If path of the page is simple, it is recommended to use PageHeader instead of the Breadcrumb."
+    },
+    {
+      "name": "ElPagination",
+      "kind": "component",
+      "summary": "If you have too much data to display in one page, use pagination."
+    },
+    {
+      "name": "ElPopconfirm",
+      "kind": "component",
+      "summary": "A simple confirmation dialog of an element click action."
+    },
+    {
+      "name": "ElPopover",
+      "kind": "component",
+      "summary": "ElPopover: native Element Plus component."
+    },
+    {
+      "name": "ElProgress",
+      "kind": "component",
+      "summary": "Progress is used to show the progress of current operation, and inform the user the current status."
+    },
+    {
+      "name": "ElRadio",
+      "kind": "component",
+      "summary": "Single selection among multiple options."
+    },
+    {
+      "name": "ElRadioButton",
+      "kind": "component",
+      "summary": "ElRadioButton: native Element Plus component."
+    },
+    {
+      "name": "ElRadioGroup",
+      "kind": "component",
+      "summary": "ElRadioGroup: native Element Plus component."
+    },
+    {
+      "name": "ElRate",
+      "kind": "component",
+      "summary": "Used for rating"
+    },
+    {
+      "name": "ElResult",
+      "kind": "component",
+      "summary": "Used to give feedback on the result of user's operation or access exception."
+    },
+    {
+      "name": "ElRow",
+      "kind": "component",
+      "summary": "ElRow: native Element Plus component."
+    },
+    {
+      "name": "ElScrollbar",
+      "kind": "component",
+      "summary": "Used to replace the browser's native scrollbar."
+    },
+    {
+      "name": "ElSegmented",
+      "kind": "component",
+      "summary": "Display multiple options and allow users to select a single option."
+    },
+    {
+      "name": "ElSelect",
+      "kind": "component",
+      "summary": "When there are plenty of options, use a drop-down menu to display and select desired ones."
+    },
+    {
+      "name": "ElSelectV2",
+      "kind": "component",
+      "summary": ":::tip"
+    },
+    {
+      "name": "ElSkeleton",
+      "kind": "component",
+      "summary": "When loading data, and you need a rich experience for visual and interactions for your end users, you can choose `skeleton`."
+    },
+    {
+      "name": "ElSkeletonItem",
+      "kind": "component",
+      "summary": "ElSkeletonItem: native Element Plus component."
+    },
+    {
+      "name": "ElSlider",
+      "kind": "component",
+      "summary": "Drag the slider within a fixed range."
+    },
+    {
+      "name": "ElSpace",
+      "kind": "component",
+      "summary": "Even though we have [Divider]"
+    },
+    {
+      "name": "ElSplitter",
+      "kind": "component",
+      "summary": "ElSplitter: native Element Plus component."
+    },
+    {
+      "name": "ElSplitterPanel",
+      "kind": "component",
+      "summary": "ElSplitterPanel: native Element Plus component."
+    },
+    {
+      "name": "ElStatistic",
+      "kind": "component",
+      "summary": "Display statistics."
+    },
+    {
+      "name": "ElStep",
+      "kind": "component",
+      "summary": "ElStep: native Element Plus component."
+    },
+    {
+      "name": "ElSteps",
+      "kind": "component",
+      "summary": "Guide the user to complete tasks in accordance with the process. Its steps can be set according to the actual application scenario and the number of the steps can't be less than 2."
+    },
+    {
+      "name": "ElSubMenu",
+      "kind": "component",
+      "summary": "ElSubMenu: native Element Plus component."
+    },
+    {
+      "name": "ElSwitch",
+      "kind": "component",
+      "summary": "Switch is used for switching between two opposing states."
+    },
+    {
+      "name": "ElTable",
+      "kind": "component",
+      "summary": "Display multiple data with similar format. You can sort, filter, compare your data in a table."
+    },
+    {
+      "name": "ElTableColumn",
+      "kind": "component",
+      "summary": "ElTableColumn: native Element Plus component."
+    },
+    {
+      "name": "ElTableV2",
+      "kind": "component",
+      "summary": "ElTableV2: native Element Plus component."
+    },
+    {
+      "name": "ElTabPane",
+      "kind": "component",
+      "summary": "ElTabPane: native Element Plus component."
+    },
+    {
+      "name": "ElTabs",
+      "kind": "component",
+      "summary": "Divide data collections which are related yet belong to different types."
+    },
+    {
+      "name": "ElTag",
+      "kind": "component",
+      "summary": "Used for marking and selection."
+    },
+    {
+      "name": "ElText",
+      "kind": "component",
+      "summary": "Used for text."
+    },
+    {
+      "name": "ElTimeline",
+      "kind": "component",
+      "summary": "Visually display timeline."
+    },
+    {
+      "name": "ElTimelineItem",
+      "kind": "component",
+      "summary": "ElTimelineItem: native Element Plus component."
+    },
+    {
+      "name": "ElTimePicker",
+      "kind": "component",
+      "summary": "Use Time Picker for time input."
+    },
+    {
+      "name": "ElTimeSelect",
+      "kind": "component",
+      "summary": "Use Time Select for time input."
+    },
+    {
+      "name": "ElTooltip",
+      "kind": "component",
+      "summary": "Display prompt information for mouse hover."
+    },
+    {
+      "name": "ElTour",
+      "kind": "component",
+      "summary": "A popup component for guiding users through a product. Use when you want to guide users through a product."
+    },
+    {
+      "name": "ElTourStep",
+      "kind": "component",
+      "summary": "ElTourStep: native Element Plus component."
+    },
+    {
+      "name": "ElTransfer",
+      "kind": "component",
+      "summary": "ElTransfer: native Element Plus component."
+    },
+    {
+      "name": "ElTree",
+      "kind": "component",
+      "summary": "Display a set of data with hierarchies."
+    },
+    {
+      "name": "ElTreeSelect",
+      "kind": "component",
+      "summary": "ElTreeSelect: native Element Plus component."
+    },
+    {
+      "name": "ElTreeV2",
+      "kind": "component",
+      "summary": "ElTreeV2: native Element Plus component."
+    },
+    {
+      "name": "ElUpload",
+      "kind": "component",
+      "summary": "Upload files by clicking or drag-and-drop."
+    },
+    {
+      "name": "ElWatermark",
+      "kind": "component",
+      "summary": "Add specific text or patterns to the page."
+    },
+    {
+      "name": "epEn",
+      "kind": "locale",
+      "summary": "English locale object for ElConfigProvider."
+    },
+    {
+      "name": "epZhCn",
+      "kind": "locale",
+      "summary": "Chinese locale object for ElConfigProvider."
+    },
+    {
+      "name": "KbElementShell",
+      "kind": "component",
+      "summary": "Optional Kooboo workspace preset built with native Element Plus navigation and drawer."
+    },
+    {
+      "name": "KbLucideIcon",
+      "kind": "component",
+      "summary": "Vue-rendered SVG using the pinned App Base Lucide loader."
+    }
+  ]
+}

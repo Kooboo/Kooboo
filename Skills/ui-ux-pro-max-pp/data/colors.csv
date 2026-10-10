@@ -1,0 +1,124 @@
+No,Product Type,Primary (Hex),Secondary (Hex),CTA (Hex),Background (Hex),Text (Hex),Border (Hex),Notes,Variant ID,Tone Tags,Palette Family,Weight
+1,SaaS (General),#2563EB,#3B82F6,#F97316,#F8FAFC,#1E293B,#E2E8F0,Trust blue + orange CTA contrast
+2,Micro SaaS,#6366F1,#818CF8,#10B981,#F5F3FF,#1E1B4B,#E0E7FF,Indigo primary + emerald CTA
+3,E-commerce,#059669,#10B981,#F97316,#ECFDF5,#064E3B,#A7F3D0,Success green + urgency orange
+4,E-commerce Luxury,#1C1917,#44403C,#CA8A04,#FAFAF9,#0C0A09,#D6D3D1,Premium dark + gold accent
+5,Service Landing Page,#0EA5E9,#38BDF8,#F97316,#F0F9FF,#0C4A6E,#BAE6FD,Sky blue trust + warm CTA
+6,B2B Service,#0F172A,#334155,#0369A1,#F8FAFC,#020617,#E2E8F0,Professional navy + blue CTA
+7,Financial Dashboard,#0F172A,#1E293B,#22C55E,#020617,#F8FAFC,#334155,Dark bg + green positive indicators
+8,Analytics Dashboard,#1E40AF,#3B82F6,#F59E0B,#F8FAFC,#1E3A8A,#DBEAFE,Blue data + amber highlights
+9,Healthcare App,#0891B2,#22D3EE,#059669,#ECFEFF,#164E63,#A5F3FC,Calm cyan + health green
+10,Educational App,#4F46E5,#818CF8,#F97316,#EEF2FF,#1E1B4B,#C7D2FE,Playful indigo + energetic orange
+11,Creative Agency,#EC4899,#F472B6,#06B6D4,#FDF2F8,#831843,#FBCFE8,Bold pink + cyan accent
+12,Portfolio/Personal,#18181B,#3F3F46,#2563EB,#FAFAFA,#09090B,#E4E4E7,Monochrome + blue accent
+13,Gaming,#7C3AED,#A78BFA,#F43F5E,#0F0F23,#E2E8F0,#4C1D95,Neon purple + rose action
+14,Government/Public Service,#0F172A,#334155,#0369A1,#F8FAFC,#020617,#E2E8F0,High contrast navy + blue
+15,Fintech/Crypto,#F59E0B,#FBBF24,#8B5CF6,#0F172A,#F8FAFC,#334155,Gold trust + purple tech
+16,Social Media App,#E11D48,#FB7185,#2563EB,#FFF1F2,#881337,#FECDD3,Vibrant rose + engagement blue
+17,Productivity Tool,#0D9488,#14B8A6,#F97316,#F0FDFA,#134E4A,#99F6E4,Teal focus + action orange
+18,Design System/Component Library,#4F46E5,#6366F1,#F97316,#EEF2FF,#312E81,#C7D2FE,Indigo brand + doc hierarchy
+19,AI/Chatbot Platform,#7C3AED,#A78BFA,#06B6D4,#FAF5FF,#1E1B4B,#DDD6FE,AI purple + cyan interactions
+20,NFT/Web3 Platform,#8B5CF6,#A78BFA,#FBBF24,#0F0F23,#F8FAFC,#4C1D95,Purple tech + gold value
+21,Creator Economy Platform,#EC4899,#F472B6,#F97316,#FDF2F8,#831843,#FBCFE8,Creator pink + engagement orange
+22,Sustainability/ESG Platform,#059669,#10B981,#0891B2,#ECFDF5,#064E3B,#A7F3D0,Nature green + ocean blue
+23,Remote Work/Collaboration Tool,#6366F1,#818CF8,#10B981,#F5F3FF,#312E81,#E0E7FF,Calm indigo + success green
+24,Mental Health App,#8B5CF6,#C4B5FD,#10B981,#FAF5FF,#4C1D95,#EDE9FE,Calming lavender + wellness green
+25,Pet Tech App,#F97316,#FB923C,#2563EB,#FFF7ED,#9A3412,#FED7AA,Playful orange + trust blue
+26,Smart Home/IoT Dashboard,#1E293B,#334155,#22C55E,#0F172A,#F8FAFC,#475569,Dark tech + status green
+27,EV/Charging Ecosystem,#0891B2,#22D3EE,#22C55E,#ECFEFF,#164E63,#A5F3FC,Electric cyan + eco green
+28,Subscription Box Service,#D946EF,#E879F9,#F97316,#FDF4FF,#86198F,#F5D0FE,Excitement purple + urgency orange
+29,Podcast Platform,#1E1B4B,#312E81,#F97316,#0F0F23,#F8FAFC,#4338CA,Dark audio + warm accent
+30,Dating App,#E11D48,#FB7185,#F97316,#FFF1F2,#881337,#FECDD3,Romantic rose + warm orange
+31,Micro-Credentials/Badges Platform,#0369A1,#0EA5E9,#CA8A04,#F0F9FF,#0C4A6E,#BAE6FD,Trust blue + achievement gold
+32,Knowledge Base/Documentation,#475569,#64748B,#2563EB,#F8FAFC,#1E293B,#E2E8F0,Neutral grey + link blue
+33,Hyperlocal Services,#059669,#10B981,#F97316,#ECFDF5,#064E3B,#A7F3D0,Location green + action orange
+34,Beauty/Spa/Wellness Service,#EC4899,#F9A8D4,#8B5CF6,#FDF2F8,#831843,#FBCFE8,Soft pink + lavender luxury
+35,Luxury/Premium Brand,#1C1917,#44403C,#CA8A04,#FAFAF9,#0C0A09,#D6D3D1,Premium black + gold accent
+36,Restaurant/Food Service,#DC2626,#F87171,#CA8A04,#FEF2F2,#450A0A,#FECACA,Appetizing red + warm gold
+37,Fitness/Gym App,#F97316,#FB923C,#22C55E,#1F2937,#F8FAFC,#374151,Energy orange + success green
+38,Real Estate/Property,#0F766E,#14B8A6,#0369A1,#F0FDFA,#134E4A,#99F6E4,Trust teal + professional blue
+39,Travel/Tourism Agency,#0EA5E9,#38BDF8,#F97316,#F0F9FF,#0C4A6E,#BAE6FD,Sky blue + adventure orange
+40,Hotel/Hospitality,#1E3A8A,#3B82F6,#CA8A04,#F8FAFC,#1E40AF,#BFDBFE,Luxury navy + gold service
+41,Wedding/Event Planning,#DB2777,#F472B6,#CA8A04,#FDF2F8,#831843,#FBCFE8,Romantic pink + elegant gold
+42,Legal Services,#1E3A8A,#1E40AF,#B45309,#F8FAFC,#0F172A,#CBD5E1,Authority navy + trust gold
+43,Insurance Platform,#0369A1,#0EA5E9,#22C55E,#F0F9FF,#0C4A6E,#BAE6FD,Security blue + protected green
+44,Banking/Traditional Finance,#0F172A,#1E3A8A,#CA8A04,#F8FAFC,#020617,#E2E8F0,Trust navy + premium gold
+45,Online Course/E-learning,#0D9488,#2DD4BF,#F97316,#F0FDFA,#134E4A,#5EEAD4,Progress teal + achievement orange
+46,Non-profit/Charity,#0891B2,#22D3EE,#F97316,#ECFEFF,#164E63,#A5F3FC,Compassion blue + action orange
+47,Music Streaming,#1E1B4B,#4338CA,#22C55E,#0F0F23,#F8FAFC,#312E81,Dark audio + play green
+48,Video Streaming/OTT,#0F0F23,#1E1B4B,#E11D48,#000000,#F8FAFC,#312E81,Cinema dark + play red
+49,Job Board/Recruitment,#0369A1,#0EA5E9,#22C55E,#F0F9FF,#0C4A6E,#BAE6FD,Professional blue + success green
+50,Marketplace (P2P),#7C3AED,#A78BFA,#22C55E,#FAF5FF,#4C1D95,#DDD6FE,Trust purple + transaction green
+51,Logistics/Delivery,#2563EB,#3B82F6,#F97316,#EFF6FF,#1E40AF,#BFDBFE,Tracking blue + delivery orange
+52,Agriculture/Farm Tech,#15803D,#22C55E,#CA8A04,#F0FDF4,#14532D,#BBF7D0,Earth green + harvest gold
+53,Construction/Architecture,#64748B,#94A3B8,#F97316,#F8FAFC,#334155,#E2E8F0,Industrial grey + safety orange
+54,Automotive/Car Dealership,#1E293B,#334155,#DC2626,#F8FAFC,#0F172A,#E2E8F0,Premium dark + action red
+55,Photography Studio,#18181B,#27272A,#F8FAFC,#000000,#FAFAFA,#3F3F46,Pure black + white contrast
+56,Coworking Space,#F59E0B,#FBBF24,#2563EB,#FFFBEB,#78350F,#FDE68A,Energetic amber + booking blue
+57,Cleaning Service,#0891B2,#22D3EE,#22C55E,#ECFEFF,#164E63,#A5F3FC,Fresh cyan + clean green
+58,Home Services (Plumber/Electrician),#1E40AF,#3B82F6,#F97316,#EFF6FF,#1E3A8A,#BFDBFE,Professional blue + urgent orange
+59,Childcare/Daycare,#F472B6,#FBCFE8,#22C55E,#FDF2F8,#9D174D,#FCE7F3,Soft pink + safe green
+60,Senior Care/Elderly,#0369A1,#38BDF8,#22C55E,#F0F9FF,#0C4A6E,#E0F2FE,Calm blue + reassuring green
+61,Medical Clinic,#0891B2,#22D3EE,#22C55E,#F0FDFA,#134E4A,#CCFBF1,Medical teal + health green
+62,Pharmacy/Drug Store,#15803D,#22C55E,#0369A1,#F0FDF4,#14532D,#BBF7D0,Pharmacy green + trust blue
+63,Dental Practice,#0EA5E9,#38BDF8,#FBBF24,#F0F9FF,#0C4A6E,#BAE6FD,Fresh blue + smile yellow
+64,Veterinary Clinic,#0D9488,#14B8A6,#F97316,#F0FDFA,#134E4A,#99F6E4,Caring teal + warm orange
+66,Bakery/Cafe,#92400E,#B45309,#F8FAFC,#FEF3C7,#78350F,#FDE68A,Warm brown + cream white
+67,Coffee Shop,#78350F,#92400E,#FBBF24,#FEF3C7,#451A03,#FDE68A,Coffee brown + warm gold
+68,Brewery/Winery,#7C2D12,#B91C1C,#CA8A04,#FEF2F2,#450A0A,#FECACA,Deep burgundy + craft gold
+69,Airline,#1E3A8A,#3B82F6,#F97316,#EFF6FF,#1E40AF,#BFDBFE,Sky blue + booking orange
+70,News/Media Platform,#DC2626,#EF4444,#1E40AF,#FEF2F2,#450A0A,#FECACA,Breaking red + link blue
+71,Magazine/Blog,#18181B,#3F3F46,#EC4899,#FAFAFA,#09090B,#E4E4E7,Editorial black + accent pink
+72,Freelancer Platform,#6366F1,#818CF8,#22C55E,#EEF2FF,#312E81,#C7D2FE,Creative indigo + hire green
+73,Consulting Firm,#0F172A,#334155,#CA8A04,#F8FAFC,#020617,#E2E8F0,Authority navy + premium gold
+74,Marketing Agency,#EC4899,#F472B6,#06B6D4,#FDF2F8,#831843,#FBCFE8,Bold pink + creative cyan
+75,Event Management,#7C3AED,#A78BFA,#F97316,#FAF5FF,#4C1D95,#DDD6FE,Excitement purple + action orange
+76,Conference/Webinar Platform,#1E40AF,#3B82F6,#22C55E,#EFF6FF,#1E3A8A,#BFDBFE,Professional blue + join green
+77,Membership/Community,#7C3AED,#A78BFA,#22C55E,#FAF5FF,#4C1D95,#DDD6FE,Community purple + join green
+78,Newsletter Platform,#0369A1,#0EA5E9,#F97316,#F0F9FF,#0C4A6E,#BAE6FD,Trust blue + subscribe orange
+79,Digital Products/Downloads,#6366F1,#818CF8,#22C55E,#EEF2FF,#312E81,#C7D2FE,Digital indigo + buy green
+80,Church/Religious Organization,#7C3AED,#A78BFA,#CA8A04,#FAF5FF,#4C1D95,#DDD6FE,Spiritual purple + warm gold
+81,Sports Team/Club,#DC2626,#EF4444,#FBBF24,#FEF2F2,#7F1D1D,#FECACA,Team red + championship gold
+82,Museum/Gallery,#18181B,#27272A,#F8FAFC,#FAFAFA,#09090B,#E4E4E7,Gallery black + white space
+83,Theater/Cinema,#1E1B4B,#312E81,#CA8A04,#0F0F23,#F8FAFC,#4338CA,Dramatic dark + spotlight gold
+84,Language Learning App,#4F46E5,#818CF8,#22C55E,#EEF2FF,#312E81,#C7D2FE,Learning indigo + progress green
+85,Coding Bootcamp,#0F172A,#1E293B,#22C55E,#020617,#F8FAFC,#334155,Terminal dark + success green
+86,Cybersecurity Platform,#00FF41,#0D0D0D,#FF3333,#000000,#E0E0E0,#1F1F1F,Matrix green + alert red
+87,Developer Tool / IDE,#1E293B,#334155,#22C55E,#0F172A,#F8FAFC,#475569,Code dark + run green
+88,Biotech / Life Sciences,#0EA5E9,#0284C7,#10B981,#F0F9FF,#0C4A6E,#BAE6FD,DNA blue + life green
+89,Space Tech / Aerospace,#F8FAFC,#94A3B8,#3B82F6,#0B0B10,#F8FAFC,#1E293B,Star white + launch blue
+90,Architecture / Interior,#171717,#404040,#D4AF37,#FFFFFF,#171717,#E5E5E5,Minimal black + accent gold
+91,Quantum Computing,#00FFFF,#7B61FF,#FF00FF,#050510,#E0E0FF,#333344,Quantum cyan + interference purple
+92,Biohacking / Longevity,#FF4D4D,#4D94FF,#00E676,#F5F5F7,#1C1C1E,#E5E5EA,Bio red/blue + vitality green
+93,Autonomous Systems,#00FF41,#008F11,#FF3333,#0D1117,#E6EDF3,#30363D,Terminal green + alert red
+94,Generative AI Art,#18181B,#3F3F46,#EC4899,#FAFAFA,#09090B,#E4E4E7,Canvas neutral + creative pink
+95,Spatial / Vision OS,#FFFFFF,#E5E5E5,#007AFF,#888888,#000000,#CCCCCC,Glass white + system blue
+96,Climate Tech,#059669,#10B981,#FBBF24,#ECFDF5,#064E3B,#A7F3D0,Nature green + solar gold
+97,Florist/Plant Shop,#1C1917,#44403C,#CA8A04,#FAFAF9,#0C0A09,#D6D3D1,Premium dark + gold accent,florist-luxury,elegant;premium,dark-gold,1
+98,Florist/Plant Shop,#BE185D,#F472B6,#EC4899,#FFF1F2,#831843,#FECDD3,Romantic blush + rose accent,florist-romantic,romantic;warm,blush,1
+99,Florist/Plant Shop,#18181B,#525252,#2563EB,#FAFAFA,#171717,#E5E5E5,Minimal monochrome + blue accent,florist-minimal,minimal;clean,monochrome,1
+100,Florist/Plant Shop,#0A0A0A,#2A2520,#C9A227,#0B0B0C,#F5EFE2,#3A3324,Black + champagne gold high luxury,florist-luxe-noir,luxury;premium;elegant,dark-gold,2
+101,Florist/Plant Shop,#2F6B4F,#A3B18A,#BE185D,#FAF7F2,#24352C,#DCE5DC,Botanical green + blush on warm ivory,florist-natural,natural;fresh;organic,natural,2
+102,Florist/Plant Shop,#BE123C,#F59E0B,#166534,#FFF7ED,#4C0519,#FECDD3,Seasonal berry + marigold with leaf-green CTA,florist-seasonal,playful;bold;seasonal,high-contrast,1
+103,Fashion Editorial Retail,#1A1A1A,#F97316,#F59E0B,#FFF8F0,#111827,#FED7AA,"Black, ivory, and orange for search-led fashion commerce with confident promo strips",fashion-search-retail,editorial;commerce;warm,black-ivory-orange,1
+104,Food Delivery Dark,#111827,#F97316,#84CC16,#050505,#F8FAFC,#374151,Charcoal night backdrop with hot orange CTA and lime appetite accent,food-delivery-dark,food;energetic;dark,dark-orange-lime,1
+105,Cinematic Portfolio Noir,#0B0B0C,#1E1B4B,#E8D5B7,#050507,#F8FAFC,#2E2A3A,Near-black cinematic base with indigo depth and champagne action highlights,cinematic-portfolio-noir,portfolio;cinematic;dark,noir-champagne,1
+106,AI Prompt Neon,#0B1220,#06B6D4,#39FF14,#020617,#E5F6FF,#1E3A5F,Navy AI product palette with cyan interface accents and electric green CTA,ai-prompt-neon,ai;product;dark,navy-cyan-green,1
+107,Interior Linen Search,#D8B15F,#8B7355,#F97316,#F5F0E8,#332A22,#E6D9C8,Warm linen interior palette for furniture search overlays and room collections,interior-linen-search,furniture;interior;warm,linen-wood,1
+108,Organic Garden Cream,#2F6B4F,#A3B18A,#65A30D,#FAF7EF,#24352C,#DCE5DC,"Cream and layered greens for organic agriculture, garden services, and circular photo panels",organic-garden-cream,organic;agriculture;garden,cream-green,1
+109,Medical Clinic Friendly,#0EA5E9,#E0F7FA,#F43F5E,#F3FCFF,#123044,#BFEAF5,Clean cyan clinical base with coral action for friendly illustrated healthcare pages,medical-cyan-coral,medical;friendly;illustrated,cyan-coral,1
+110,Legal Editorial,#12233D,#C9A66B,#E7B76B,#F6F1E8,#18202B,#DDD2C0,Navy and muted legal gold for trustworthy law firm pages with utility headers,legal-navy-gold,legal;editorial;trust,navy-gold,1
+111,Dark Professional Service,#1C1B18,#BFA06A,#F1D7A5,#0F0F0E,#F6F0E5,#34302A,Near-black professional palette with champagne accents for legal and consulting story grids,dark-law-champagne,dark;legal;premium,black-champagne,1
+112,Furniture Campaign Retail,#F27C48,#F8E8DE,#111827,#FFF8F2,#2A1E18,#F1D3C4,Peach retail campaign palette for furniture cost panels and ecommerce promo blocks,furniture-peach-campaign,furniture;retail;campaign,peach-charcoal,1
+113,Architecture Studio,#111111,#F2C94C,#FFFFFF,#F4F4F1,#111111,#D9D9D2,Monochrome architectural base with yellow accent for large-type project heroes,architecture-mono-amber,architecture;monochrome;studio,mono-yellow,1
+114,Commerce Palette Pool,#111827,#E5E7EB,#F97316,#F8FAFC,#111827,#E5E7EB,Editorial midnight commerce palette with warm CTA for premium product shelves,commerce-premium-midnight,premium;commerce;editorial,premium-dark,1
+115,Commerce Palette Pool,#2F6B4F,#A3B18A,#F59E0B,#FAF7EF,#24352C,#DCE5DC,Botanical retail palette with sage structure and amber buying action,commerce-natural-sage,natural;fresh;commerce,natural,1
+116,Commerce Palette Pool,#E11D48,#F97316,#2563EB,#FFF7ED,#4C0519,#FED7AA,Coral and orange commerce palette with blue trust contrast for energetic category pages,commerce-playful-coral,playful;bold;commerce,high-contrast,1
+117,Commerce Palette Pool,#2563EB,#94A3B8,#10B981,#F8FAFC,#0F172A,#E2E8F0,Clean blue commerce palette with green checkout action for catalog-first stores,commerce-clean-blue,clean;modern;commerce,minimal-blue,1
+118,Premium Palette Pool,#0A0A0A,#3A3324,#C9A227,#0B0B0C,#F5EFE2,#3A3324,Noir champagne premium palette for high-touch product storytelling,premium-noir-champagne,premium;luxury;elegant,dark-gold,1
+119,Premium Palette Pool,#2A2118,#D8B15F,#8B5CF6,#FFF8F0,#20150F,#E9DAC7,Warm ivory premium palette with muted gold and violet action accent,premium-warm-ivory,premium;warm;elegant,warm-luxury,1
+120,Premium Palette Pool,#12233D,#C9A66B,#E7B76B,#F6F1E8,#18202B,#DDD2C0,Navy gold premium palette for refined trustworthy commerce pages,premium-navy-gold,premium;professional;elegant,navy-gold,1
+121,Playful Palette Pool,#F97316,#FB923C,#2563EB,#FFF7ED,#7C2D12,#FED7AA,Warm orange and blue playful palette for friendly product merchandising,playful-orange-blue,playful;warm;commerce,orange-blue,1
+122,Playful Palette Pool,#0D9488,#99F6E4,#F43F5E,#F0FDFA,#134E4A,#CCFBF1,Fresh teal and coral playful palette for care-oriented product categories,playful-teal-coral,playful;fresh;friendly,teal-coral,1
+124,Natural Palette Pool,#2F6B4F,#A3B18A,#BE185D,#FAF7F2,#24352C,#DCE5DC,Sage and blush natural palette for fresh organic product storytelling,natural-sage-blush,natural;fresh;organic,sage-blush,1
+125,Natural Palette Pool,#166534,#84CC16,#F59E0B,#F7F7EA,#14532D,#D9E8C8,Leaf and amber natural palette for warm eco retail collections,natural-leaf-amber,natural;organic;warm,leaf-amber,1

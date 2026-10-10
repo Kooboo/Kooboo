@@ -1,0 +1,88 @@
+# Kooboo Preflight commerce capability rules
+
+rules:
+  - id: PF-COMMERCE-002
+    capability: commerce
+    profiles: [site, app]
+    requiredStage: commerce-runtime
+    title: Product lists must not use the first variant as the list price
+    severity: BLOCKER
+    appliesTo: [Page, View]
+    requiredArtifactFields: [commerceSurface]
+    tags: [commerce, product, price]
+    customCheck: commerceListingPrice
+    fix: "Use product.price (the lowest price across all variants) for Products lists and starting prices. Use the selected variant.price on the PDP; do not treat variants[0].price as the top-level price alias."
+
+  - id: PF-COMMERCE-004
+    advisory: true
+    capability: commerce
+    profiles: [site, app]
+    requiredStage: commerce-runtime
+    title: Online-store Header must retain account and cart entry points without showing both
+    severity: BLOCKER
+    appliesTo: [Layout, View]
+    requiredArtifactFields: [commerceModel, commerceSurface]
+    tags: [commerce, header, auth, cart]
+    customCheck: commerceHeaderEntrypoints
+    fix: "The shared Header for online-checkout must include cart and login/account entry points and fetch the shared auth-status. Both guest and authenticated sides must initially be hidden, then show exactly one side after auth-status returns; dynamically shown or hidden nodes must not also carry responsive display classes such as md:flex/lg:flex, so put breakpoints on the outer layer and layout on the inner layer; Desktop/Mobile must share the same auth state."
+
+  - id: PF-COMMERCE-006
+    capability: commerce
+    profiles: [site, app]
+    requiredStage: commerce-runtime
+    title: Commerce login must share kb_commerce state
+    severity: BLOCKER
+    appliesTo: [View, Script, Api]
+    requiredArtifactFields: [commerceSurface]
+    tags: [commerce, auth, customer, state]
+    customCheck: commerceAuthContract
+    fix: "Use customer.login for login, login immediately after registration, use customer.currentId + customer.get for the status endpoint, and use customer.logout to sign out; Account/Header must consume the same auth-status API. Do not replace kb_commerce with localStorage commerce_token."
+
+  - id: PF-COMMERCE-008
+    capability: commerce
+    profiles: [site, app]
+    requiredStage: commerce-runtime
+    title: Cart details must use real price fields
+    severity: BLOCKER
+    appliesTo: [Page, View, Script, Api, CodeBlock]
+    requiredArtifactFields: [commerceSurface]
+    tags: [commerce, cart, checkout, price]
+    customCheck: commerceCartLineContract
+    fix: "The unit-price field in CartDetail.lines is price, the line-amount field is amount, and the original price is originalPrice/originalAmount; do not use the nonexistent unitPrice/totalPrice. The Header cart count uses totalQuantity, not lines.length."
+
+  - id: PF-COMMERCE-009
+    capability: commerce
+    profiles: [site, app]
+    requiredStage: payment-runtime
+    title: Storefront order and payment endpoints must verify current-customer ownership
+    severity: BLOCKER
+    appliesTo: [Page, View, Api, CodeBlock]
+    requiredArtifactFields: [commerceSurface]
+    tags: [commerce, order, payment, authorization]
+    customCheck: commerceOrderOwnership
+    fix: "Identity may come only from k.commerce.customer.currentId. Order details, continued payment, and cancellation must read the order and verify order.customer.id === currentId; order lists must not accept an arbitrary customerId from a public request."
+
+  - id: PF-COMMERCE-012
+    advisory: true
+    capability: commerce
+    profiles: [site, app]
+    requiredStage: commerce-runtime
+    title: PDP add-to-cart must submit a valid variant and synchronize shared cart state
+    severity: BLOCKER
+    appliesTo: [Page, View, Script]
+    requiredArtifactFields: [commerceSurface]
+    tags: [commerce, product, variant, cart, header]
+    customCheck: commerceAddToCartContract
+    fix: "Submit the selected or default valid variant, handle failures, restore the control, and refresh shared cart state through the application state mechanism. No particular DOM attribute or event name is required."
+
+  - id: PF-COMMERCE-014
+    capability: commerce
+    profiles: [site, app]
+    requiredStage: commerce-runtime
+    title: Checkout order creation must bind the current customer and current cart
+    severity: BLOCKER
+    appliesTo: [Api, CodeBlock, View, Page]
+    requiredArtifactFields: [commerceSurface]
+    tags: [commerce, checkout, order, cart, customer]
+    customCheck: commerceCheckoutContract
+    fix: "Before Checkout creates an order, read customer.currentId and cart.currentId; explicitly compare cart.customerId === currentId; after creation, explicitly compare order.customer.id === currentId before redirecting to the payment endpoint. customer.login binds the current cart; when they differ, investigate session/cart drift instead of assuming that ownership should be rebuilt or removed."

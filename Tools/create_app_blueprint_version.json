@@ -1,0 +1,11 @@
+{
+  "type": "function",
+  "function": {
+    "name": "create_app_blueprint_version",
+    "description": "Retired legacy kfile Blueprint creation entry point. Use propose_blueprint, review it, then save_blueprint.",
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false
+    }
+  }
+}

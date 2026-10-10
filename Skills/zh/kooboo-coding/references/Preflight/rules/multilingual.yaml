@@ -1,0 +1,18 @@
+# Kooboo Preflight multilingual capability rules
+
+rules:
+  - id: PF-KSCRIPT-004
+    capability: multilingual
+    profiles: [site, app]
+    title: Multilingual sites must not hand-write language URLs or internal redirects
+    severity: BLOCKER
+    appliesTo: [Api, CodeBlock, Script, Page, Layout, View]
+    requiredArtifactFields: [multilingual]
+    tags: [multilingual, navigation, routing]
+    patterns:
+      - "href\\s*=\\s*[\"'][^\"']*\\?(lang|language|culture)="
+      - "href\\s*=\\s*[\"']/[a-z]{2}(?:-[A-Za-z]{2})?/[^\"']*[\"']"
+      - "k\\.response\\.redirect\\s*\\(\\s*[\"']/(?!_)[^\"']*[\"']"
+      - "(?:window\\.)?location\\.href\\s*=\\s*[\"']/(?!_)[^\"']*[\"']"
+      - "(?:window\\.)?location\\.(assign|replace)\\s*\\(\\s*[\"']/(?!_)[^\"']*[\"']"
+    fix: "On multilingual sites, do not manually build `/en/...`, `?lang=...`, or `?culture=...`, and do not hard-code `location.href='/cart'` or `k.response.redirect('/cart')`. Use `k.site.multilingual.getUrl('/cart')` to preserve the current-language redirect; use `k.site.multilingual.currentURLs()` to switch the current page's language; use `k.site.multilingual.getLangUrl('/products', 'en')` to switch to a specified-language page. The parameter pattern ultimately generates `?lang=...`, not `?culture=...`."

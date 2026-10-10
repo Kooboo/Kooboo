@@ -1,0 +1,44 @@
+{
+  "type": "function",
+  "function": {
+    "name": "order_sale_stats",
+    "description": "Get order sales statistics including detailed order line information with customer, shipping, and payment details for orders within a specified date range, with pagination support.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "description": "Optional start date (inclusive) for filtering sales. Format: yyyy-MM-dd"
+        },
+        "endDate": {
+          "description": "Optional end date (inclusive) for filtering sales. Format: yyyy-MM-dd"
+        },
+        "pageIndex": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Page index for pagination (default: 1)"
+        },
+        "pageSize": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Page size for pagination (default: 20)"
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

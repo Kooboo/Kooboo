@@ -1,0 +1,53 @@
+{
+  "type": "function",
+  "function": {
+    "name": "save_actor",
+    "description": "Save one reviewed Actor in the existing Blueprint. Reuse its id for a complete-object update. Only call after user approval.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "actor": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "type": {
+              "enum": [
+                "human",
+                "system"
+              ]
+            },
+            "boundary": {
+              "enum": [
+                "internal",
+                "external"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

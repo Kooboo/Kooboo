@@ -1,0 +1,100 @@
+{
+  "type": "function",
+  "function": {
+    "name": "search_code",
+    "description": "Search names and source text across site pages, scripts, styles, menus, layouts, views, forms, APIs, and code blocks. When request source headers identify files, pass namesOrIds and types to search only those objects, then read_object_text around the returned 1-based lines. Supports literal/regex matching and optional per-object match pagination. Omitting the new scope/pagination arguments preserves existing search results. Summaries are previews, not patch source.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string",
+          "description": "Text or regular expression to search for in object names and source text."
+        },
+        "isRegex": {
+          "type": "boolean",
+          "description": "Treat Keyword as a regular expression. Defaults to false."
+        },
+        "ignoreCase": {
+          "type": "boolean",
+          "description": "Ignore character casing while matching. Defaults to true."
+        },
+        "types": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "enum": [
+              "Page",
+              "Script",
+              "Style",
+              "Menu",
+              "Layout",
+              "View",
+              "Form",
+              "Code"
+            ]
+          },
+          "description": "Optional object types to search. When omitted, all supported code-bearing types are searched."
+        },
+        "namesOrIds": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional exact object names or GUIDs, intersected with Types. Omitted/null searches all objects; an empty array searches none. For an App Base Script header /service.asset.js#listAssets, pass service.asset.js here and listAssets as Keyword. No URL, glob or substring matching."
+        },
+        "matchSkip": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Number of source matches to skip inside EACH matching object. Defaults to zero; negative values become zero. To continue one object\u0027s matches, also scope NamesOrIds to that object."
+        },
+        "matchTake": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Optional maximum source matches returned per object. Omitted/null returns all remaining matches, preserving legacy behavior. Explicit values are clamped to 0\u2013100; zero returns metadata only. Match pagination metadata is emitted only when MatchSkip or MatchTake is specified. Summaries retain their original content."
+        },
+        "skip": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Optional number of matching objects to skip. Negative values are treated as zero."
+        },
+        "take": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Optional maximum number of matching objects to return. Defaults to 20; negative values are treated as zero."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "keyword"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "function",
+  "function": {
+    "name": "list_sandbox",
+    "description": "List sandbox sites created for the current site.",
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false
+    }
+  }
+}

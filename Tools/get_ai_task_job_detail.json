@@ -1,0 +1,20 @@
+{
+  "type": "function",
+  "function": {
+    "name": "get_ai_task_job_detail",
+    "description": "Get detailed information of an AI task job by its id or name.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "nameOrId": {
+          "type": "string",
+          "description": "AI task job id or name"
+        }
+      },
+      "required": [
+        "nameOrId"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

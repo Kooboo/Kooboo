@@ -1,0 +1,109 @@
+{
+  "type": "function",
+  "function": {
+    "name": "create_discount",
+    "description": "Create a new discount.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "startDate": true,
+        "endDate": true,
+        "condition": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "isAny": {
+              "type": "boolean"
+            },
+            "items": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "option": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "option",
+                  "method",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "method": {
+          "enum": [
+            "DiscountCode",
+            "AutomaticDiscount"
+          ]
+        },
+        "code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "codeUsageLimit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647
+        },
+        "type": {
+          "enum": [
+            "ProductAmountOff",
+            "OrderAmountOff",
+            "FreeShipping"
+          ]
+        },
+        "value": {
+          "type": "number"
+        },
+        "isPercent": {
+          "type": "boolean"
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647
+        },
+        "isExclusion": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

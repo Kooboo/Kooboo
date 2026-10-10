@@ -1,0 +1,58 @@
+{
+  "type": "function",
+  "function": {
+    "name": "save_source_file",
+    "description": "Save reviewed complete files in the current server App Plan. Submit one or more same-type objects; reuse stable IDs for full replacement. Unsubmitted objects are retained, omitted optional fields in submitted objects are cleared. References must already exist or be included in this same-type batch. Empty arrays are a no-op. Requires an existing Blueprint. The entire batch is validated before one aggregate write; no runtime resources or progress are created.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "sourceFiles": {
+          "type": [
+            "array"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "script",
+                  "style",
+                  "page",
+                  "api",
+                  "codeblock"
+                ]
+              },
+              "fileName": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "fileName",
+              "path"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "sourceFiles"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

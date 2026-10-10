@@ -1,0 +1,19 @@
+{
+  "type": "function",
+  "function": {
+    "name": "search_site_memory",
+    "description": "Search site memory by a literal phrase; returns bounded excerpts and offsets. Use read_site_memory for relevant details, not a full-directory dump.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

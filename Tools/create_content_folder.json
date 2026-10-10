@@ -1,0 +1,36 @@
+{
+  "type": "function",
+  "function": {
+    "name": "create_content_folder",
+    "description": "Create a content folder using an existing content type name or ID. If the folder name exists, returns without changing it.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "contentTypeNameOrId": {
+          "type": "string"
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "name",
+        "contentTypeNameOrId"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

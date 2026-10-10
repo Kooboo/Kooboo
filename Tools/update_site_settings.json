@@ -1,0 +1,67 @@
+{
+  "type": "function",
+  "function": {
+    "name": "update_site_settings",
+    "description": "Update settings for the current site. For App creation, set only DisplayName when get_site_info shows an empty or clearly temporary display name; preserve internal Website.Name, domain, and path.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "isMultiLingual": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "defaultCulture": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cultures": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "enableSitePath": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "false \u0060about?lang=en\u0060\uFF0Ctrue \u0060/en/about\u0060"
+        },
+        "siteType": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            null
+          ]
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

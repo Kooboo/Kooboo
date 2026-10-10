@@ -1,0 +1,35 @@
+<!-- kooboo-app-base:v2 -->
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>__APP_TITLE__</title>
+  <link rel="stylesheet" href="/app-base.css">
+__DESIGN_RUNTIME_STYLE_LINKS__
+  <link rel="stylesheet" href="/app.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "vue": "/vue.js",
+        "vue-router": "/vue-router.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="app" v-cloak></div>
+  <noscript>This application requires JavaScript.</noscript>
+  <script>
+    // A failed module import stops the whole graph before main.js runs; show a fallback instead of a blank page.
+    function koobooAppModulesFailed() {
+      var mountElement = document.getElementById('app')
+      console.error('Application modules failed to load. Check Network for a missing module or a non-JavaScript response.')
+      mountElement.removeAttribute('v-cloak')
+      mountElement.innerHTML = '<main class="app-error"><p>Application could not be loaded.</p></main>'
+    }
+  </script>
+  <script type="module" src="/main.js" onerror="koobooAppModulesFailed()"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "type": "function",
+  "function": {
+    "name": "transfer_page",
+    "description": "Import one external web page and its resources into the current site. Requires an unused destination name. Waits for completion and returns taskId, finish, success, messages, and model containing the imported page id and name.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "pageUrl": {
+          "type": "string",
+          "description": "Source HTTP or HTTPS page URL to import."
+        },
+        "name": {
+          "type": "string",
+          "description": "Unused destination page name/route. Omit to derive it from the source URL."
+        },
+        "headless": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use headless rendering for pages that require JavaScript."
+        }
+      },
+      "required": [
+        "pageUrl"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

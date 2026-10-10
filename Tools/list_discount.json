@@ -1,0 +1,20 @@
+{
+  "type": "function",
+  "function": {
+    "name": "list_discount",
+    "description": "List all discounts with usage counts.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

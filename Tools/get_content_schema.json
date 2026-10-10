@@ -1,0 +1,26 @@
+{
+  "type": "function",
+  "function": {
+    "name": "get_content_schema",
+    "description": "Get the field schema of a specified content folder for building front-end forms or automated processing.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "folderNameOrId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "type": "function",
+  "function": {
+    "name": "add_ai_task_job",
+    "description": "Create a new AI task job for the current site.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "AI task job name"
+        },
+        "startTime": {
+          "description": "First run time in UTC"
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Whether the job is active. Default is true"
+        },
+        "repeat": {
+          "type": "boolean",
+          "description": "Whether the job should repeat"
+        },
+        "frequence": {
+          "type": "integer",
+          "enum": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            6
+          ],
+          "description": "Repeat frequency as a JSON integer: 0=Day, 1=Hour, 3=Minutes, 4=Week, 5=Month, 6=Second. Do not send a name or 2."
+        },
+        "frequenceUnit": {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Positive integer number of frequency units between runs when repeat=true; for example frequence=1 and frequenceUnit=2 means every two hours."
+        },
+        "prompt": {
+          "type": "string",
+          "description": "Prompt executed by the scheduled AI task"
+        },
+        "model": {
+          "type": "string",
+          "description": "AI model name"
+        },
+        "provider": {
+          "type": "string",
+          "description": "AI provider name"
+        }
+      },
+      "required": [
+        "name",
+        "prompt",
+        "model",
+        "provider"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

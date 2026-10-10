@@ -1,0 +1,67 @@
+{
+  "type": "function",
+  "function": {
+    "name": "list_content",
+    "description": "List content items in a specified folder with optional culture/language support, skip offset, and take limit.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "folderNameOrId": {
+          "type": "string"
+        },
+        "culture": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "skip": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Nonnegative integer offset, default 0. Negative values are treated as 0. For the next page, add the number of returned items to skip."
+        },
+        "take": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Nonnegative integer result limit. Omitted or null returns all remaining items; use an explicit budget such as 20 for paging. Zero returns no items; negative values are treated as 0."
+        },
+        "fields": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Field names to include in results. If empty, only Id is returned."
+        },
+        "keyword": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional keyword for case-insensitive fuzzy search. Matches selected fields or all text fields when Fields is empty."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "folderNameOrId"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

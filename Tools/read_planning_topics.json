@@ -1,0 +1,56 @@
+{
+  "type": "function",
+  "function": {
+    "name": "read_planning_topics",
+    "description": "Read site-level assumptions, open questions and answers independently of Blueprint and App Plan. Responses include updatedAt; pass it as expectedUpdatedAt when updating an existing topic. Lists return bounded summaries; supply ids for full details including suggestions, options and confirmation evidence. Read these before planning or implementation; recorded confirmation is not permission to implement.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Stable topic IDs for full details; empty returns summaries."
+        },
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional filter: open, answered, confirmed or dismissed."
+        },
+        "artifact": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional filter: site, blueprint or app-plan. Includes site-wide topics."
+        },
+        "cursor": {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Nonnegative integer pagination cursor. Omit or use 0 on the first request; use the returned nextCursor for subsequent pages and keep the same filters. Stop when nextCursor is null."
+        },
+        "maxItems": {
+          "type": "integer",
+          "minimum": -2147483648,
+          "maximum": 2147483647,
+          "description": "Maximum items per page: integer from 1 to 30, default 20. Use 20 on the first request; follow nextCursor for remaining items."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

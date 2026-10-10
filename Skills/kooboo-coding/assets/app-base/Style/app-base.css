@@ -1,0 +1,415 @@
+/* kooboo-app-base:v2 */
+/* Managed runtime/reset/route-placeholder styles. Product UI belongs to the selected design system. */
+/* Common browser reset. Low specificity lets design-components.css own visuals.
+   Preserve native focus rings and checkbox/radio/range appearance. */
+:where(*),
+:where(*)::before,
+:where(*)::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:where(html) {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  tab-size: 4;
+}
+
+:where(html, body, #app) {
+  min-height: 100%;
+}
+
+:where(body) {
+  font-family: var(--font-sans, var(--font-family, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif));
+  color: var(--foreground, var(--text-1, CanvasText));
+  background: var(--background, var(--bg-white, Canvas));
+  -webkit-font-smoothing: antialiased;
+}
+
+:where(h1, h2, h3, h4, h5, h6) {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+:where(a) {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+:where(ol, ul, menu) {
+  list-style: none;
+}
+
+:where(table) {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border-color: inherit;
+  text-indent: 0;
+}
+
+:where(th) {
+  font-weight: inherit;
+  text-align: inherit;
+}
+
+:where(fieldset) {
+  min-width: 0;
+  border: 0;
+}
+
+:where(button, input, optgroup, select, textarea),
+:where(input)::file-selector-button {
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+
+:where(button, select) {
+  text-transform: none;
+}
+
+:where(button, input[type="button"], input[type="reset"], input[type="submit"]),
+:where(input)::file-selector-button {
+  -webkit-appearance: button;
+  appearance: button;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  background-image: none;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+/* Leave native non-text inputs usable; reset the surfaces styled by the design library. */
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]), select, textarea) {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+:where(button:disabled, input:disabled, select:disabled, textarea:disabled) {
+  cursor: default;
+}
+
+:where(textarea) {
+  resize: vertical;
+}
+
+:where(input, textarea)::placeholder {
+  opacity: 1;
+}
+
+:where(button, input)::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+:where(img, video, canvas, iframe, embed, object) {
+  display: block;
+  vertical-align: middle;
+}
+
+:where(img, video) {
+  max-width: 100%;
+  height: auto;
+}
+
+:where(img, iframe) {
+  border: 0;
+}
+
+:where(hr) {
+  height: 0;
+  color: inherit;
+  border: 0;
+  border-top: 1px solid;
+}
+
+:where(abbr[title]) {
+  text-decoration: underline dotted;
+}
+
+:where(b, strong) {
+  font-weight: bolder;
+}
+
+:where(code, kbd, samp, pre) {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 1em;
+}
+
+:where(small) {
+  font-size: 80%;
+}
+
+:where(sub, sup) {
+  position: relative;
+  font-size: 75%;
+  line-height: 0;
+  vertical-align: baseline;
+}
+
+:where(sub) { bottom: -0.25em; }
+:where(sup) { top: -0.5em; }
+
+:where(summary) {
+  display: list-item;
+}
+
+:where(dialog) {
+  margin: auto;
+}
+
+:where([hidden]:not([hidden="until-found"])) {
+  display: none !important;
+}
+
+/* Scale Lucide icons with text while allowing component styles to override them. */
+:where(svg[data-lucide], .lucide) {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  overflow: hidden;
+  stroke-width: 2;
+}
+
+[v-cloak] {
+  display: none;
+}
+
+:where(.app-root) {
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Works as a flex/grid child without choosing the parent layout or scroll model. */
+:where([data-app-region="content"]) {
+  flex: 1 1 0%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.app-loading,
+.app-error {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 24px;
+}
+
+.app-planned-screen {
+  display: flex;
+  min-height: 220px;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  border: 1px dashed color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 12px;
+  color: inherit;
+  padding: 32px;
+}
+
+.app-planned-screen__icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+  border-radius: 10px;
+  opacity: .72;
+}
+
+.app-planned-screen__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.app-planned-screen h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.app-planned-screen p {
+  margin: 6px 0 0;
+  opacity: .62;
+}
+
+/* Temporary classic layout skeleton. AI replaces its DOM immediately after reading
+   the design CSS; the RouterView stays live throughout layout generation. */
+.app-base-skeleton {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-base-skeleton__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 72px;
+  padding: 16px 24px;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.app-base-skeleton__identity,
+.app-base-skeleton__actions,
+.app-base-skeleton__menu {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.app-base-skeleton__bar,
+.app-base-skeleton__block {
+  display: block;
+  flex-shrink: 0;
+  border-radius: 6px;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  animation: app-base-skeleton-pulse 1.8s ease-in-out infinite;
+}
+
+.app-base-skeleton__bar { height: 12px; }
+.app-base-skeleton__icon { width: 24px; height: 24px; }
+.app-base-skeleton__brand { width: 144px; height: 18px; }
+.app-base-skeleton__search { width: 200px; height: 32px; }
+.app-base-skeleton__avatar { width: 32px; height: 32px; border-radius: 50%; }
+
+.app-base-skeleton__workspace {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  flex: 1;
+  min-width: 0;
+}
+
+.app-base-skeleton__sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 48px;
+  padding: 28px 24px;
+  border-right: 1px solid color-mix(in srgb, currentColor 8%, transparent);
+  background: color-mix(in srgb, currentColor 2%, transparent);
+}
+
+.app-base-skeleton__menus { display: grid; gap: 20px; }
+.app-base-skeleton__menu { min-height: 32px; }
+.app-base-skeleton__label { width: 112px; }
+.app-base-skeleton__menu:nth-child(even) .app-base-skeleton__label { width: 80px; }
+
+.app-base-skeleton__content {
+  min-width: 0;
+  padding: clamp(20px, 3vw, 40px);
+}
+
+@keyframes app-base-skeleton-pulse {
+  0%, 100% { opacity: .45; }
+  50% { opacity: 1; }
+}
+
+@media (max-width: 640px) {
+  .app-base-skeleton__workspace { grid-template-columns: 64px minmax(0, 1fr); }
+  .app-base-skeleton__sidebar { padding: 24px 20px; }
+  .app-base-skeleton__label,
+  .app-base-skeleton__menu:nth-child(even) .app-base-skeleton__label,
+  .app-base-skeleton__search { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-base-skeleton__bar,
+  .app-base-skeleton__block { animation: none; }
+}
+
+/* Installation placeholder: neutral across design systems, no fake progress. */
+.app-preparing-screen {
+  --app-preparing-color: var(--app-skeleton-color, color-mix(in srgb, currentColor 10%, transparent));
+  --app-preparing-border: color-mix(in srgb, currentColor 10%, transparent);
+  min-width: 0;
+  width: 100%;
+  display: grid;
+  gap: 24px;
+}
+
+.app-preparing-header,
+.app-preparing-actions,
+.app-preparing-toolbar,
+.app-preparing-table__header,
+.app-preparing-table__row {
+  display: flex;
+  align-items: center;
+}
+
+.app-preparing-header { justify-content: space-between; gap: 24px; }
+.app-preparing-heading { display: grid; gap: 12px; min-width: 0; flex: 1; }
+.app-preparing-title,
+.app-preparing-description,
+.app-preparing-action,
+.app-preparing-stat__label,
+.app-preparing-stat__value,
+.app-preparing-stat__trend,
+.app-preparing-search,
+.app-preparing-filter,
+.app-preparing-toolbar-action,
+.app-preparing-table__header > div,
+.app-preparing-cell {
+  background: var(--app-preparing-color);
+  border-radius: var(--radius-sm, 4px);
+  animation: app-preparing-pulse 1.6s ease-in-out infinite;
+}
+
+.app-preparing-title { width: min(280px, 60%); height: 28px; }
+.app-preparing-description { width: min(420px, 80%); height: 14px; }
+.app-preparing-actions { gap: 12px; }
+.app-preparing-action { width: 88px; height: 36px; border: 1px solid var(--app-preparing-border); }
+.app-preparing-action--primary { width: 112px; }
+
+.app-preparing-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.app-preparing-stat { display: grid; gap: 14px; min-width: 0; padding: 20px; border: 1px solid var(--app-preparing-border); border-radius: var(--radius-md, 8px); }
+.app-preparing-stat__label { width: 52%; height: 12px; }
+.app-preparing-stat__value { width: 38%; height: 28px; }
+.app-preparing-stat__trend { width: 64%; height: 10px; }
+
+.app-preparing-panel { min-width: 0; overflow-x: auto; border: 1px solid var(--app-preparing-border); border-radius: var(--radius-md, 8px); }
+.app-preparing-toolbar { gap: 12px; padding: 16px; border-bottom: 1px solid var(--app-preparing-border); }
+.app-preparing-search { width: min(280px, 34%); height: 36px; }
+.app-preparing-filter { width: 112px; height: 36px; }
+.app-preparing-filter--short { width: 96px; }
+.app-preparing-toolbar-action { width: 96px; height: 36px; margin-left: auto; }
+.app-preparing-table { display: grid; min-width: 620px; }
+.app-preparing-table__header,
+.app-preparing-table__row { display: grid; grid-template-columns: minmax(180px, 1.6fr) repeat(2, minmax(100px, 1fr)) 96px 72px; gap: 20px; padding: 0 20px; }
+.app-preparing-table__header { min-height: 48px; border-bottom: 1px solid var(--app-preparing-border); }
+.app-preparing-table__header > div { width: 64%; height: 10px; }
+.app-preparing-table__row { min-height: 64px; border-bottom: 1px solid var(--app-preparing-border); }
+.app-preparing-table__row:last-child { border-bottom: 0; }
+.app-preparing-cell { width: 72%; height: 12px; }
+.app-preparing-cell--primary { width: 84%; }
+.app-preparing-cell--status { width: 56px; height: 22px; border-radius: 999px; }
+.app-preparing-cell--action { width: 28px; height: 12px; margin-left: auto; }
+
+@keyframes app-preparing-pulse { 50% { opacity: .72; } }
+@media (max-width: 760px) {
+  .app-preparing-header { align-items: flex-start; flex-direction: column; }
+  .app-preparing-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .app-preparing-toolbar { flex-wrap: wrap; }
+  .app-preparing-search { width: 100%; }
+  .app-preparing-toolbar-action { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-preparing-title,
+  .app-preparing-description,
+  .app-preparing-action,
+  .app-preparing-stat__label,
+  .app-preparing-stat__value,
+  .app-preparing-stat__trend,
+  .app-preparing-search,
+  .app-preparing-filter,
+  .app-preparing-toolbar-action,
+  .app-preparing-table__header > div,
+  .app-preparing-cell { animation: none; }
+}

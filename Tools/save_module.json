@@ -1,0 +1,55 @@
+{
+  "type": "function",
+  "function": {
+    "name": "save_module",
+    "description": "Save one reviewed Module and optional Scenario links through the shared Blueprint save contract. Requires an existing reviewed Blueprint graph. Automatically links to its Blueprint; supplied blueprintId must match it. Reuse the Module id for updates. Only call after user approval.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "blueprintId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "module": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "scenarioIds": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "required": [
+        "module"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

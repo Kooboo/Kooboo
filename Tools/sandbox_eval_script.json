@@ -1,0 +1,28 @@
+{
+  "type": "function",
+  "function": {
+    "name": "sandbox_eval_script",
+    "description": "Execute KScript in a sandbox site and return the script result.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "KScript source code to execute in the sandbox."
+        },
+        "sandbox": {
+          "type": "string",
+          "description": "Sandbox name returned by list_sandbox or create_sandbox."
+        }
+      },
+      "required": [
+        "code",
+        "sandbox"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

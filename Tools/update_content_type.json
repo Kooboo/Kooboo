@@ -1,0 +1,113 @@
+{
+  "type": "function",
+  "function": {
+    "name": "update_content_type",
+    "description": "Update an existing content type by name. deleteProperties removes fields by exact name; appendProperties adds new fields. Read the existing schema first; omit either array to leave that part unchanged.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "appendProperties": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "displayName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "multipleLanguage": {
+                "type": "boolean"
+              },
+              "isSummary": {
+                "type": "boolean",
+                "description": "Specifies whether this field should be displayed as a summary field when browsing data in table view"
+              },
+              "controlType": {
+                "enum": [
+                  "TextBox",
+                  "TextArea",
+                  "RichEditor",
+                  "Selection",
+                  "CheckBox",
+                  "RadioBox",
+                  "Switch",
+                  "MediaFile",
+                  "File",
+                  "DateTime",
+                  "Number",
+                  "ColorPicker",
+                  "KeyValues",
+                  "ValueList"
+                ]
+              },
+              "selectionOptions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "name",
+              "controlType"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "deleteProperties": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

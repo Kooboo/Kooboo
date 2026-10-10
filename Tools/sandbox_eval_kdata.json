@@ -1,0 +1,25 @@
+{
+  "type": "function",
+  "function": {
+    "name": "sandbox_eval_kdata",
+    "description": "Execute a KData block and return its exported variables.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "KData markup containing a \u003Ck-data\u003E element. Only explicitly exported variables are returned."
+        },
+        "sandbox": {
+          "type": "string",
+          "description": "Sandbox name returned by list_sandbox or create_sandbox."
+        }
+      },
+      "required": [
+        "source",
+        "sandbox"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

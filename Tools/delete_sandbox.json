@@ -1,0 +1,23 @@
+{
+  "type": "function",
+  "function": {
+    "name": "delete_sandbox",
+    "description": "Delete a sandbox site created for the current site by name.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "siteName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Name suffix of the sandbox site to delete"
+        }
+      },
+      "required": [
+        "siteName"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

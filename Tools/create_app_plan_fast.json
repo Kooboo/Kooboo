@@ -1,0 +1,80 @@
+{
+  "type": "function",
+  "function": {
+    "name": "create_app_plan_fast",
+    "description": "Retired App Plan writer; use the typed per-object save tools.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "expectedCurrentAppPlanVersionId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sourceBlueprintVersionId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "renderingMode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "designSystemId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "designSystemRationale": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dataStrategy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shellPattern": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "contentDensity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "theme": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "sourceBlueprintVersionId",
+        "designSystemId",
+        "designSystemRationale",
+        "shellPattern"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

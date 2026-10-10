@@ -1,0 +1,96 @@
+{
+  "type": "function",
+  "function": {
+    "name": "update_app_plan",
+    "description": "Retired App Plan writer; use the typed per-object save tools.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "patches": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "description": "set, add or remove. add requires a new ID-addressed array object."
+              },
+              "path": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Property names and stable object IDs; never array indexes. Read the target contract first."
+              },
+              "value": {
+                "description": "Required for set/add; omit for remove. New or replaced array objects must retain the ID in the final path segment."
+              }
+            },
+            "required": [
+              "op",
+              "path"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "appPlanVersionId": {
+          "type": "string"
+        },
+        "foundation": true,
+        "dataModels": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "add": {
+              "type": "array"
+            },
+            "update": {
+              "type": "array"
+            },
+            "removeIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "deliverySlices": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "add": {
+              "$ref": "#/properties/dataModels/properties/add"
+            },
+            "update": {
+              "$ref": "#/properties/dataModels/properties/update"
+            },
+            "removeIds": {
+              "$ref": "#/properties/dataModels/properties/removeIds"
+            }
+          },
+          "additionalProperties": false
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "appPlanVersionId"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

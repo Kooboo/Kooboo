@@ -1,0 +1,25 @@
+{
+  "type": "function",
+  "function": {
+    "name": "read_skill_resource",
+    "description": "Read a resource inside an installed skill, such as a reference document or asset. Keep skillName as the exact installed name (for example kooboo-coding) and pass the separate relative resourceName (for example references/Scenario/app-building/index.md). Do not prepend the skill name to resourceName. Use load_skill only for the entry instructions.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "skillName": {
+          "type": "string",
+          "description": "Exact installed skill name, for example kooboo-coding; not a document path."
+        },
+        "resourceName": {
+          "type": "string",
+          "description": "Resource path relative to the skill root, copied from its instructions, for example references/Scenario/app-building/index.md. Do not include the skill name prefix."
+        }
+      },
+      "required": [
+        "skillName",
+        "resourceName"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

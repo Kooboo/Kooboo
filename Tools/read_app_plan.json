@@ -1,0 +1,20 @@
+{
+  "type": "function",
+  "function": {
+    "name": "read_app_plan",
+    "description": "Read the current strongly typed server App Plan with all settings, deliverySlices, screens, dataContracts, services and sourceFiles. Call with {}. No version, milestone or pagination selectors. Reading never creates a Plan; exists=false means no server Plan.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

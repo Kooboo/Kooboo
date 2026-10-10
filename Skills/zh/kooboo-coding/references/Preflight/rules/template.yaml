@@ -1,0 +1,143 @@
+# Kooboo Preflight template capability rules
+
+rules:
+  - id: PF-KOBOO-TEMPLATE-001
+    advisory: true
+    customCheck: templateDialect
+    capability: template
+    profiles: [site, app]
+    title: Do not invent non-Kooboo template syntax
+    severity: BLOCKER
+    appliesTo: [Page, Layout, View]
+    tags: [template]
+    fix: "Use the syntax of the actual rendering engine. Vue, Alpine, Angular, and client template strings are valid in their own runtime; only unresolved server-template block syntax requires correction."
+
+  - id: PF-KOBOO-TEMPLATE-002
+    customCheck: templateServerContext
+    capability: server-script
+    profiles: [site, app]
+    title: Template scripts using k.* must declare the server environment
+    severity: HIGH
+    appliesTo: [Page, Layout, View]
+    tags: [template, kscript]
+    fix: "Use server k.* APIs only in an explicit server script or API/CodeBlock. Check the script environment and actual API use; client-side objects with the same variable name are not server APIs."
+
+  - id: PF-KOBOO-TEMPLATE-018
+    capability: template
+    profiles: [site, app]
+    title: Ordinary template containers must not declare env=server
+    severity: BLOCKER
+    appliesTo: [Page, Layout, View]
+    tags: [template, env-server, client-script]
+    customCheck: envServerWrapper
+    fix: "Remove env=server from ordinary elements such as outer div/section/Page/View wrappers. k-data and k-xx bindings do not need this attribute; retain it only on <script env=\"server\"> that actually executes KScript, otherwise descendant client scripts may fail."
+
+  - id: PF-KOBOO-TEMPLATE-020
+    capability: template-data
+    profiles: [site, app]
+    title: Ordinary client scripts must not use Mustache to read Kooboo variables
+    severity: BLOCKER
+    appliesTo: [Page, Layout, View]
+    tags: [template, client-script, binding]
+    customCheck: clientScriptMustache
+    fix: "Kooboo values are not interpolated inside ordinary client scripts. Use DOM/API transfer when reading server data; client framework template strings and template script blocks are valid."
+
+  - id: PF-KOBOO-TEMPLATE-005
+    customCheck: layoutPlaceholder
+    capability: template
+    profiles: [site, app]
+    title: Layout must declare a page placeholder
+    severity: BLOCKER
+    knownErrorId: KOOB-LAYOUT-PAGE-ASSEMBLY
+    debugPriority: immediate
+    debugPlaybookAnchor: 5-koob-layout-page-assembly
+    appliesTo: [Layout]
+    tags: [template, layout]
+    fix: "Declare at least one non-empty k-placeholder name for Page content."
+
+  - id: PF-KOBOO-TEMPLATE-003
+    capability: template
+    profiles: [site, app]
+    title: A Page bound to a Layout must declare a layout placeholder region
+    severity: BLOCKER
+    knownErrorId: KOOB-LAYOUT-PAGE-ASSEMBLY
+    debugPriority: immediate
+    debugPlaybookAnchor: 5-koob-layout-page-assembly
+    appliesTo: [Page]
+    requiredArtifactFields: [layoutName]
+    tags: [template, layout]
+    requiredPatterns:
+      - "<layout\\b[^>]*\\bid\\s*=\\s*[\"'][^\"']+[\"']"
+      - "<placeholder\\b"
+    customCheck: layoutIdMatchesArtifactLayoutName
+    fix: "When creating or updating a Page with layoutName, content must be wrapped in <layout id=\"...\"> and declare the corresponding <placeholder id=\"...\"> content region inside it; the `id` on the `layout` tag must exist and exactly match artifact.layoutName."
+
+  - id: PF-KOBOO-TEMPLATE-010
+    capability: template
+    profiles: [site, app]
+    title: A placeholder in a Page bound to a Layout must be nested inside layout
+    severity: BLOCKER
+    knownErrorId: KOOB-LAYOUT-PAGE-ASSEMBLY
+    debugPriority: immediate
+    debugPlaybookAnchor: 5-koob-layout-page-assembly
+    appliesTo: [Page]
+    requiredArtifactFields: [layoutName]
+    tags: [template, layout, placeholder]
+    customCheck: layoutWrapsPlaceholder
+    fix: "`<layout>` is a container tag, not a declaration tag. Do not use an empty `<layout id=\"...\"></layout>` or place it alongside `<placeholder>`; the correct structure is `<layout id=\"...\"><placeholder id=\"...\">...</placeholder></layout>`. See Functions/frontend-create.md and Frontend/page.md."
+
+  - id: PF-KOBOO-TEMPLATE-007
+    advisory: true
+    capability: template
+    profiles: [site, app]
+    title: "Review repeated Views against the composition contract"
+    severity: BLOCKER
+    knownErrorId: KOOB-LAYOUT-PAGE-ASSEMBLY
+    debugPriority: immediate
+    debugPlaybookAnchor: 5-koob-layout-page-assembly
+    appliesTo: [Page]
+    requiredArtifactFields: [layoutName]
+    tags: [template, layout, cross-artifact]
+    implementation: scanCrossArtifactDuplicateViewRefs
+    fix: "Check whether the repeated View is intentional. Reusable Views may appear more than once; remove duplicated chrome only when the composition contract requires a single instance."
+
+  - id: PF-KOBOO-TEMPLATE-013
+    capability: template
+    profiles: [site, app]
+    title: The Page placeholder must exist in the bound Layout
+    severity: BLOCKER
+    knownErrorId: KOOB-LAYOUT-PAGE-ASSEMBLY
+    debugPriority: immediate
+    debugPlaybookAnchor: 5-koob-layout-page-assembly
+    appliesTo: [Page]
+    requiredArtifactFields: [layoutName]
+    tags: [template, layout, placeholder, cross-artifact]
+    implementation: scanCrossArtifactPlaceholderNames
+    fix: "The Page's <placeholder id> must exactly match the bound Layout's k-placeholder value and is case-sensitive. Correct the Page placeholder id first; modify the Layout only when the requirement truly changes its region."
+
+  - id: PF-KOBOO-TEMPLATE-014
+    capability: template
+    profiles: [site, app]
+    title: The Layout bound to the Page must exist and be readable
+    severity: BLOCKER
+    knownErrorId: KOOB-LAYOUT-PAGE-ASSEMBLY
+    debugPriority: immediate
+    debugPlaybookAnchor: 5-koob-layout-page-assembly
+    appliesTo: [Page]
+    requiredArtifactFields: [layoutName]
+    tags: [template, layout, cross-artifact]
+    implementation: scanCrossArtifactLayoutReadable
+    fix: "Confirm that the Page's layoutName points to an existing Layout and that the <layout id> in Page content matches that name. Do not create a same-name empty Layout temporarily just to pass the scan."
+
+  - id: PF-KOBOO-RESOURCE-001
+    capability: template
+    profiles: [site, app]
+    title: Referenced Views must exist
+    severity: BLOCKER
+    knownErrorId: KOOB-RESOURCE-REFERENCE
+    debugPriority: immediate
+    debugPlaybookAnchor: 7-koob-resource-reference
+    appliesTo: [Page, Layout, View]
+    tags: [template, view, resource, cross-artifact]
+    implementation: scanCrossArtifactMissingViewReferences
+    fix: "First use list_site_object(View) to confirm the real name. Correct <view id> when the name is misspelled; when the object has not been created, create it only after its content and responsibility are explicit, and do not generate a same-name empty View."

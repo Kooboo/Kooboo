@@ -1,0 +1,23 @@
+# Kooboo Preflight forms capability rules
+
+rules:
+  - id: PF-FORM-001
+    customCheck: formLabels
+    capability: forms
+    profiles: [site, app]
+    title: Form controls must have labels
+    severity: BLOCKER
+    appliesTo: [Page, View]
+    tags: [form, a11y]
+    fix: "Add a visible label to form controls and associate it with for/id; when a visible label is unsuitable, use aria-label or aria-labelledby."
+
+  - id: PF-FORM-002
+    advisory: true
+    customCheck: formFeedback
+    capability: forms
+    profiles: [site, app]
+    title: Forms must provide error feedback
+    severity: HIGH
+    appliesTo: [Page, View, Script]
+    tags: [form, error-state]
+    fix: "Verify submission failures produce accessible visible feedback. Localized text, framework validation, and shared components are valid; source-only inspection is advisory."

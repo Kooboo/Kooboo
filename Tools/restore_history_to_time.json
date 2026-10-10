@@ -1,0 +1,23 @@
+{
+  "type": "function",
+  "function": {
+    "name": "restore_history_to_time",
+    "description": "Restore the current website to the last recorded state at or before a date/time.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "time": {
+          "description": "Date/time to restore to. ISO 8601 format with a time-zone offset is recommended."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

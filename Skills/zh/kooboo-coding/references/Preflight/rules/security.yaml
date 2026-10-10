@@ -1,0 +1,35 @@
+# Kooboo Preflight security capability rules
+
+rules:
+  - id: PF-SECURITY-001
+    advisory: true
+    customCheck: hardcodedSecrets
+    capability: code
+    profiles: [site, app]
+    title: "Review embedded credential candidates"
+    severity: BLOCKER
+    appliesTo: [Api, CodeBlock, Script, Page, View]
+    tags: [security, secret]
+    fix: "Move actual credentials to server-side configuration. Placeholder configuration and public identifiers are not automatically secrets; review advisory candidates before changing them."
+
+  - id: PF-SECURITY-002
+    advisory: true
+    customCheck: htmlInjection
+    capability: code
+    profiles: [site, app]
+    title: Avoid unsafe HTML injection
+    severity: HIGH
+    appliesTo: [Page, View, Script, Api, CodeBlock]
+    tags: [security, xss]
+    fix: "Review whether HTML comes from an untrusted source and whether an appropriate sanitizer is applied. Empty assignments and fixed markup are allowed; prefer textContent for plain data."
+
+  - id: PF-BACKEND-001
+    advisory: true
+    customCheck: writeValidation
+    capability: code
+    profiles: [site, app]
+    title: Write operations must validate input
+    severity: HIGH
+    appliesTo: [Api, CodeBlock]
+    tags: [validation]
+    fix: "Verify field validation and authorization/ownership on each write path, including checks in called services. Lexical proximity alone cannot prove validation is missing."

@@ -1,0 +1,46 @@
+# Kooboo Preflight common capability rules
+
+rules:
+  - id: PF-UNIVERSAL-001
+    customCheck: unfinishedContent
+    capability: common
+    profiles: [site, app]
+    title: Do not deliver unfinished placeholder content
+    severity: BLOCKER
+    appliesTo: [Page, Layout, View, Style, Script, Api, CodeBlock]
+    tags: [completeness]
+    fix: "Complete unfinished visible copy or implementation comments. Business status values, documented examples, and approved fixtures are not unfinished delivery."
+
+  - id: PF-UNIVERSAL-002
+    advisory: true
+    customCheck: emojiPolicy
+    capability: common
+    profiles: [site, app]
+    title: "Review emoji against the approved content policy"
+    severity: BLOCKER
+    appliesTo: [Page, Layout, View, Script]
+    tags: [content]
+    fix: "Review emoji against the user request and content policy. Explicitly requested emoji may remain; this advisory does not establish a policy violation."
+
+  - id: PF-UNIVERSAL-003
+    customCheck: fakeLinks
+    capability: common
+    profiles: [site, app]
+    title: Do not use empty or fake links
+    severity: HIGH
+    appliesTo: [Page, Layout, View]
+    tags: [navigation, completeness]
+    fix: "Change it to a real route or real Kooboo object URL; if it is not navigation, use a button; remove the link when it cannot be made real."
+
+  - id: PF-UNIVERSAL-004
+    customCheck: cdataWrapper
+    capability: common
+    profiles: [site, app]
+    title: Do not wrap Page/Layout/View content in XML CDATA
+    severity: BLOCKER
+    knownErrorId: KOOB-CDATA-WRAPPER
+    debugPriority: immediate
+    debugPlaybookAnchor: 3-koob-cdata-wrapper
+    appliesTo: [Page, Layout, View]
+    tags: [template, create-input, cdata]
+    fix: "The content for create_page / create_layout / create_view must be passed as a raw HTML string; do not wrap it in <![CDATA[...]]>. CDATA is XML escaping syntax, while Kooboo passes arguments through JSON and does not need XML-level escaping. If read_object_text returns content beginning with <![CDATA[, it was written incorrectly earlier; remove the CDATA marker and the closing ]]> and save the plain content with update_text_object."

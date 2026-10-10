@@ -1,0 +1,24 @@
+{
+  "type": "function",
+  "function": {
+    "name": "undo_history_item",
+    "description": "Undo one CMS history change. This action creates a new history item.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "logId": {
+          "type": "integer",
+          "description": "Positive ID of the log item to undo."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

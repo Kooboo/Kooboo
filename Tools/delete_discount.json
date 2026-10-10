@@ -1,0 +1,29 @@
+{
+  "type": "function",
+  "function": {
+    "name": "delete_discount",
+    "description": "Delete a discount by its id. This also removes discount usage records linked to the discount.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

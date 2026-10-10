@@ -1,0 +1,19 @@
+{
+  "type": "function",
+  "function": {
+    "name": "get_site_info",
+    "description": "Returns site settings, resource counts and appPlanning presence (present, missing). Presence does not prove valid planning. Before changing an existing App, read current Blueprint/App Plan and affected resources, then analyze planning impact. Planning changes require review_app_requirements; unchanged planning permits scoped maintenance. Failed reads are not absence.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      }
+    }
+  }
+}

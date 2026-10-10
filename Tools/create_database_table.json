@@ -1,0 +1,73 @@
+{
+  "type": "function",
+  "function": {
+    "name": "create_database_table",
+    "description": "Create an internal SQLite table with explicit columns. No implicit columns are added; at most one primary-key column is supported.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "columns": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "TEXT",
+                  "INTEGER",
+                  "REAL",
+                  "BLOB",
+                  "NUMERIC"
+                ]
+              },
+              "notNull": {
+                "type": "boolean"
+              },
+              "primaryKey": {
+                "type": "boolean"
+              },
+              "unique": {
+                "type": "boolean"
+              },
+              "defaultValue": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Optional literal default value, not a SQL expression."
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "name",
+        "columns"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

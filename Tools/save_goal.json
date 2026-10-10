@@ -1,0 +1,52 @@
+{
+  "type": "function",
+  "function": {
+    "name": "save_goal",
+    "description": "Save one reviewed Goal in the existing Blueprint. actorIds are stored Actor GUIDs; a new Goal requires at least one. The server creates its links. Reuse its id for updates. Only call after user approval.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "goal": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "actorIds": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Stored Actor GUIDs. Required for a new Goal; omitted links are retained on update."
+        }
+      },
+      "required": [
+        "goal"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

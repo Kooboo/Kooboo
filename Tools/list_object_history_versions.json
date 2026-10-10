@@ -1,0 +1,41 @@
+{
+  "type": "function",
+  "function": {
+    "name": "list_object_history_versions",
+    "description": "List all recorded versions of a CMS object by its name or ID and its store or table name.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "nameOrId": {
+          "type": "string",
+          "description": "CMS object name or GUID ID."
+        },
+        "storeName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "CMS store name. Provide either storeName or tableName, but not both."
+        },
+        "tableName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Dynamic table name. Provide either tableName or storeName, but not both."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "nameOrId"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

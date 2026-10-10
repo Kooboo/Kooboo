@@ -1,0 +1,11 @@
+{
+  "type": "function",
+  "function": {
+    "name": "read_app_blueprint",
+    "description": "Read the accepted Blueprint graph from AIApplicationStore. The legacy kfile Blueprint version API is retired.",
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false
+    }
+  }
+}

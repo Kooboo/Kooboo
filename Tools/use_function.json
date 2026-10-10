@@ -1,0 +1,29 @@
+{
+  "type": "function",
+  "function": {
+    "name": "use_function",
+    "description": "Load authoritative InputSchema and ReturnSchema before invoking a function found through function_discover. This function only loads schemas; it never invokes the named functions. After the result is returned, invoke the target function directly with schema-valid arguments. Do not call use_function again for a name whose schema is already in the conversation. Discover progressively as the task becomes clear. When several discovered functions are needed for the immediate task, load them together in one names array; do not preload unrelated functions or reload unchanged schemas already in context. In AI Chat, use_function also resolves the frontend tools the client declares locally, so a tool declared in the current request (such as ask_user_input) can be called directly with its provided schema, while a deferred frontend tool (such as review_app_requirements) must be loaded through use_function before use. Never guess object IDs or omit view-specific required arguments.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "names"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

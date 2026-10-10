@@ -1,0 +1,40 @@
+{
+  "type": "function",
+  "function": {
+    "name": "checkout_history",
+    "description": "Create another website containing the current website\u0027s state at a history log ID.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "logId": {
+          "type": "integer",
+          "description": "Positive log ID identifying the historical site state."
+        },
+        "siteName": {
+          "type": "string",
+          "description": "Name of the new website."
+        },
+        "fullDomain": {
+          "type": "string",
+          "description": "Full domain binding for the new website."
+        },
+        "published": {
+          "type": "boolean",
+          "description": "Whether the new website should be published immediately."
+        },
+        "sandbox": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional sandbox name. Executes the operation in that sandbox site when provided."
+        }
+      },
+      "required": [
+        "siteName",
+        "fullDomain"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
