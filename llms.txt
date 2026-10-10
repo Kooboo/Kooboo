@@ -1,0 +1,53 @@
+# Kooboo
+
+> Kooboo is an AI-native web OS for building, running, and owning websites and business
+> applications: AI website creation, visual editing, content management, databases,
+> ecommerce, email, analytics, hosting, development and deployment in one portable system.
+> This repository publishes the Kooboo product documentation and the AI-facing skills and
+> function definitions that power the Kooboo AI assistant.
+> Product site: https://www.kooboo.com/ · Documentation site: https://docs.kooboo.com/
+
+## Product documentation
+
+- [Documentation index](https://github.com/Kooboo/Kooboo/blob/main/Docs/official-docs/README.md): all 208 English pages with titles and one-line summaries.
+- [KScript API reference](https://github.com/Kooboo/Kooboo/blob/main/Docs/official-docs/api/index.md): server-side `k.*` APIs for authentication, content, databases, commerce, payments, mail, files, networking and site resources.
+- [Admin CMS guide](https://github.com/Kooboo/Kooboo/blob/main/Docs/official-docs/cms/index.md): site structure, content, commerce, database, development, settings and operations in the Kooboo console.
+- [Template engine](https://github.com/Kooboo/Kooboo/blob/main/Docs/official-docs/templateEngine/index.md): `k-data`, bindings, layout, page, view, plus JS and CSS resource handling.
+- [Quick start](https://github.com/Kooboo/Kooboo/blob/main/Docs/official-docs/quick-start/index.md): create a site, build a page, add content, add server-side logic, publish a domain.
+- [中文文档索引](https://github.com/Kooboo/Kooboo/blob/main/Docs/official-docs/zh/README.md): 同一批文档的中文版本，共 208 篇。
+
+## AI skills (loaded by the Kooboo AI assistant)
+
+- [Skills index](https://github.com/Kooboo/Kooboo/blob/main/Skills/README.md): all 11 skill packages with their purposes.
+- [browser-control](https://github.com/Kooboo/Kooboo/blob/main/Skills/browser-control/SKILL.md): Browser control for the expanded right-side site preview, including observation, interaction, navigation, upload, and verification.
+- [debug](https://github.com/Kooboo/Kooboo/blob/main/Skills/debug/SKILL.md): Diagnose and fix problems in the current Kooboo site through an evidence-first workflow using Preview diagnostics, Network, Browser Control, source inspection, and Preflight. / Diagnose and fix blank pages, errors, netwo…
+- [history](https://github.com/Kooboo/Kooboo/blob/main/Skills/history/SKILL.md): Inspect Kooboo CMS history, list and filter change records, view object versions, compare revisions, undo selected changes, restore a website to a historical point, or check out a historical state as another website.
+- [kooboo-ai-task-automation](https://github.com/Kooboo/Kooboo/blob/main/Skills/kooboo-ai-task-automation/SKILL.md): Use when the user wants to create or refine a Kooboo AI Task Job, fixed routine, scheduled task, or chat-created automation from natural language, including write-capable jobs such as scheduled posting, content sync, cle…
+- [kooboo-app-i18n](https://github.com/Kooboo/Kooboo/blob/main/Skills/kooboo-app-i18n/SKILL.md): Add or maintain multilingual Vue AI Apps using Kooboo Labels and vue-i18n, including language switching, translated menus and titles, and component-library locales.
+- [kooboo-cms-guide](https://github.com/Kooboo/Kooboo/blob/main/Skills/kooboo-cms-guide/SKILL.md): Use when guiding users to Kooboo CMS admin URLs, show_action_button, get_site_info (siteId, baseUrl), or JWT/payment/SMS/OAuth setup links.
+- [kooboo-coding](https://github.com/Kooboo/Kooboo/blob/main/Skills/kooboo-coding/SKILL.md): Kooboo Site / App / Scoped Coding Router.
+- [kooboo-jsonld](https://github.com/Kooboo/Kooboo/blob/main/Skills/kooboo-jsonld/SKILL.md): Use when adding, inspecting, or debugging JSON-LD structured data in Kooboo pages, views, or layouts: k-json-ld, schema.org, Product, Article, Organization, BreadcrumbList, rich results, field mappings, or missing applic…
+- [lighthouse-optimizer](https://github.com/Kooboo/Kooboo/blob/main/Skills/lighthouse-optimizer/SKILL.md): Analyze Lighthouse or PageSpeed results for a Kooboo site, map failed audits and DOM/resource evidence to Pages, Views, Layouts, Scripts, Styles, Images, APIs, or CodeBlocks, produce prioritized optimization recommendati…
+- [sandbox](https://github.com/Kooboo/Kooboo/blob/main/Skills/sandbox/SKILL.md): Use a hidden Kooboo Sandbox site to copy selected site objects, make isolated changes, execute KData or KScript, render templates, and verify page output without changing the current site.
+- [ui-ux-pro-max-pp](https://github.com/Kooboo/Kooboo/blob/main/Skills/ui-ux-pro-max-pp/SKILL.md): Use when Kooboo AI has entered site-building SOP S2/S3 and needs a Page Plan, Design System, or page View prompts.
+
+## AI functions (tools the assistant can call)
+
+- [Tools index](https://github.com/Kooboo/Kooboo/blob/main/Tools/README.md): all 149 function definitions grouped by category, with descriptions and JSON Schemas.
+  - Core: 36 functions
+  - AppBuilding: 29 functions
+  - Commerce: 23 functions
+  - History: 12 functions
+  - Basic: 11 functions
+  - Sandbox: 8 functions
+  - Site: 7 functions
+  - Analytic: 6 functions
+  - SiteDevelopment: 6 functions
+  - TaskJob: 6 functions
+  - Utils: 3 functions
+  - Settings: 2 functions
+
+## Optional
+
+- [5000 sites benchmark](https://github.com/Kooboo/Kooboo/blob/main/Docs/5000-sites-benchmark.md): stress-test evidence for running thousands of dynamic sites on one instance.
+- [Under 1 ms render benchmark](https://github.com/Kooboo/Kooboo/blob/main/Docs/kooboo-under-1ms-render-benchmark.md): render-performance benchmark method and results.

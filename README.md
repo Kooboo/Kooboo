@@ -274,6 +274,16 @@ Approved technology, hosting, infrastructure, integration, and distribution part
 
 This repository is maintained for official compiled releases, checksums, release notes, issue reporting, and release feedback. It is not a public source-code repository.
 
+# What is in this repository
+
+| Path | Contents |
+|------|----------|
+| [`Docs/official-docs/`](Docs/official-docs) | Kooboo product documentation: the [KScript API reference](Docs/official-docs/api/index.md), the [Admin (CMS) guide](Docs/official-docs/cms/index.md), the [template engine](Docs/official-docs/templateEngine/index.md), and the [quick-start tutorials](Docs/official-docs/quick-start/index.md) — 208 pages, plus a [Chinese edition](Docs/official-docs/zh/README.md) |
+| [`Docs/`](Docs) | Benchmark reports and the evidence behind Kooboo's performance claims |
+| [`Skills/`](Skills) | Skill packages loaded by the Kooboo AI assistant |
+| [`Tools/`](Tools) | Function definitions available to the Kooboo AI assistant |
+| [`llms.txt`](llms.txt) | Machine-readable map of this repository |
+
 ---
 
 Copyright © Kooboo. All rights reserved.
