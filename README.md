@@ -278,7 +278,7 @@ This repository is maintained for official compiled releases, checksums, release
 
 | Path | Contents |
 |------|----------|
-| [`Docs/official-docs/`](Docs/official-docs) | Kooboo product documentation: the [KScript API reference](Docs/official-docs/api/index.md), the [Admin (CMS) guide](Docs/official-docs/cms/index.md), the [template engine](Docs/official-docs/templateEngine/index.md), and the [quick-start tutorials](Docs/official-docs/quick-start/index.md) — 208 pages, plus a [Chinese edition](Docs/official-docs/zh/README.md) |
+| [`Docs/official-docs/`](Docs/official-docs/README.md) | Documentation indexes with topic summaries and links to [docs.kooboo.com](https://docs.kooboo.com/): [KScript API](https://docs.kooboo.com/api/index.html), [Admin CMS](https://docs.kooboo.com/cms/index.html), [template engine](https://docs.kooboo.com/templateEngine/index.html), and [quick start](https://docs.kooboo.com/quick-start/index.html). [English](Docs/official-docs/README.md) and [中文](Docs/official-docs/zh/README.md) indexes each cover 208 topics |
 | [`Docs/`](Docs) | Benchmark reports and the evidence behind Kooboo's performance claims |
 | [`Skills/`](Skills) | Skill packages loaded by the Kooboo AI assistant |
 | [`Tools/`](Tools) | Function definitions available to the Kooboo AI assistant |

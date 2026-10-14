@@ -2,7 +2,7 @@
 
 > **本目录面向 AI。** 这里存放 Kooboo AI 助手在运行时加载的技能包，用于判断如何建设和修改
 > Kooboo 站点与应用。它**不是面向用户的文档**——想读 Kooboo 文档请从
-> [`Docs/official-docs/zh/`](../../Docs/official-docs/zh) 开始。
+> [文档索引](../../Docs/official-docs/zh/README.md) 开始。
 >
 > 英文原版：[English](../README.md) · 全仓库的机器可读地图：[llms.txt](../../llms.txt)
 

@@ -3,18 +3,18 @@
 > Kooboo is an AI-native web OS for building, running, and owning websites and business
 > applications: AI website creation, visual editing, content management, databases,
 > ecommerce, email, analytics, hosting, development and deployment in one portable system.
-> This repository publishes the Kooboo product documentation and the AI-facing skills and
-> function definitions that power the Kooboo AI assistant.
+> This repository provides documentation indexes with topic summaries and links to
+> docs.kooboo.com, plus the AI-facing skills and function definitions that power the Kooboo AI assistant.
 > Product site: https://www.kooboo.com/ · Documentation site: https://docs.kooboo.com/
 
 ## Product documentation
 
-- [Documentation index](https://github.com/Kooboo/Kooboo/blob/main/Docs/official-docs/README.md): all 208 English pages with titles and one-line summaries.
-- [KScript API reference](https://github.com/Kooboo/Kooboo/blob/main/Docs/official-docs/api/index.md): server-side `k.*` APIs for authentication, content, databases, commerce, payments, mail, files, networking and site resources.
-- [Admin CMS guide](https://github.com/Kooboo/Kooboo/blob/main/Docs/official-docs/cms/index.md): site structure, content, commerce, database, development, settings and operations in the Kooboo console.
-- [Template engine](https://github.com/Kooboo/Kooboo/blob/main/Docs/official-docs/templateEngine/index.md): `k-data`, bindings, layout, page, view, plus JS and CSS resource handling.
-- [Quick start](https://github.com/Kooboo/Kooboo/blob/main/Docs/official-docs/quick-start/index.md): create a site, build a page, add content, add server-side logic, publish a domain.
-- [中文文档索引](https://github.com/Kooboo/Kooboo/blob/main/Docs/official-docs/zh/README.md): 同一批文档的中文版本，共 208 篇。
+- [Documentation index](https://github.com/Kooboo/Kooboo/blob/main/Docs/official-docs/README.md): 208 topics with titles, one-line summaries, and links to the full documentation at docs.kooboo.com.
+- [KScript API reference](https://docs.kooboo.com/api/index.html): server-side `k.*` APIs for authentication, content, databases, commerce, payments, mail, files, networking and site resources.
+- [Admin CMS guide](https://docs.kooboo.com/cms/index.html): site structure, content, commerce, database, development, settings and operations in the Kooboo console.
+- [Template engine](https://docs.kooboo.com/templateEngine/index.html): `k-data`, bindings, layout, page, view, plus JS and CSS resource handling.
+- [Quick start](https://docs.kooboo.com/quick-start/index.html): create a site, build a page, add content, add server-side logic, publish a domain.
+- [中文文档索引](https://github.com/Kooboo/Kooboo/blob/main/Docs/official-docs/zh/README.md): 208 个主题的中文标题和摘要，链接到 docs.kooboo.com 的英文正文。
 
 ## AI skills (loaded by the Kooboo AI assistant)
 

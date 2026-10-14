@@ -3,7 +3,7 @@
 > **This directory is AI-facing.** It holds the 149 functions (tools) that the Kooboo
 > AI assistant can call while working on a site, exported as OpenAI-style tool definitions. It
 > is *not* a developer API and not end-user documentation — readers looking for Kooboo
-> documentation should start at [`Docs/official-docs/`](../Docs/official-docs).
+> documentation should start at [docs.kooboo.com](https://docs.kooboo.com/).
 >
 > Machine-readable map of the whole repository: [llms.txt](../../llms.txt)
 

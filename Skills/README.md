@@ -3,7 +3,7 @@
 > **This directory is AI-facing.** It holds the skill packages that the Kooboo AI assistant
 > loads at runtime to decide how to build and modify Kooboo sites and apps. It is *not*
 > end-user documentation — readers looking for Kooboo documentation should start at
-> [`Docs/official-docs/`](../Docs/official-docs).
+> [docs.kooboo.com](https://docs.kooboo.com/).
 >
 > Chinese mirror: [zh/](zh) · Machine-readable map of the whole repository: [llms.txt](../../llms.txt)
 
